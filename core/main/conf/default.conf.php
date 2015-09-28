@@ -3,7 +3,7 @@ return array(
 	'Database' => array(
 			'Driver' => 'mysql',
 			'DBHost' => 'localhost',
-			'DB' => 'kusemaadmin',
+			'DB' => 'sushico',
 			'Username' => 'root',
 			'Password' => 'root'
 		)
