@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<application id="KusemaInternal-System" mode="Debug">
+<application id="Sushi-Co-System" mode="Debug">
 	<!-- alias definitions and namespace usings <paths> <alias id="myalias"
 		path="./lib" /> <using namespace="Application.common.*" /> </paths> -->
 
@@ -79,7 +79,7 @@
 	</services>
 	<!-- application parameters -->
 	<parameters>
-		<parameter id="AppTitle" value="Kusema Management System" />
+		<parameter id="AppTitle" value="Sushi Co Management System" />
 		<parameter id="AppVersion" value="1.0.0" />
 	</parameters>
 

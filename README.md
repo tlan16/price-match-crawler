@@ -1,2 +1,2 @@
-# kusema_admin
-the admin site for kusema
+# sushi_co
+the admin site for sushi&co
