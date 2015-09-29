@@ -6,7 +6,7 @@ class InfoAbstract extends BaseEntityAbstract
 	 * 
 	 * @var string
 	 */
-	private $value;
+	private $value = "";
 	/**
 	 * The type of the information
 	 *
@@ -18,13 +18,13 @@ class InfoAbstract extends BaseEntityAbstract
 	 *
 	 * @var int
 	 */
-	protected $entityId;
+	protected $entityId = 0;
 	/**
 	 * The name of the entity
 	 *
 	 * @var string
 	 */
-	protected $entityName;
+	protected $entityName = "";
 	/**
 	 * The class name of the entity
 	 * @var unknown
@@ -154,14 +154,14 @@ class InfoAbstract extends BaseEntityAbstract
 	 * 
 	 * @return InfoAbstract
 	 */
-	public static function create(InfoEntityAbstract $baseEntity, InfoTypeAbstract $type, $value = null, $entity = null, InfoAbstract &$exitsObj = null)
+	public static function create(InfoEntityAbstract $baseEntity, InfoTypeAbstract $type, $value = "", $entity = null, InfoAbstract &$exitsObj = null)
 	{
 		$className = get_called_class();
 		if(!$entity instanceof BaseEntityAbstract && trim($value) === '')
 			throw new Exception('must give entity or value');
-		$value = trim($value) === '' ? null : trim($value);
-		$entityName = $entity instanceof BaseEntityAbstract ? get_class($entity) : null;
-		$entityId = $entity instanceof BaseEntityAbstract ? $entity->getId() : null;
+		$value = trim($value);
+		$entityName = $entity instanceof BaseEntityAbstract ? get_class($entity) : "";
+		$entityId = $entity instanceof BaseEntityAbstract ? $entity->getId() : 0;
 		$info = ($exitsObj instanceof InfoAbstract ? $exitsObj : new $className());
 		$info->setEntity($baseEntity)
 			->setType($type)
@@ -232,9 +232,9 @@ class InfoAbstract extends BaseEntityAbstract
 	 */
 	public function __loadDaoMap()
 	{
-		DaoMap::setStringType('value', 'varchar', 255, true);
-		DaoMap::setIntType('entityId', 'int', 10, true, true);
-		DaoMap::setStringType('entityName','varchar', 50, true);
+		DaoMap::setStringType('entityName','varchar', 50, false, "");
+		DaoMap::setIntType('entityId', 'int', 10, true, false, 0);
+		DaoMap::setStringType('value', 'varchar', 255, false, "");
 		DaoMap::setManyToOne(StringUtilsAbstract::lcFirst($this->_entityClass), $this->_entityClass, strtolower(get_class($this)) . '_entity');
 		DaoMap::setManyToOne('type', get_class($this) . 'Type', strtolower(get_class($this)) . '_info_type');
 		

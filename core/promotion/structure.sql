@@ -17,9 +17,9 @@ CREATE TABLE `ingredientinfotype` (
 DROP TABLE IF EXISTS `ingredientinfo`;
 CREATE TABLE `ingredientinfo` (
 	`id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-	`value` varchar(255) NULL DEFAULT '',
-	`entityId` int(10) unsigned NULL DEFAULT 0,
-	`entityName` varchar(50) NULL DEFAULT '',
+	`entityName` varchar(50) NOT NULL DEFAULT '',
+	`entityId` int(10) unsigned NOT NULL DEFAULT 0,
+	`value` varchar(255) NOT NULL DEFAULT '',
 	`ingredientId` int(10) unsigned NOT NULL DEFAULT 0,
 	`typeId` int(10) unsigned NOT NULL DEFAULT 0,
 	`active` bool NOT NULL DEFAULT 1,

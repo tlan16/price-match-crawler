@@ -105,9 +105,10 @@ class InfoTypeAbstract extends BaseEntityAbstract
 			throw new Exception('Name for a ' . $class . ' must not be empty');
 		$description = trim($description);
 		$active = (intval($active) === 1);
-		$objs = $class::getAllByCriteria('name = ?', array($name), $active, 1, 1);
+		$objs = $class::getAllByCriteria('name = ?', array($name), false, 1, 1);
 		$obj = count($objs) > 0 ? $objs[0] : new $class();
 		$obj->setName($name)
+			->setDescription($description)
 			->setActive($active)
 			->save();
 		return $obj;

@@ -135,7 +135,7 @@ class InfoEntityAbstract extends BaseEntityAbstract
 	 *
 	 * @return InfoEntityAbstract
 	 */
-	protected function addInfo($typeId, $entity = null, $value = null, $overRideValue = false)
+	public function addInfo($typeId, $entity = null, $value = "", $overRideValue = false)
 	{
 		DaoMap::loadMap($this);
 		if(!isset(DaoMap::$map[strtolower(get_class($this))]['infos']) || ($class = trim(DaoMap::$map[strtolower(get_class($this))]['infos']['class'])) === '')
@@ -144,9 +144,9 @@ class InfoEntityAbstract extends BaseEntityAbstract
 		$InfoTypeClass = $class . 'Type';
 		$infoType = $InfoTypeClass::get($typeId);
 		$typeId = ($typeId === null ? null : intval($typeId));
-		$value = StringUtilsAbstract::nullOrString($value);
-		$entityId = $entity instanceof BaseEntityAbstract ? $entity->getId() : null;
-		$entityName = $entity instanceof BaseEntityAbstract ? get_class($entity) : null;
+		$value = trim($value);
+		$entityId = $entity instanceof BaseEntityAbstract ? $entity->getId() : 0;
+		$entityName = $entity instanceof BaseEntityAbstract ? get_class($entity) : "";
 		if($overRideValue === true)
 		{
 			//clear all info
@@ -173,7 +173,7 @@ class InfoEntityAbstract extends BaseEntityAbstract
 	 *
 	 * @return InfoEntityAbstract
 	 */
-	protected function removeInfo($typeId)
+	public function removeInfo($typeId)
 	{
 		DaoMap::loadMap($this);
 		if(!isset(DaoMap::$map[strtolower(get_class($this))]['infos']) || ($class = trim(DaoMap::$map[strtolower(get_class($this))]['infos']['class'])) === '')
@@ -219,5 +219,30 @@ class InfoEntityAbstract extends BaseEntityAbstract
 		parent::__loadDaoMap();
 		
 		DaoMap::createIndex('name');
+	}
+/**
+	 * To create a new self
+	 * 
+	 * @param string $name
+	 * @param string $description
+	 * @param bool	 $active
+	 * 
+	 * @return InfoEntityAbstract
+	 * @throws Exception
+	 */
+	public static function create($name, $description = '', $active = true) 
+	{
+		$class = get_called_class();
+		if(($name = trim($name)) === '')
+			throw new Exception('Name for a ' . $class . ' must not be empty');
+		$description = trim($description);
+		$active = (intval($active) === 1);
+		$objs = $class::getAllByCriteria('name = ?', array($name), false, 1, 1);
+		$obj = count($objs) > 0 ? $objs[0] : new $class();
+		$obj->setName($name)
+			->setDescription($description)
+			->setActive($active)
+			->save();
+		return $obj;
 	}
 }

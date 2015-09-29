@@ -6,8 +6,9 @@ try {
 	$transStarted = false;
 	try {Dao::beginTransaction();} catch(Exception $e) {$transStarted = true;}
 
-	$obj = Ingredient::
+	$obj = Ingredient::create('fish');
 	var_dump($obj);
+	$obj->addInfo(IngredientInfoType::ID_ALLERGENT, Allergent::get(1));
 	
 	if($transStarted === false)
 		Dao::commitTransaction();
