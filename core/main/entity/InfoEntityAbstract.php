@@ -92,10 +92,21 @@ class InfoEntityAbstract extends BaseEntityAbstract
 	 * @param string $reset
 	 * @throws EntityException
 	 */
-	protected function getInfo($typeId, $entityName = null, $entityId = null, $value = null, $reset = false)
+	protected function getInfo($typeId, BaseEntityAbstract $entity = null, $value = '', $reset = false)
 	{
 		DaoMap::loadMap($this);
-		$cacheKey = trim($typeId) . trim($entityName) . trim($entityId);
+		
+		$entityId = 0;
+		$entityName = '';
+		
+		if($entity !== null)
+		{	
+			$entityId = $entity->getId();
+			$entityName = get_class($entity);
+		}
+		
+		$cacheKey = get_called_class().$entityName.$entityId;
+		
 		if(!isset($this->_cache[$cacheKey]) || $reset === true)
 		{
 			if(!isset(DaoMap::$map[strtolower(get_class($this))]['infos']) || ($class = trim(DaoMap::$map[strtolower(get_class($this))]['infos']['class'])) === '')
@@ -103,24 +114,23 @@ class InfoEntityAbstract extends BaseEntityAbstract
 
 			$sql = 'select id from ' . strtolower($class) . ' `info` where `info`.active = 1 and `info`.' . strtolower(get_class($this)) . 'Id = ? and `info`.typeId = ?';
 			$params =  array($this->getId(), $typeId);
-			if($entityName === null || trim($entityName) !== '')
-			{
-				$sql .= $entityName === null ? ' and `info`.entityName is NULL' : ' and `info`.entityName = ?';
-				if($entityName !== null)
-					$params[] =  trim($entityName);
-			}
-			if($entityId === null || intval($entityId) !== 0)
-			{
-				$sql .= $entityId === null ? ' and `info`.entityId is NULL' : ' and `info`.entityId = ?';
-				if($entityId !== null)
-					$params[] = intval($entityId);
-			}
+			//if($entityName === null || trim($entityName) !== '')
+			
+			$sql .= " and `info`.entityName = ? ";
+			$sql .= " and `info`.entityId = ? ";
+			$params = array_merge($params, array($entityName, $entityId)); 
+			
+			$sql .= ' and `info`.value = ? ';
+			$params[] = trim($value);
+
+			/*
 			if($value === null || trim($value) !== '')
 			{
 				$sql .= $value === null ? ' and `info`.value is NULL' : ' and `info`.value = ?';
 				if($value !== null)
 					$params[] = trim($value);
 			}
+			*/
 			$result = Dao::getResultsNative($sql, $params, PDO::FETCH_NUM);
 			$this->_cache[$cacheKey] = array_map(create_function('$row', 'return ' . $class . '::get($row[0]);'), $result);
 		}
@@ -135,15 +145,17 @@ class InfoEntityAbstract extends BaseEntityAbstract
 	 *
 	 * @return InfoEntityAbstract
 	 */
-	public function addInfo($typeId, $entity = null, $value = "", $overRideValue = false)
+	public function addInfo(InfoTypeAbstract $infoType, BaseEntityAbstract $entity = null, $value = "", $overRideValue = false)
 	{
 		DaoMap::loadMap($this);
 		if(!isset(DaoMap::$map[strtolower(get_class($this))]['infos']) || ($class = trim(DaoMap::$map[strtolower(get_class($this))]['infos']['class'])) === '')
 			throw new EntityException('You can NOT get information from a entity' . get_class($this) . ', setup the relationship first!');
 
-		$InfoTypeClass = $class . 'Type';
-		$infoType = $InfoTypeClass::get($typeId);
-		$typeId = ($typeId === null ? null : intval($typeId));
+		//$InfoTypeClass = $class . 'Type';
+		$InfoTypeClass = get_class($infoType); ///
+		$typeId = $infoType->getId(); ///
+		//$infoType = $InfoTypeClass::get($typeId);
+		//$typeId = ($typeId === null ? null : intval($typeId));
 		$value = trim($value);
 		$entityId = $entity instanceof BaseEntityAbstract ? $entity->getId() : 0;
 		$entityName = $entity instanceof BaseEntityAbstract ? get_class($entity) : "";
@@ -157,13 +169,13 @@ class InfoEntityAbstract extends BaseEntityAbstract
 		else
 		{
 			//check whether we have one already
-			$infos = $this->getInfo($typeId, $entityName, $entityId, $value);
+			$infos = $this->getInfo($typeId, $entity, $value);
 			$info = count($infos) > 0 ? $infos[0] : $class::create($this, $infoType, $value, $entity);		
 			$info->setActive(true)->save();
 		}
 
 		//referesh cache
-		$this->getInfo($typeId, $entityName, $entityId, true);
+		$this->getInfo($typeId, $entity, true);
 		return $this;
 	}
 	/**

@@ -1,35 +1,35 @@
 <?php
-/** IngredientInfo Entity
+/** MaterialInfo Entity
  *
  * @package    Core
  * @subpackage Entity
  * @author     lhe<helin16@gmail.com>
  */
-class IngredientInfo extends InfoAbstract
+class MaterialInfo extends InfoAbstract
 {
 	/**
-	 * The Ingredient of the IngredientInfo
+	 * The Material of the MaterialInfo
 	 * @var Ingredient
 	 */
-	protected $ingredient;
+	protected $material;
 	/**
 	 * getter for ingredient
 	 *
 	 * @return Ingredient
 	 */
-	public function getIngredient()
+	public function getMaterial()
 	{
-		$this->loadManyToOne('ingredient');
-	    return $this->ingredient;
+		$this->loadManyToOne('material');
+	    return $this->material;
 	}
 	/**
 	 * Setter for ingredient
 	 *
 	 * @return IngredientInfo
 	 */
-	public function setIngredient(Ingredient $ingredient)
+	public function setMaterial(Material $material)
 	{
-	    $this->ingredient = $ingredient;
+	    $this->material = $material;
 	    return $this;
 	}
 	/**
@@ -38,7 +38,7 @@ class IngredientInfo extends InfoAbstract
 	 */
 	public function __loadDaoMap()
 	{
-		DaoMap::begin($this, 'ingr_info');
+		DaoMap::begin($this, 'mat_info');
 		parent::__loadDaoMap();
 	
 		DaoMap::commit();

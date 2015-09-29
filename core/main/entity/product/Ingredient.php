@@ -28,15 +28,17 @@ class Ingredient extends InfoEntityAbstract
 	 * @return Ingredient
 	 * @throws Exception
 	 */
-	public function addAllergent($name, $description = '')
+	public function addAllergent(Allergent $allergent)
 	{
-		$allergent = Allergent::create($name, $description);
-		if(!$allergent instanceof Allergent)
-			throw new Exception('system error');
 		$infoType = IngredientInfoType::get(IngredientInfoType::ID_ALLERGENT);
+		
+		$this->addInfo($infoType, $allergent, '', false);
+		/*
 		if(!$infoType instanceof IngredientInfoType)
 			throw new Exception('system error');
 		$info = IngredientInfo::create($this, $infoType, null, $allergent);
+		*/
 		return $this;
+		
 	}
 }

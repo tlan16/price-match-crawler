@@ -163,12 +163,14 @@ class InfoAbstract extends BaseEntityAbstract
 		$entityName = $entity instanceof BaseEntityAbstract ? get_class($entity) : "";
 		$entityId = $entity instanceof BaseEntityAbstract ? $entity->getId() : 0;
 		$info = ($exitsObj instanceof InfoAbstract ? $exitsObj : new $className());
+		
 		$info->setEntity($baseEntity)
 			->setType($type)
 			->setValue($value)
 			->setEntityName($entityName)
 			->setEntityId($entityId)
 			->save();
+		
 		return $info;
 	}
 	/**
