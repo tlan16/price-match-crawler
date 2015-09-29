@@ -1,26 +1,26 @@
 <?php
 /**
- * This is the listing page for ProductCodeType
+ * This is the listing page for allergent
  * 
  * @package    Web
  * @subpackage Controller
  * @author     lhe<helin16@gmail.com>
  */
-class QuestionController extends CRUDPageAbstract
+class Controller extends CRUDPageAbstract
 {
 	/**
 	 * (non-PHPdoc)
 	 * @see BPCPageAbstract::$menuItem
 	 */
-	public $menuItem = 'questions';
-	protected $_focusEntity = 'Question';
+	public $menuItem = 'allergent';
+	protected $_focusEntity = 'Allergent';
 	/**
 	 * constructor
 	 */
 	public function __construct()
 	{
 		parent::__construct();
-		if(!AccessControl::canAccessQuestionListingPage(Core::getRole()))
+		if(!AccessControl::canAccessAllergentListingPage(Core::getRole()))
 			die('You do NOT have access to this page');
 	}
 	/**
@@ -70,29 +70,21 @@ class QuestionController extends CRUDPageAbstract
 				$query = $class::getQuery();
 				switch ($field)
 				{
-					case 'quest.title':
-					case 'quest.content':
+					case 'name':
+					case 'description':
 						{
-							if($field === 'quest.content' && (!isset($serachCriteria['quest.content.token']) || ($token = (strtolower(trim($serachCriteria['quest.content.token'])) !== 'on'))))
-							{
-								$where[] =  $field . " like ? ";
-								$params[] = '%' . $value . '%';
-								break;
-							} else {
-								$searchTokens = array();
-								StringUtilsAbstract::permute(preg_split("/[\s,]+/", $value), $searchTokens);
-								$likeArray = array();
-								foreach($searchTokens as $index => $tokenArray) {
-									$key = 'token' . $index;
-									$params[$key] = '%' . implode('%', $tokenArray) . '%';
-									$likeArray[] = $field . " like :" . $key;
-								}
-								
-								$where[] = '(' . implode(' OR ', $likeArray) . ')';
-								break;
+							$searchTokens = array();
+							StringUtilsAbstract::permute(preg_split("/[\s,]+/", $value), $searchTokens);
+							$likeArray = array();
+							foreach($searchTokens as $index => $tokenArray) {
+								$key = 'token' . $index;
+								$params[$key] = '%' . implode('%', $tokenArray) . '%';
+								$likeArray[] = $field . " like :" . $key;
 							}
+							$where[] = '(' . implode(' OR ', $likeArray) . ')';
+							break;
 						}
-					case 'quest.active':
+					case 'active':
 						{
 							$value = intval($value);
 							if($value === 0 || $value === 1)

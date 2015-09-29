@@ -14,13 +14,11 @@ Abstract class AccessControl
 		}
 		return false;
 	}
-	public static function canAccessQuestionListingPage(Role $role)
+	public static function canAccessAllergentListingPage(Role $role)
 	{
 		switch($role->getId())
 		{
-			case Role::ID_SYSTEM_DEVELOPER:
-			case Role::ID_FORUM_USER:
-			case Role::ID_ADMIN_USER:
+			default:
 				{
 					return true;
 				}

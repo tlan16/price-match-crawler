@@ -2,35 +2,17 @@
 class InfoEntityAbstract extends BaseEntityAbstract
 {
 	/**
-	 * The title
+	 * The name
 	 *
 	 * @var string
 	 */
-	private $title;
+	private $name;
 	/**
-	 * The content
+	 * The description
 	 *
 	 * @var string
 	 */
-	private $content;
-	/**
-	 * The author
-	 *
-	 * @var Person
-	 */
-	protected $author = null;
-	/**
-	 * The author name
-	 * 
-	 * @var string
-	 */
-	private $authorName = null;
-	/**
-	 * The reference ID (e.g. kusema web forum id)
-	 * 
-	 * @var string
-	 */
-	private $refId = null;
+	private $description;
 	/**
 	 * The cache for info
 	 *
@@ -45,99 +27,41 @@ class InfoEntityAbstract extends BaseEntityAbstract
 	protected $infos;
 	
 	/**
-	 * getter for title
+	 * getter for name
 	 *
 	 * @return string
 	 */
-	public function getTitle()
+	public function getName()
 	{
-	    return $this->title;
+	    return $this->name;
 	}
 	/**
-	 * Setter for title
+	 * Setter for name
 	 *
 	 * @return InfoEntityAbstract
 	 */
-	public function setTitle($title)
+	public function setName($name)
 	{
-	    $this->title = $title;
+	    $this->name = $name;
 	    return $this;
 	}
 	/**
-	 * getter for content
+	 * getter for description
 	 *
 	 * @return string
 	 */
-	public function getContent()
+	public function getDescription()
 	{
-	    return $this->content;
+	    return $this->description;
 	}
 	/**
-	 * Setter for content
+	 * Setter for description
 	 *
 	 * @return InfoEntityAbstract
 	 */
-	public function setContent($content)
+	public function setDescription($description)
 	{
-	    $this->content = $content;
-	    return $this;
-	}
-	/**
-	 * getter for author
-	 *
-	 * @return UserAccount|null
-	 */
-	public function getAuthor()
-	{
-		$this->loadManyToOne('author');
-	    return $this->author;
-	}
-	/**
-	 * getter for authorName
-	 *
-	 * @return string
-	 */
-	public function getAuthorName()
-	{
-	    return $this->authorName;
-	}
-	/**
-	 * Setter for authorName
-	 *
-	 * @return InfoEntityAbstract
-	 */
-	public function setAuthorName($authorName)
-	{
-	    $this->authorName = $authorName;
-	    return $this;
-	}
-	/**
-	 * getter for refId
-	 *
-	 * @return string
-	 */
-	public function getRefId()
-	{
-	    return $this->refId;
-	}
-	/**
-	 * Setter for refId
-	 *
-	 * @return InfoEntityAbstract
-	 */
-	public function setRefId($refId)
-	{
-	    $this->refId = $refId;
-	    return $this;
-	}
-	/**
-	 * Setter for author
-	 *
-	 * @return InfoEntityAbstract
-	 */
-	public function setAuthor($author)
-	{
-	    $this->author = $author;
+	    $this->description = $description;
 	    return $this;
 	}
 	/**
@@ -270,13 +194,6 @@ class InfoEntityAbstract extends BaseEntityAbstract
 		{
 			$array['createdBy'] = array('id'=> $this->getCreatedBy()->getId(), 'person' => $this->_getPersonJson($this->getCreatedBy()->getPerson()) );
 			$array['updatedBy'] = array('id'=> $this->getUpdatedBy()->getId(), 'person' => $this->_getPersonJson($this->getUpdatedBy()->getPerson()) );
-			$array['author'] = $this->getAuthor() instanceof Person ? $this->_getPersonJson($this->getAuthor()) : null;
-			if(($topics = $this->getTopics()) && count($topics) > 0)
-				$array['topics'] = array_map(create_function('$a', '$b=$a->getJson();$id=$a->getId();return $b["Topic"] ? array($id=>$b["Topic"]) : null;'), $topics);
-			if(($units = $this->getUnits()) && count($units) > 0)
-				$array['units'] = array_map(create_function('$a', '$b=$a->getJson();$id=$a->getId();return $b["Unit"] ? array($id=>$b["Unit"]) : null;'), $units);
-			if(($votes = $this->getVotes()) && count($votes) > 0)
-				$array['votes'] = array_map(create_function('$a', '$b=$a->getJson();$id=$a->getId();return $b["Vote"] ? array($id=>$b["Vote"]) : null;'), $votes);
 		}
 		return parent::getJson($array, $reset);
 	}
@@ -296,119 +213,11 @@ class InfoEntityAbstract extends BaseEntityAbstract
 	public function __loadDaoMap()
 	{
 		DaoMap::setOneToMany("infos", get_class($this) . "Info", strtolower(get_class($this)) . "_info");
-		DaoMap::setStringType('title', 'varchar', 100);
-		DaoMap::setStringType('content','LONGTEXT');
-		DaoMap::setStringType('authorName', 'varchar', 50, true, null);
-		DaoMap::setManyToOne('author', 'Person', get_class($this) . '_au', true);
-		DaoMap::setStringType('refId', 'varchar', 50, true);
+		DaoMap::setStringType('name', 'varchar', 100);
+		DaoMap::setStringType('description','varchar', 255);
 		
 		parent::__loadDaoMap();
 		
-		DaoMap::createIndex('title');
-		DaoMap::createIndex('authorName');
-		DaoMap::createIndex('refId');
-	}
-	public static function getByRefId($refId, $activeOnly = true)
-	{
-		$class = get_called_class();
-		$refId = trim($refId);
-		$activeOnly = (intval($activeOnly) === 1);
-		$objs = $class::getAllByCriteria('refId = ?', array($refId), intval($activeOnly), 1, 1);
-		return count($objs) > 0 ? $objs[0] : null;
-	}
-	public function voteUp(Person $person, $overRideValue = false)
-	{
-		DaoMap::loadMap($this);
-		if(!isset(DaoMap::$map[strtolower(get_class($this))]['infos']) || ($class = trim(DaoMap::$map[strtolower(get_class($this))]['infos']['class'])) === '')
-			throw new EntityException('You can NOT get information from a entity' . get_class($this) . ', setup the relationship first!');
-		$InfoTypeClass = $class . 'Type';
-		return $this->vote($class::VALUE_VOTE_UP, $person, $overRideValue);
-	}
-	public function voteDown(Person $person, $overRideValue = false)
-	{
-		DaoMap::loadMap($this);
-		if(!isset(DaoMap::$map[strtolower(get_class($this))]['infos']) || ($class = trim(DaoMap::$map[strtolower(get_class($this))]['infos']['class'])) === '')
-			throw new EntityException('You can NOT get information from a entity' . get_class($this) . ', setup the relationship first!');
-		$InfoTypeClass = $class . 'Type';
-		return $this->vote($class::VALUE_VOTE_DOWN, $person, $overRideValue);
-	}
-	private function vote($voteType, Person $person, $overRideValue = false)
-	{
-		DaoMap::loadMap($this);
-		if(!isset(DaoMap::$map[strtolower(get_class($this))]['infos']) || ($class = trim(DaoMap::$map[strtolower(get_class($this))]['infos']['class'])) === '')
-			throw new EntityException('You can NOT get information from a entity' . get_class($this) . ', setup the relationship first!');
-		$InfoTypeClass = $class . 'Type';
-		
-		$typeId = $InfoTypeClass::ID_VOTE;
-		if(($typeId = intval($typeId)) === 0)
-			throw new Exception('cannot find const ID_VOTE under class ' . $InfoTypeClass);
-		return $this->addInfo($typeId, $person, intval($voteType), $overRideValue);
-	}
-	public function getVotes($entityName = 'Person', $entityId = null, $value = null, $reset = false)
-	{
-		$value = (intval($value) === 0 ? null : intval($value));
-		
-		DaoMap::loadMap($this);
-		if(!isset(DaoMap::$map[strtolower(get_class($this))]['infos']) || ($class = trim(DaoMap::$map[strtolower(get_class($this))]['infos']['class'])) === '')
-			throw new EntityException('You can NOT get information from a entity' . get_class($this) . ', setup the relationship first!');
-		$InfoTypeClass = $class . 'Type';
-		
-		$typeId = $InfoTypeClass::ID_VOTE;
-		if(trim($typeId) === '')
-			return null;
-		
-		return $this->getInfo($typeId, $entityName, $entityId, $value, $reset);
-	}
-	public function addTopic(Topic $topic, $overRideValue = false)
-	{
-		DaoMap::loadMap($this);
-		if(!isset(DaoMap::$map[strtolower(get_class($this))]['infos']) || ($class = trim(DaoMap::$map[strtolower(get_class($this))]['infos']['class'])) === '')
-			throw new EntityException('You can NOT get information from a entity' . get_class($this) . ', setup the relationship first!');
-		$InfoTypeClass = $class . 'Type';
-		
-		$typeId = $InfoTypeClass::ID_TOPIC;
-		return $this->addInfo($typeId, $topic, null, $overRideValue);
-	}
-	public function getTopics($entityName = 'Topic', $entityId = null, $value = null, $reset = false)
-	{
-		$value = intval($value) === 0 ? null : intval($value);
-	
-		DaoMap::loadMap($this);
-		if(!isset(DaoMap::$map[strtolower(get_class($this))]['infos']) || ($class = trim(DaoMap::$map[strtolower(get_class($this))]['infos']['class'])) === '')
-			throw new EntityException('You can NOT get information from a entity' . get_class($this) . ', setup the relationship first!');
-		$InfoTypeClass = $class . 'Type';
-	
-		$typeId = $InfoTypeClass::ID_TOPIC;
-		$entityId = ($entityId === null ? '' : intval($entityId));
-		if(trim($typeId) === '')
-			throw new Exception($InfoTypeClass . '::ID_TOPIC is empty or invalid');
-		
-		return $this->getInfo($typeId, $entityName, $entityId, $value, $reset);
-	}
-	public function addUnit(Unit $unit, $overRideValue = false)
-	{
-		DaoMap::loadMap($this);
-		if(!isset(DaoMap::$map[strtolower(get_class($this))]['infos']) || ($class = trim(DaoMap::$map[strtolower(get_class($this))]['infos']['class'])) === '')
-			throw new EntityException('You can NOT get information from a entity' . get_class($this) . ', setup the relationship first!');
-		$InfoTypeClass = $class . 'Type';
-		
-		$typeId = $InfoTypeClass::ID_UNIT;
-		return $this->addInfo($typeId, $unit, null, $overRideValue);
-	}
-	public function getUnits($entityName = 'Unit', $entityId = null, $value = null, $reset = false)
-	{
-		$value = (intval($value) === 0 ? null : intval($value));
-	
-		DaoMap::loadMap($this);
-		if(!isset(DaoMap::$map[strtolower(get_class($this))]['infos']) || ($class = trim(DaoMap::$map[strtolower(get_class($this))]['infos']['class'])) === '')
-			throw new EntityException('You can NOT get information from a entity' . get_class($this) . ', setup the relationship first!');
-		$InfoTypeClass = $class . 'Type';
-	
-		$typeId = $InfoTypeClass::ID_UNIT;
-		$entityId = ($entityId === null ? '' : intval($entityId));
-		if(trim($typeId) === '')
-			throw new Exception($InfoTypeClass . '::ID_UNIT is empty or invalid');
-		
-		return $this->getInfo($typeId, $entityName, $entityId, $value, $reset);
+		DaoMap::createIndex('name');
 	}
 }

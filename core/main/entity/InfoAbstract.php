@@ -1,8 +1,6 @@
 <?php
 class InfoAbstract extends BaseEntityAbstract
 {
-	const VALUE_VOTE_UP = 1;
-	const VALUE_VOTE_DOWN = 2;
 	/**
 	 * The value of the information
 	 * 
@@ -183,6 +181,7 @@ class InfoAbstract extends BaseEntityAbstract
 	 */
 	public static function find(InfoEntityAbstract $entity, InfoTypeAbstract $type = null, $searchActiveOnly = true, $pageNo = null, $pageSize = DaoQuery::DEFAUTL_PAGE_SIZE, $orderBy = array(), &$stats = array())
 	{
+		$class = get_called_class();
 		$where = StringUtilsAbstract::lcFirst(str_replace('Info', '', get_called_class())) . 'Id = ?';
 		$params = array($entity->getId());
 		if($type instanceof InfoTypeAbstract)
@@ -190,7 +189,7 @@ class InfoAbstract extends BaseEntityAbstract
 			$where .=' AND typeId = ?';
 			$params[] = $type->getId();
 		}
-		return self::getAllByCriteria($where, $params, $searchActiveOnly, $pageNo, $pageSize, $orderBy, $stats);
+		return $class::getAllByCriteria($where, $params, $searchActiveOnly, $pageNo, $pageSize, $orderBy, $stats);
 	}
 	/**
 	 * removing all the information object
@@ -202,6 +201,7 @@ class InfoAbstract extends BaseEntityAbstract
 	 */
 	public static function remove(InfoEntityAbstract $entity, InfoTypeAbstract $type = null)
 	{
+		$class = get_called_class();
 		$where = StringUtilsAbstract::lcFirst(str_replace('Info', '', get_called_class())) . 'Id = ?';
 		$params = array($entity->getId());
 		if($type instanceof InfoTypeAbstract)
@@ -209,7 +209,7 @@ class InfoAbstract extends BaseEntityAbstract
 			$where .=' AND typeId = ?';
 			$params[] = $type->getId();
 		}
-		self::updateByCriteria('active = 0', $where, $params);
+		$class::updateByCriteria('active = 0', $where, $params);
 	}
 	/**
 	 * (non-PHPdoc)

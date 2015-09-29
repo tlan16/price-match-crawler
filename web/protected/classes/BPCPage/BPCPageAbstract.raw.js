@@ -360,4 +360,11 @@ BPCPageJs.prototype = {
 			}
 		}
 	}
+	/**
+	 * disable all input, btn, textarea, select
+	 * 
+	 */
+	,disableAll: function() {
+		jQuery("input, button, .btn, textarea, select, .select2, .chosen").addClass('disabled').prop("disabled", true);
+	}
 };

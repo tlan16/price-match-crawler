@@ -7,30 +7,29 @@
 			<div class="panel-heading">
 				<label for="showSearch">Show Search Criteria?</label>
 				<input id="showSearch" type="checkbox" checked onclick="$(this).up('#searchPanel').down('.panel-body').toggle();$(this).up('#searchPanel').down('#searchBtn').toggle();">
-				<span id="searchBtn" class="pull-right btn btn-primary btn-sm" data-loading-text="searching ..." onclick="pageJs.getSearchCriteria().getResults(true, <%= $this->pageSize %>);" >Search</span>
+				<div class="btn-group pull-right">
+					<span id="resetBtn" class="btn btn-success btn-sm" data-loading-text="resetting ..." onclick="pageJs.disableAll();location.reload();" >Reset</span>
+					<span id="searchBtn" class="btn btn-primary btn-sm" data-loading-text="searching ..." onclick="pageJs.getSearchCriteria().getResults(true, <%= $this->pageSize %>);" >Search</span>
+				</div>
 			</div>
 			<div class="panel-body search-panel" style="/**display: none;**/">
 				<div class="row">
 					<div class="col-sm-4">
 						<div class="form-group form-group-sm input-group">
-                           <label for="quest.title" class="input-group-addon">Title:</label>
-                           <input type="text" class="form-control input-sm" search_field="quest.title" placeholder="The title of the <%= $this->getFocusEntity() %>">
+                           <label for="name" class="input-group-addon">Name:</label>
+                           <input type="text" class="form-control input-sm" search_field="name" placeholder="The name of the <%= $this->getFocusEntity() %>">
                        </div>
 					</div>
 					<div class="col-sm-4">
 						<div class="form-group form-group-sm input-group">
-                           <label for="quest.content" class="input-group-addon">Content:</label>
-                           <input type="text" class="form-control input-sm" search_field="quest.content" placeholder="The content of the <%= $this->getFocusEntity() %>">
-                           <label for="quest.content.token" class="input-group-addon">
-                               <input type="checkbox" search_field="quest.content.token" placeholder="The content of the <%= $this->getFocusEntity() %>">
-                               Token?
-						   </label>
+                           <label for="description" class="input-group-addon">Description:</label>
+                           <input type="text" class="form-control input-sm" search_field="description" placeholder="The description of the <%= $this->getFocusEntity() %>">
                        </div>
 					</div>
 					<div class="col-sm-4">
 						<div class="form-group form-group-sm input-group">
-                           <label for="quest.active" class="input-group-addon">Active?</label>
-                           <select class="input-sm select2" search_field="quest.active" data-minimum-results-for-search="-1">
+                           <label for="active" class="input-group-addon">Active?</label>
+                           <select class="input-sm select2" search_field="active" data-minimum-results-for-search="-1">
                            		<option value="1">YES</option>
                            		<option value="0">NO</option>
                            		<option value="3">ALL</option>
