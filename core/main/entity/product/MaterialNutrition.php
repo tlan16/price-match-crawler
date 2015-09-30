@@ -67,6 +67,10 @@ class MaterialNutrition extends BaseEntityAbstract
 	public function __loadDaoMap()
 	{
 		DaoMap::begin($this, 'mat_nut');
+		DaoMap::setManyToOne("material", "Material", "mat");
+		DaoMap::setManyToOne("nutrition", "Nutrition", "nut");
+		DaoMap::setManyToOne("serveManagement", "ServeManagement", "srv_mgm");
+		DaoMap::setIntType('qty', 'int', 5);
 	
 		parent::__loadDaoMap();
 	
