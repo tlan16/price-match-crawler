@@ -268,6 +268,21 @@ class UDate
 	{
 	    return $this->_dateTime->format($format);
 	}
+	
+	/**
+	 * This function checks if a date sting is a valid date
+	 * 
+	 * @param String $date
+	 * @return boolean|UDate
+	 */
+	public static function validateDate($date)
+	{
+		$date = new UDate($date);
+		if(trim($date) == trim(self::zeroDate()))
+			return false;
+		
+		return $date;
+	}
 }
 
 ?>
