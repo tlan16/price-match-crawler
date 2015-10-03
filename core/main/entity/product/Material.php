@@ -7,6 +7,13 @@
  */
 class Material extends InfoEntityAbstract
 {
+	/**
+	 * This function gets the MaterialNutrition of the material based on the nutrition
+	 * @param Nutrition $nutrition
+	 * @return 
+	 * 		MaterialNutrition	--- if found  
+	 * 		FALSE				--- if not found	
+	 */
 	public function getNutrition(Nutrition $nutrition)
 	{
 		$mnArray = MaterialNutrition::getAllByCriteria('materialId = ? and nutritionId = ?', array($this->getId(), $nutrition->getId()));
@@ -22,9 +29,18 @@ class Material extends InfoEntityAbstract
 		return MaterialNutrition::getAllByCriteria('materialId = ?', array($this->getId()), true);
 	}
 	
+	/**
+	 * THis function removes the nutrition of a material
+	 * @param Nutrition $nutrition
+	 * @return Material
+	 */
 	public function removeNutrition(Nutrition $nutrition)
 	{
+		$mn = $this->getNutrition($nutrition);
+		if($mn instanceof MaterialNutrition)
+			$mn->deleteByCriteria('id = ?', array($mn->getId()));
 		
+		return $this;
 	}
 	
 	/**
