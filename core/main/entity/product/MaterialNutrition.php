@@ -61,6 +61,32 @@ class MaterialNutrition extends BaseEntityAbstract
 	}
 	
 	/**
+	 * This is the create function for MaterialNutrition
+	 * @param Material $material
+	 * @param Nutrition $nutrition
+	 * @param int $qty
+	 * @param ServeMeasurement $serveMeasurement
+	 * 
+	 * @throws Exception
+	 * @return MaterialNutrition
+	 */
+	public static function create(Material $material, Nutrition $nutrition, $qty, ServeMeasurement $serveMeasurement)
+	{
+		if(!is_numeric($qty) || $qty <= 0)
+			throw new Exception('Qty must be a non-zero numeric value');
+		
+		$mn = new MaterialNutrition();
+		$mn->setMaterial($material)
+		   ->setNutrition($nutrition)
+		   ->setQty($qty)
+		   ->setServeMeasurement($serveMeasurement)
+		   ->setActive(true)
+		   ->save();
+		
+		return $mn;
+	}
+	
+	/**
 	 * (non-PHPdoc)
 	 * @see BaseEntity::__loadDaoMap()
 	 */
