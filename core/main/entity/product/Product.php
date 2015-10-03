@@ -122,7 +122,7 @@ class Product extends InfoEntityAbstract
 		DaoMap::setStringType('barcode','varchar', 100);
 		DaoMap::setIntType('size','int', 8);
 		DaoMap::setStringType('usedByVariance','varchar', 100);
-		DaoMap::setIntType('unitPrice','int', 10);
+		DaoMap::setIntType('unitPrice', 'double', '10,4');
 		DaoMap::setIntType('labelVersionNo','int', 3);
 		
 		/// load the dao map for InfoEntityAbstract /// 

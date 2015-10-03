@@ -117,8 +117,8 @@ class Label extends BaseEntityAbstract
 		DaoMap::setDateType('printedDate');
 		DaoMap::setDateType('useByDate');
 		DaoMap::setManyToOne('printedBy', 'UserAccount');
-		DaoMap::setStringType('versionNo', 'varchar', 20); /// ???
-		DaoMap::setIntType('printedPrice', 'int', 8); /// ????
+		DaoMap::setStringType('versionNo', 'varchar', 3); 
+		DaoMap::setIntType('printedPrice', 'double', '10,4'); 
 		
 		parent::__loadDaoMap();
 	}
