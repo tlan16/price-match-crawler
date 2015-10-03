@@ -8,7 +8,7 @@ class MaterialNutrition extends BaseEntityAbstract
 	
 	protected $qty;
 	
-	protected $serveManagement;
+	protected $serveMeasurement;
 	
 	public function getMaterial()
 	{
@@ -51,12 +51,12 @@ class MaterialNutrition extends BaseEntityAbstract
 	public function getServeMeasurement()
 	{
 		$this->loadManyToOne('serveMeasurement');
-		return $this->serveManagement;
+		return $this->serveMeasurement;
 	}
 	
-	public function setServeMeasurement(ServeManagement $serveMeasurement)
+	public function setServeMeasurement(ServeMeasurement $serveMeasurement)
 	{
-		$this->serveManagement = $serveMeasurement;
+		$this->serveMeasurement = $serveMeasurement;
 		return $this;
 	}
 	
@@ -69,7 +69,7 @@ class MaterialNutrition extends BaseEntityAbstract
 		DaoMap::begin($this, 'mat_nut');
 		DaoMap::setManyToOne("material", "Material", "mat");
 		DaoMap::setManyToOne("nutrition", "Nutrition", "nut");
-		DaoMap::setManyToOne("serveManagement", "ServeManagement", "srv_mgm");
+		DaoMap::setManyToOne("serveMeasurement", "ServeMeasurement", "srv_mgm");
 		DaoMap::setIntType('qty', 'int', 5);
 	
 		parent::__loadDaoMap();

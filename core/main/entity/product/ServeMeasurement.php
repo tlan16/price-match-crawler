@@ -5,7 +5,7 @@
  * @subpackage Entity
  * @author     lhe<helin16@gmail.com>
  */
-class ServeManagement extends ResourceAbstract
+class ServeMeasurement extends ResourceAbstract
 {
 	/**
 	 * (non-PHPdoc)
