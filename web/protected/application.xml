@@ -26,6 +26,9 @@
 			<!-- FrontEnd:: Allergent list page -->
 			<url ServiceParameter="Allergent.List.Controller" pattern="allergents.html" />
 			
+			<!-- FrontEnd:: Product list page -->
+			<url ServiceParameter="Product.List.ProductListController" pattern="products.html" />
+			
 			<!-- FrontEnd:: Configurable Statics page -->
 			<url ServiceParameter="Statics.Configurable.Controller" pattern="statics/config.html" />
 			<!-- FrontEnd:: Generic Statics page -->
