@@ -23,6 +23,7 @@ PageJs.prototype = Object.extend(new CRUDPageJs(), {
 		tmp.me = this;
 		
 		jQuery('.select2').select2();
+		return tmp.me;
 	}
 	,localizeDate: function(datestring) {
 		return moment.utc(datestring).local().format("D MMM YY, h:mm:ss a");

@@ -20,8 +20,8 @@ class Controller extends CRUDPageAbstract
 	public function __construct()
 	{
 		parent::__construct();
-		if(!AccessControl::canAccessAllergentListingPage(Core::getRole()))
-			die('You do NOT have access to this page');
+// 		if(!AccessControl::canAccessAllergentListingPage(Core::getRole()))
+// 			die('You do NOT have access to this page');
 	}
 	/**
 	 * (non-PHPdoc)
@@ -30,10 +30,10 @@ class Controller extends CRUDPageAbstract
 	protected function _getEndJs()
 	{
 		$js = parent::_getEndJs();
-		$js .= "pageJs.getResults(true, " . $this->pageSize . ");";
-		$js .= "pageJs.loadSelect2();";
-		$js .= "pageJs._bindSearchKey();";
-		$js .= 'pageJs.setCallbackId("updateItem", "' . $this->updateItemBtn->getUniqueID(). '");';
+		$js .= "pageJs.loadSelect2()";
+		$js .= "._bindSearchKey()";
+		$js .= '.setCallbackId("updateItem", "' . $this->updateItemBtn->getUniqueID(). '")';
+		$js .= ".getResults(true, " . $this->pageSize . ");";
 		return $js;
 	}
 	/**

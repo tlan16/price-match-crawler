@@ -69,11 +69,12 @@ class InfoTypeAbstract extends BaseEntityAbstract
 	 */
 	public static function get($typeId)
 	{
-		if(!isset(self::$_cache[$typeId]))
-		{
-			self::$_cache[$typeId] = parent::get($typeId);
-		}
-		return self::$_cache[$typeId];
+		$class = get_called_class();
+		
+		if(!isset(self::$_cache[$class]) || !isset(self::$_cache[$class][$typeId]))
+			self::$_cache[$class][$typeId] = parent::get($typeId);
+		
+		return self::$_cache[$class][$typeId];
 	}
 	/**
 	 * (non-PHPdoc)

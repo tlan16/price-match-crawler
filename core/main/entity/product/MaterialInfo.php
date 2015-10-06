@@ -15,7 +15,7 @@ class MaterialInfo extends InfoAbstract
 	/**
 	 * getter for ingredient
 	 *
-	 * @return Ingredient
+	 * @return Material
 	 */
 	public function getMaterial()
 	{
@@ -23,9 +23,9 @@ class MaterialInfo extends InfoAbstract
 	    return $this->material;
 	}
 	/**
-	 * Setter for ingredient
+	 * Setter for Material
 	 *
-	 * @return IngredientInfo
+	 * @return MaterialInfo
 	 */
 	public function setMaterial(Material $material)
 	{
@@ -40,7 +40,7 @@ class MaterialInfo extends InfoAbstract
 	{
 		DaoMap::begin($this, 'mat_info');
 		parent::__loadDaoMap();
-	
+		
 		DaoMap::commit();
 	}
 }

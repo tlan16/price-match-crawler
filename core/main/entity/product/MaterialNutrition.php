@@ -117,7 +117,6 @@ class MaterialNutrition extends BaseEntityAbstract
 		   ->setNutrition($nutrition)
 		   ->setQty($qty)
 		   ->setServeMeasurement($serveMeasurement)
-		   ->setActive(true)
 		   ->save();
 		
 		return $mn;

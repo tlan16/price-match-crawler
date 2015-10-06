@@ -83,12 +83,16 @@ class Product extends InfoEntityAbstract
 	}
 	
 	/**
-	 * Setter function for Unit Price	?????
+	 * Setter function for Unit Price
 	 * @param Int $unitPrice
 	 * @return Product
 	 */
 	public function setUnitPrice($unitPrice)
 	{
+		$unitPrice = StringUtilsAbstract::getValueFromCurrency($unitPrice);
+		if(!is_numeric($unitPrice))
+			throw new Exception('Unit Price must be numeric');
+		
 		$this->unitPrice = $unitPrice;
 		return $this;
 	}
@@ -119,14 +123,16 @@ class Product extends InfoEntityAbstract
 	public function __loadDaoMap()
 	{
 		DaoMap::begin($this, 'pro');
-		DaoMap::setStringType('barcode','varchar', 100);
+		DaoMap::setStringType('barcode','varchar', 20);
 		DaoMap::setIntType('size','int', 8);
-		DaoMap::setStringType('usedByVariance','varchar', 100);
+		DaoMap::setStringType('usedByVariance','varchar', 20);
 		DaoMap::setIntType('unitPrice', 'double', '10,4');
-		DaoMap::setIntType('labelVersionNo','int', 3);
+		DaoMap::setStringType('labelVersionNo','varchar', 10);
 		
 		/// load the dao map for InfoEntityAbstract /// 
 		parent::__loadDaoMap();
+		
+		DaoMap::createIndex('barcode');
 		DaoMap::commit();
 	}
 	

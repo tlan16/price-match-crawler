@@ -32,6 +32,20 @@ class Label extends BaseEntityAbstract
 	 */
 	private $versionNo;
 	
+	protected $product;
+	
+	public function getProduct()
+	{
+		$this->loadManyToOne('product');
+		return $this->product;
+	}
+	
+	public function setProduct(Product $product)
+	{
+		$this->product = $product;
+		return $this;
+	}
+	
 	/**
 	 * 
 	 */
@@ -104,6 +118,8 @@ class Label extends BaseEntityAbstract
 	
 	public function setPrintedPrice($printedPrice)
 	{
+		$printedPrice = StringUtilsAbstract::getValueFromCurrency($printedPrice);
+		
 		if(!is_numeric($printedPrice))
 			throw new Exception('A valid price must be provided to set the Printed Price');
 		
@@ -113,14 +129,20 @@ class Label extends BaseEntityAbstract
 	
 	public function __loadDaoMap()
 	{
+		DaoMap::begin($this, 'lbl');
 		DaoMap::setStringType('name', 'varchar', 100);
 		DaoMap::setDateType('printedDate');
 		DaoMap::setDateType('useByDate');
 		DaoMap::setManyToOne('printedBy', 'UserAccount');
-		DaoMap::setStringType('versionNo', 'varchar', 3); 
+		DaoMap::setStringType('versionNo', 'varchar', 10); 
 		DaoMap::setIntType('printedPrice', 'double', '10,4'); 
-		
+		DaoMap::setManyToOne('product', 'Product', 'pro'); 
 		parent::__loadDaoMap();
+		
+		DaoMap::createIndex('useByDate');
+		DaoMap::createIndex('name');
+		DaoMap::createIndex('versonNo');
+		DaoMap::commit();
 	}
 	
 	

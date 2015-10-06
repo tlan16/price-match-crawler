@@ -14,9 +14,9 @@ class Material extends InfoEntityAbstract
 	 * 		MaterialNutrition	--- if found  
 	 * 		FALSE				--- if not found	
 	 */
-	public function getNutrition(Nutrition $nutrition)
+	public function getMaterialNutrition(Nutrition $nutrition)
 	{
-		$mnArray = MaterialNutrition::getAllByCriteria('materialId = ? and nutritionId = ?', array($this->getId(), $nutrition->getId()));
+		$mnArray = MaterialNutrition::getAllByCriteria('materialId = ? and nutritionId = ?', array($this->getId(), $nutrition->getId()), true, 1, 1);
 		return (count($mnArray) > 0 && $mnArray[0] instanceof MaterialNutrition) ? $mnArray[0] : false; 
 	}
 	
@@ -24,7 +24,7 @@ class Material extends InfoEntityAbstract
 	 * This function finds all the nutritions of a material
 	 * @return Array[] of MaterialNutrition
 	 */
-	public function getAllNutritions()
+	public function getAllMaterialNutritions()
 	{
 		return MaterialNutrition::getAllByCriteria('materialId = ?', array($this->getId()), true);
 	}
@@ -34,12 +34,9 @@ class Material extends InfoEntityAbstract
 	 * @param Nutrition $nutrition
 	 * @return Material
 	 */
-	public function removeNutrition(Nutrition $nutrition)
+	public function removeMaterialNutrition(Nutrition $nutrition)
 	{
-		$mn = $this->getNutrition($nutrition);
-		if($mn instanceof MaterialNutrition)
-			$mn->deleteByCriteria('id = ?', array($mn->getId()));
-		
+		MaterialNutrition::updateByCriteria('active = ?', 'materialId = ? and nutritionId = ?', array(0, $this->getId(), $nutrition->getId()));
 		return $this;
 	}
 	
@@ -53,26 +50,16 @@ class Material extends InfoEntityAbstract
 	 */
 	public function addNutrition(Nutrition $nutrition, $qty, ServeMeasurement $serveMeasurement)
 	{
-		$materialNutrition = $this->getNutrition($nutrition);
+		$materialNutrition = $this->getMaterialNutrition($nutrition);
 		
-		if($materialNutrition instanceof MaterialNutrition)
-		{
-			$materialNutrition->setNutrition($nutrition)
-							  ->setQty($qty)
-							  ->setServeMeasurement($serveMeasurement)
-							  ->save();
-		}
-		else
-		{
+		if(!$materialNutrition instanceof MaterialNutrition)
 			$materialNutrition = new MaterialNutrition();
-			$materialNutrition->setMaterial($this)
-							  ->setNutrition($nutrition)
-							  ->setQty($qty)
-							  ->setServeMeasurement($serveMeasurement)
-							  ->setActive(true)
-							  ->save();
-		}
 		
+		$materialNutrition->setMaterial($this)
+						  ->setNutrition($nutrition)
+						  ->setQty($qty)
+				  		  ->setServeMeasurement($serveMeasurement)
+						  ->save();
 		return $this;	
 	}
 	
