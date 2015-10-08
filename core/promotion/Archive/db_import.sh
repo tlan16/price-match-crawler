@@ -5,7 +5,7 @@ DBNAME=sushico
 DBHOST=localhost
 DBUSERNAME=root
 DBPASSWORD=root
-MYSQLPATH=/Applications/MAMP/Library/bin/mysql
+MYSQLPATH=mysql
 
 echo Directory: $BASEDIR
 echo FileName: $FNAME
