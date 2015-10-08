@@ -7,20 +7,28 @@ class ProductListController extends CRUDPageAbstract
 		parent::__construct();
 		if(!AccessControl::checkIfCanAccessPage(PageHandler::PRODUCT_LISTING_PAGE, Core::getRole()))
 			die('You cannot access this page');
+		else
+			die('fsdfd');
 		
 		$this->_focusEntity = 'Product';
+		var_dump($this->_focusEntity); die();
+	}
+	
+	public function onInit($param)
+	{
+		parent::onInit($param);
 	}
 	
 	public function onLoad($param)
 	{
 		parent::onLoad($param);
-		if(!$this->IsPostBack && !$this->IsCallback)
-		{
-			$className = trim($this->_focusEntity);
-			$productArray = $className::getAllByCriteria();
-		}
-		
-		echo "fasfsdf";
 	}
+	
+	protected function _getEndJs()
+	{
+		$js = parent::_getEndJs();
+		$js .= "alert('loaded')";
+		return $js;
+	} 
 	
 }
