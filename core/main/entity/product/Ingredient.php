@@ -19,6 +19,43 @@ class Ingredient extends InfoEntityAbstract
 
 		DaoMap::commit();
 	}
+	
+	/**
+	 * Gets all the allergens of the ingredient
+	 * @return Array of Allergent
+	 */
+	public function getAllergents()
+	{
+		$allergentArray = array();
+		
+		$ingredientInfoArray = IngredientInfoType::getAllByCriteria('ingredientId = ? and ingredientInfoTypeId = ?', 
+																	array($this->getId(), IngredientInfoType::ID_ALLERGENT));
+		if(count($ingredientInfoArray) > 0)
+		{
+			foreach($ingredientInfoArray as $ingredientInfo)
+				$allergentArray[] = ((trim($ingredientInfo->getEntityId()) !== '') ? trim($ingredientInfo->getEntityId()) : trim($ingredientInfo->getValue()));
+
+			$allergentArray = array_unique($allergentArray);
+			
+			$criteria = array_fill(0, count($allergentArray), '?');
+			$criteria = 'id IN ('.implode(", ", $criteria).')';
+			
+			$allergentArray = Allergent::getAllByCriteria($criteria, $allergentArray);
+		}
+		
+		return $allergentArray;
+	}
+	
+	/**
+	 * Clear all the Allergents of the ingredient
+	 * @return Ingredient
+	 */
+	public function clearAllergents()
+	{
+		IngredientInfo::deleteByCriteria('ingredientId = ? and ingredientInfoTypeId = ?', array($this->getId(), IngredientInfoType::ID_ALLERGENT));
+		return $this;
+	}
+	
 	/**
 	 * add a allergent to self
 	 * 
