@@ -23,33 +23,37 @@ PageJs.prototype = Object.extend(new CRUDPageJs(), {
 		tmp.me = this;
 		
 		jQuery('.select2').select2();
-		return tmp.me;
-	}
-	,localizeDate: function(datestring) {
-		return moment.utc(datestring).local().format("D MMM YY, h:mm:ss a");
 	}
 	,_getResultRow: function(row, isTitle) {
 		var tmp = {};
 		tmp.me = this;
 		tmp.isTitle = (isTitle || false);
 		tmp.tag = (tmp.isTitle === true ? 'strong' : 'span');
-		tmp.row = new Element('span', {'class': 'row'}).store('data', row).addClassName(row.active === true ? '' : 'warning')
-			.insert({'bottom': new Element(tmp.tag, {'class': 'title col-sm-3'}).update(row.name) })
-			.insert({'bottom': new Element(tmp.tag, {'class': 'description col-sm-8'}).update(row.description) })
-			.insert({'bottom': new Element(tmp.tag, {'class': 'text-right btns col-xs-1'}).update(
+		tmp.row = new Element('span', {'class': 'row'})
+			.store('data', row)
+			.addClassName( (row.active === false && tmp.isTitle === false ) ? 'warning' : '')
+			.addClassName('list-group-item')
+			.addClassName('item_row')
+			.writeAttribute('item_id', row.id)
+			.insert({'bottom': new Element(tmp.tag, {'class': 'firstName col-md-6'}).update(row.name) })
+			.insert({'bottom': new Element(tmp.tag, {'class': 'lastName col-md-4'}).update(row.description) })
+			.insert({'bottom': new Element(tmp.tag, {'class': 'text-right btns col-md-2'}).update(
 				tmp.isTitle === true ?  
-					(new Element('span', {'class': 'btn btn-primary btn-xs', 'title': 'New'})
+					(new Element('span', {'class': 'btn btn-success btn-xs', 'title': 'New'})
 						.insert({'bottom': new Element('span', {'class': 'glyphicon glyphicon-plus'}) })
 						.insert({'bottom': ' NEW' })
 						.observe('click', function(){
-							if($$('.save-item-panel').length === 0) {
-								$(this).up('thead').insert({'bottom': tmp.me._getEditPanel({}) });
-								tmp.me.loadSelect2();
-							}
+							tmp.me._openDetailsPage();
 						})
 					)
 				: 
-					(new Element('span', {'class': 'btn-group btn-group-xs hidden-xm hidden-sm'})
+					(new Element('span', {'class': 'btn-group btn-group-xs'})
+						.insert({'bottom': tmp.editBtn = new Element('span', {'class': 'btn btn-primary', 'title': 'Delete'})
+							.insert({'bottom': new Element('span', {'class': 'glyphicon glyphicon-pencil'}) })
+							.observe('click', function(){
+								tmp.me._openDetailsPage(row);
+							})
+						})
 						.insert({'bottom': new Element('span', {'class': 'btn btn-danger', 'title': 'Delete'})
 							.insert({'bottom': new Element('span', {'class': 'glyphicon glyphicon-trash'}) })
 							.observe('click', function(){
@@ -62,6 +66,28 @@ PageJs.prototype = Object.extend(new CRUDPageJs(), {
 			) })
 		;
 		return tmp.row;
+	}
+	,_openDetailsPage: function(row) {
+		var tmp = {};
+		tmp.me = this;
+		jQuery.fancybox({
+			'width'			: '95%',
+			'height'		: '95%',
+			'autoScale'     : false,
+			'autoDimensions': false,
+			'fitToView'     : false,
+			'autoSize'      : false,
+			'type'			: 'iframe',
+			'href'			: '/allergent/' + (row ? row.id : 'new') + '.html',
+			'helpers'		: {
+				'overlay': {
+			    	'locked': false
+				}
+			},
+			'beforeClose'	    : function() {
+			}
+ 		});
+		return tmp.me;
 	}
 	,_updateItem: function(btn, entityId, newValue, method) {
 		var tmp = {};

@@ -1,12 +1,12 @@
 <?php
 /**
- * This is the listing page for allergent
+ * This is the listing page for ProductCodeType
  * 
  * @package    Web
  * @subpackage Controller
  * @author     lhe<helin16@gmail.com>
  */
-class Controller extends CRUDPageAbstract
+class ListController extends CRUDPageAbstract
 {
 	/**
 	 * (non-PHPdoc)
@@ -20,8 +20,8 @@ class Controller extends CRUDPageAbstract
 	public function __construct()
 	{
 		parent::__construct();
-// 		if(!AccessControl::canAccessAllergentListingPage(Core::getRole()))
-// 			die('You do NOT have access to this page');
+		if(!AccessControl::canAccessAllergentListingPage(Core::getRole()))
+			die('You do NOT have access to this page');
 	}
 	/**
 	 * (non-PHPdoc)
@@ -30,10 +30,10 @@ class Controller extends CRUDPageAbstract
 	protected function _getEndJs()
 	{
 		$js = parent::_getEndJs();
-		$js .= "pageJs.loadSelect2()";
-		$js .= "._bindSearchKey()";
-		$js .= '.setCallbackId("updateItem", "' . $this->updateItemBtn->getUniqueID(). '")';
-		$js .= ".getResults(true, " . $this->pageSize . ");";
+		$js .= "pageJs.getResults(true, " . $this->pageSize . ");";
+		$js .= "pageJs.loadSelect2();";
+		$js .= "pageJs._bindSearchKey();";
+		$js .= 'pageJs.setCallbackId("updateItem", "' . $this->updateItemBtn->getUniqueID(). '");';
 		return $js;
 	}
 	/**
@@ -70,21 +70,22 @@ class Controller extends CRUDPageAbstract
 				$query = $class::getQuery();
 				switch ($field)
 				{
-					case 'name':
-					case 'description':
+					case 'algt.name':
+					case 'algt.description':
 						{
 							$searchTokens = array();
 							StringUtilsAbstract::permute(preg_split("/[\s,]+/", $value), $searchTokens);
 							$likeArray = array();
 							foreach($searchTokens as $index => $tokenArray) {
-								$key = 'token' . $index;
+								$key = md5($field . $index);
 								$params[$key] = '%' . implode('%', $tokenArray) . '%';
 								$likeArray[] = $field . " like :" . $key;
 							}
+							
 							$where[] = '(' . implode(' OR ', $likeArray) . ')';
 							break;
 						}
-					case 'active':
+					case 'algt.active':
 						{
 							$value = intval($value);
 							if($value === 0 || $value === 1)
@@ -97,6 +98,10 @@ class Controller extends CRUDPageAbstract
 				}
 			}
 			$stats = array();
+			// Don't expose system user
+			$where[] = 'id != :sysUserId';
+			$params['sysUserId'] = UserAccount::get(UserAccount::ID_SYSTEM_ACCOUNT)->getPerson()->getId();
+			
 			$objects = $class::getAllByCriteria(implode(' AND ', $where), $params, false, $pageNo, $pageSize, array('id' => 'asc'), $stats);
 			$results['pageStats'] = $stats;
 			$results['items'] = array();

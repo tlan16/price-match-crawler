@@ -17,22 +17,13 @@
 		<module id="request" class="THttpRequest" UrlManager="friendly-url" />
 		<module id="friendly-url" class="System.Web.TUrlMapping" EnableCustomUrl="true" UrlPrefix="/">
 
-			<!-- FrontEnd:: Test page -->
-			<url ServiceParameter="Test.ListController" pattern="test.html" />
-
 			<!-- FrontEnd:: login page -->
 			<url ServiceParameter="Login.LoginController" pattern="login.html" />
 			
 			<!-- FrontEnd:: Allergent list page -->
-			<url ServiceParameter="Allergent.List.Controller" pattern="allergents.html" />
-			
-			<!-- FrontEnd:: Product list page -->
-			<url ServiceParameter="Product.List.ProductListController" pattern="products.html" />
-			
-			<!-- FrontEnd:: Configurable Statics page -->
-			<url ServiceParameter="Statics.Configurable.Controller" pattern="statics/config.html" />
-			<!-- FrontEnd:: Generic Statics page -->
-			<url ServiceParameter="Statics.Generic.StaticsController" pattern="statics.html" />
+			<url ServiceParameter="Allergent.List.ListController" pattern="allergents.html" />
+			<!-- FrontEnd:: Allergent Detail page -->
+			<url ServiceParameter="Allergent.Details.DetailsController" pattern="allergent/{id}.html" parameters.id="new|\d+"/>
 			
 			<!-- FrontEnd:: user page -->
 			<url ServiceParameter="User.List.UsersController" pattern="users.html" />
@@ -65,7 +56,7 @@
 
 	<!-- configuration for available services -->
 	<services>
-		<service id="page" class="TPageService" DefaultPage="Allergent.List.Controller">
+		<service id="page" class="TPageService" DefaultPage="Allergent.List.ListController">
 		    <pages MasterClass="Application.layout.PageLayout" Theme="default" />
 			<modules>
 				<module id="auth" class="Application.classes.WebUser.AuthManager" UserManager="users" ReturnUrl="/" LoginPage="Login.LoginController" AuthExpire="3600" />
