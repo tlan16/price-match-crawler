@@ -92,13 +92,17 @@ class Ingredient extends InfoEntityAbstract
 		foreach($infoArray as $info)
 		{
 			$tmp = array();
+			$tmp['id'] = trim($info->getId());
 			$tmp['value'] = trim($info->getValue());
 			$tmp['entityName'] = trim($info->getEntityName());
 			$tmp['entityId'] = trim($info->getEntityId());
 			$infoType = $info->getType();
 			$tmp[StringUtilsAbstract::lcFirst(get_class($infoType))] = $infoType->getJson();
 			
-			$array['infos'][] = $tmp;
+			if(!isset($array['infos'][$infoType->getId()]))
+				$array['infos'][$infoType->getId()] = array();
+			
+			$array['infos'][$infoType->getId()][] = $tmp;
 		}
 		
 		return parent::getJson($array, $reset);	
