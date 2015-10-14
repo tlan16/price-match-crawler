@@ -63,9 +63,9 @@ PageJs.prototype = Object.extend(new CRUDPageJs(), {
 								.addClassName( (row.active === false && tmp.isTitle === false ) ? 'glyphicon glyphicon-repeat' : 'glyphicon glyphicon-trash')
 							})
 							.observe('click', function(){
-								if(!confirm('Are you sure you want to delete this item?'))
+								if(!confirm('Are you sure you want to ' + (row.active === true ? 'DE-ACTIVATE' : 'RE-ACTIVATE') +' this item?'))
 									return false;
-								tmp.me._deleteItem(row, true);
+								tmp.me._deleteItem(row, row.active);
 							})
 						}) 
 					)
