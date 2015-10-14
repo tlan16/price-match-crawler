@@ -28,7 +28,7 @@ class Ingredient extends InfoEntityAbstract
 	{
 		$allergentArray = array();
 		
-		$ingredientInfoArray = IngredientInfo::getAllByCriteria('ingredientId = ? and ingredientInfoTypeId = ?', 
+		$ingredientInfoArray = IngredientInfo::getAllByCriteria('ingredientId = ? and typeId = ?', 
 																	array($this->getId(), IngredientInfoType::ID_ALLERGENT));
 		if(count($ingredientInfoArray) > 0)
 		{
@@ -88,22 +88,7 @@ class Ingredient extends InfoEntityAbstract
 		$array = $extra;
 		$array['infos'] = array();
 		
-		$infoArray = $this->getInfos();
-		foreach($infoArray as $info)
-		{
-			$tmp = array();
-			$tmp['id'] = trim($info->getId());
-			$tmp['value'] = trim($info->getValue());
-			$tmp['entityName'] = trim($info->getEntityName());
-			$tmp['entityId'] = trim($info->getEntityId());
-			$infoType = $info->getType();
-			$tmp[StringUtilsAbstract::lcFirst(get_class($infoType))] = $infoType->getJson();
-			
-			if(!isset($array['infos'][$infoType->getId()]))
-				$array['infos'][$infoType->getId()] = array();
-			
-			$array['infos'][$infoType->getId()][] = $tmp;
-		}
+		$array['infos']['allergents'] = ( (count($allgergents = $this->getAllergents())) === 0 ? array() : array_map(create_function('$a', 'return $a->getJson();'), $allgergents) );
 		
 		return parent::getJson($array, $reset);	
 	}
