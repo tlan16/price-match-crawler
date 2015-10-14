@@ -30,6 +30,7 @@ class Menu extends TTemplateControl
 				,'ingradients' => array('url' => '/ingradients.html', 'name' => 'Ingradients', 'icon' => '')
 				,'allergents' => array('url' => '/allergents.html', 'name' => 'Allergents', 'icon' => '')
 				,'nutritions' => array('url' => '/nutritions.html', 'name' => 'Nutritions', 'icon' => '')
+				,'servemeasurements' => array('url' => '/servemeasurements.html', 'name' => 'Serve Measurements', 'icon' => '')
 			)
 		);
 		$html = "<ul class='nav navbar-nav'>";
