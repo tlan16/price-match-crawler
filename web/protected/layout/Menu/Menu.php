@@ -29,6 +29,7 @@ class Menu extends TTemplateControl
 				'icon' => '<span class="glyphicon glyphicon-th-list"></span>'
 				,'ingradients' => array('url' => '/ingradients.html', 'name' => 'Ingradients', 'icon' => '')
 				,'allergents' => array('url' => '/allergents.html', 'name' => 'Allergents', 'icon' => '')
+				,'nutritions' => array('url' => '/nutritions.html', 'name' => 'Nutritions', 'icon' => '')
 			)
 		);
 		$html = "<ul class='nav navbar-nav'>";

@@ -8,7 +8,7 @@ try {
 
 	$obj = Ingredient::create('fish');
 	var_dump($obj);
-	$obj->addInfo(IngredientInfoType::ID_ALLERGENT, Allergent::get(1));
+	$obj->addAllergent(Allergent::get(3));
 	
 	if($transStarted === false)
 		Dao::commitTransaction();

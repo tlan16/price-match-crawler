@@ -20,6 +20,11 @@
 			<!-- FrontEnd:: login page -->
 			<url ServiceParameter="Login.LoginController" pattern="login.html" />
 			
+			<!-- FrontEnd:: Nutrition list page -->
+			<url ServiceParameter="Nutrition.List.ListController" pattern="nutritions.html" />
+			<!-- FrontEnd:: Nutrition Detail page -->
+			<url ServiceParameter="Nutrition.Details.DetailsController" pattern="nutrition/{id}.html" parameters.id="new|\d+"/>
+			
 			<!-- FrontEnd:: Ingradient list page -->
 			<url ServiceParameter="Ingradient.List.ListController" pattern="ingradients.html" />
 			<!-- FrontEnd:: Ingradient Detail page -->
