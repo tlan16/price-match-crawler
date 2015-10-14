@@ -14,7 +14,6 @@ class UserAccount extends BaseEntityAbstract
      * @var int
      */
     const ID_SYSTEM_ACCOUNT = 10;
-    const SOURCE_FORUM_KUSEMA = 'kusema';
     /**
      * The username
      *
