@@ -52,7 +52,7 @@ class Ingredient extends InfoEntityAbstract
 	 */
 	public function clearAllergents()
 	{
-		IngredientInfo::deleteByCriteria('ingredientId = ? and ingredientInfoTypeId = ?', array($this->getId(), IngredientInfoType::ID_ALLERGENT));
+		IngredientInfo::deleteByCriteria('ingredientId = ? and typeId = ?', array($this->getId(), IngredientInfoType::ID_ALLERGENT));
 		return $this;
 	}
 	

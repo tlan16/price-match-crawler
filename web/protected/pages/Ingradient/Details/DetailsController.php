@@ -39,7 +39,7 @@ class DetailsController extends DetailsPageAbstract
 		$js .= "pageJs._containerIds=" . json_encode(array(
 				'name' => 'name_div'
 				,'description' => 'description_div'
-				,'active' => 'active_div'
+				,'allergents' => 'allergents_div'
 				,'comments' => 'comments_div'
 				,'saveBtn' => 'save_btn'
 		)) . ";";
@@ -64,46 +64,31 @@ class DetailsController extends DetailsPageAbstract
 		try
 		{
 			$focusEntity = $this->getFocusEntity();
-			Dao::beginTransaction();
-			if (! isset ( $params->CallbackParameter->entityName ) || ($entityName = trim ( $params->CallbackParameter->entityName )) === '')
-				$entityName = $focusEntity;
-			if (!isset ( $params->CallbackParameter->entityId ) || ($entityId = trim ( $params->CallbackParameter->entityId )) === '')
-				throw new Exception ( 'System Error: entityId is not provided!' );
-			if ($entityId !== 'new' && ! ($entity = $entityName::get ( $entityId )) instanceof $entityName)
-				throw new Exception ( 'System Error: no such a entity exisits!' );
-			if ($entityId !== 'new' && ( !isset ( $params->CallbackParameter->field ) || ($field = trim ( $params->CallbackParameter->field ))  === '') )
-				throw new Exception ( 'System Error: invalid field passed in!' );
-			if (! isset ( $params->CallbackParameter->value ))
-				throw new Exception ( 'System Error: invalid value passed in!' );
-			$value = $params->CallbackParameter->value;
-			switch ($entityName)
-			{
-				case $focusEntity: {
-					if($entityId === 'new') {
-						if (!isset ( $value->name ) || ($name = trim ( $value->name )) === '')
-							throw new Exception ( 'System Error: name is not provided!' );
-						if (!isset ( $value->description ) || ($description = trim ( $value->description )) === '')
-							$description = '';
-						$entity = $focusEntity::create($name, $description);
-						break;
-					}
-					switch ($field)
-					{
-						case 'name': {
-							if(($value = trim($value)) === '')
-								throw new Exception ( 'System Error: invalid name passed in!' );
-							$entity->setName($value);
-							break;
-						}
-						case 'description': {
-							$entity->setDescription(trim($value));
-							break;
-						}
-					}
-					break;
-				}
-			}
+			if (!isset ( $params->CallbackParameter->name ) || ($name = trim ( $params->CallbackParameter->name )) === '')
+				throw new Exception ( 'System Error: invalid name passed in.' );
+			$description = '';
+			if (isset ( $params->CallbackParameter->description ) )
+				$description = trim($params->CallbackParameter->description);
+			$allergentIds = array();
+			if (isset ( $params->CallbackParameter->allergents ) && ($tmp = trim($params->CallbackParameter->allergents)) !== '' )
+				$allergentIds = explode(',', $tmp);
+			else $description = trim($params->CallbackParameter->description);
+			if (isset ( $params->CallbackParameter->id ) && !($entity = $focusEntity::get(intval($params->CallbackParameter->id))) instanceof $focusEntity )
+				throw new Exception ( 'System Error: invalid id passed in.' );
 			
+			Dao::beginTransaction();
+			
+			if(!isset($entity) || !$entity instanceof $focusEntity)
+				$entity = $focusEntity::create($name,$description);
+			else $entity->setName($name)->setDescription($description);
+			
+			$entity->clearAllergents();
+			foreach ($allergentIds as $allergentId)
+			{
+				if(($allergent = Allergent::get($allergentId)) instanceof Allergent)
+					$entity->addAllergent($allergent);
+			}
+				
 			$results ['item'] = $entity->save()->getJson ();
 			Dao::commitTransaction ();
 		}

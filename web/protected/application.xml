@@ -23,7 +23,7 @@
 			<!-- FrontEnd:: Ingradient list page -->
 			<url ServiceParameter="Ingradient.List.ListController" pattern="ingradients.html" />
 			<!-- FrontEnd:: Ingradient Detail page -->
-			<url ServiceParameter="Ingradient.Details.DetailsController" pattern="ingradien/{id}.html" parameters.id="new|\d+"/>
+			<url ServiceParameter="Ingradient.Details.DetailsController" pattern="ingradient/{id}.html" parameters.id="new|\d+"/>
 			
 			<!-- FrontEnd:: Allergent list page -->
 			<url ServiceParameter="Allergent.List.ListController" pattern="allergents.html" />

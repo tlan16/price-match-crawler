@@ -177,7 +177,7 @@ BPCPageJs.prototype = {
 				,'content': errMsg
 			})
 			.tooltip('show');
-			$(input).observe('change', function(){
+			$(input).observe('keyup', function(){
 				tmp.func = $(input).retrieve('clearErrFunc');
 				if(typeof(tmp.func) === 'function')
 					tmp.func();
@@ -378,10 +378,11 @@ BPCPageJs.prototype = {
 		tmp.el = jQuery('#'+tmp.el.id);
 		return tmp.el;
 	}
-	,_getNamesString: function(objs, name) {
+	,_getNamesString: function(objs, name, glue) {
 		var tmp = {};
 		tmp.me = this;
 		tmp.name = (name || 'name');
+		tmp.glue = (glue || ', ');
 		tmp.result = "";
 		if(!Array.isArray(objs))
 			return tmp.result;
@@ -390,7 +391,18 @@ BPCPageJs.prototype = {
 			if(typeof obj[tmp.name] !== 'undefined')
 				tmp.names.push(obj[tmp.name]);
 		});
-		tmp.result = tmp.names.join(', ');
+		tmp.result = tmp.names.join(tmp.glue);
 		return tmp.result;
+	}
+	,_disableAll: function(container, selector) {
+		var tmp = {};
+		tmp.me = this;
+		tmp.selector = (selector || 'button,.btn,input,[save-item],[search_field],select,.select2');
+		tmp.container = (container || null);
+		if(tmp.container) 
+			tmp.container = tmp.me._elTojQuery(tmp.container);
+		else tmp.container = jQuery(document);
+		if(typeof tmp.selector === 'string' && tmp.selector.trim() !== '')
+			tmp.container.find(tmp.selector).prop('disabled', true).attr('disabled', true);
 	}
 };

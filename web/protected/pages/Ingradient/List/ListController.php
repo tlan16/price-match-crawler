@@ -95,6 +95,25 @@ class ListController extends CRUDPageAbstract
 							}
 							break;
 						}
+					case 'ingr.allergents':
+						{
+							$allergents = explode(',', trim($value));
+							if(count($value) > 0)
+							{
+								$ps = array();
+								$keys = array();
+								foreach($allergents as $index => $value){
+									$key = md5($field . '_' . $index);
+									$keys[] = ':' . $key;
+									$ps[$key] = trim($value);
+								}
+								$key = md5($field . '_' . 'entityName');
+								$ps[$key] = 'Allergent';
+								$query->eagerLoad('Ingredient.infos', 'inner join', 'ingr_info_algt', 'ingr.id = ingr_info_algt.ingredientId and ingr_info_algt.entityName = :' . $key . ' and ingr_info_algt.entityId in (' . implode(',', $keys) . ')');
+								$params = array_merge($params, $ps);
+							}
+							break;
+						}
 				}
 			}
 			$stats = array();
