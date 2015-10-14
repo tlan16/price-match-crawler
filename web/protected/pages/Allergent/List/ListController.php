@@ -98,11 +98,8 @@ class ListController extends CRUDPageAbstract
 				}
 			}
 			$stats = array();
-			// Don't expose system user
-			$where[] = 'id != :sysUserId';
-			$params['sysUserId'] = UserAccount::get(UserAccount::ID_SYSTEM_ACCOUNT)->getPerson()->getId();
 			
-			$objects = $class::getAllByCriteria(implode(' AND ', $where), $params, false, $pageNo, $pageSize, array('id' => 'asc'), $stats);
+			$objects = $class::getAllByCriteria(implode(' AND ', $where), $params, false, $pageNo, $pageSize, array('id' => 'desc'), $stats);
 			$results['pageStats'] = $stats;
 			$results['items'] = array();
 			foreach($objects as $obj)

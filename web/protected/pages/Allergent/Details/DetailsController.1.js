@@ -34,8 +34,8 @@ PageJs.prototype = Object.extend(new DetailsPageJs(), {
 		
 		$(tmp.me.getHTMLID('itemDiv')).addClassName('row');
 		tmp.me
-			._getBasicInputDiv('name', tmp.me._item.name, $(tmp.me._containerIds.name), null ,true)
-			._getBasicInputDiv('description', tmp.me._item.description, $(tmp.me._containerIds.description))
+			._getInputDiv('name', (tmp.me._item.name || ''), $(tmp.me._containerIds.name), null ,true)
+			._getInputDiv('description', (tmp.me._item.description || ''), $(tmp.me._containerIds.description))
 			._getSaveBtn()
 		;
 		return tmp.me;

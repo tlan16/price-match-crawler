@@ -22,7 +22,38 @@ PageJs.prototype = Object.extend(new CRUDPageJs(), {
 		var tmp = {};
 		tmp.me = this;
 		
-		jQuery('.select2').select2();
+		jQuery('select.select2').each(function(){
+			tmp.options = {};
+			if($(this).readAttribute('data-minimum-results-for-search') === 'Infinity' || $(this).readAttribute('data-minimum-results-for-search') === 'infinity' || $(this).readAttribute('data-minimum-results-for-search') == -1)
+				tmp.options['minimumResultsForSearch'] = 'Infinity';
+			jQuery(this).select2(tmp.options);
+		});
+		
+		tmp.selectBox = jQuery('[search_field="ingr.allergents"]').select2({
+			minimumInputLength: 1,
+			allowClear: true,
+			multiple: true,
+			width: "100%",
+			ajax: {
+				delay: 250
+				,url: '/ajax/getAll'
+				,type: 'GET'
+				,data: function (params) {
+					return {"searchTxt": 'name like ?', 'searchParams': ['%' + params + '%'], 'entityName': 'Allergent', 'pageNo': 1};
+				}
+				,results: function(data, page, query) {
+					tmp.result = [];
+					if(data.resultData && data.resultData.items) {
+						data.resultData.items.each(function(item){
+							tmp.result.push({'id': item.id, 'text': item.name, 'data': item});
+						});
+					}
+					return { 'results' : tmp.result };
+				}
+			}
+			,cache: true
+			,escapeMarkup: function (markup) { return markup; } // let our custom formatter work
+		});
 	}
 	,_getResultRow: function(row, isTitle) {
 		var tmp = {};
@@ -35,11 +66,11 @@ PageJs.prototype = Object.extend(new CRUDPageJs(), {
 			.addClassName('list-group-item')
 			.addClassName('item_row')
 			.writeAttribute('item_id', row.id)
-			.insert({'bottom': new Element(tmp.tag, {'class': 'firstName col-md-6'}).update(row.name) })
-			.insert({'bottom': new Element(tmp.tag, {'class': 'lastName col-md-4'}).update(row.description) })
+			.insert({'bottom': new Element(tmp.tag, {'class': 'name col-md-7'}).update(row.name) })
+			.insert({'bottom': new Element(tmp.tag, {'class': 'description col-md-3'}).update(row.description) })
 			.insert({'bottom': new Element(tmp.tag, {'class': 'text-right btns col-md-2'}).update(
 				tmp.isTitle === true ?  
-					(new Element('span', {'class': 'btn btn-success btn-xs', 'title': 'New'})
+					(new Element('span', {'class': 'btn btn-primary btn-xs', 'title': 'New'})
 						.insert({'bottom': new Element('span', {'class': 'glyphicon glyphicon-plus'}) })
 						.insert({'bottom': ' NEW' })
 						.observe('click', function(){
@@ -54,12 +85,16 @@ PageJs.prototype = Object.extend(new CRUDPageJs(), {
 								tmp.me._openDetailsPage(row);
 							})
 						})
-						.insert({'bottom': new Element('span', {'class': 'btn btn-danger', 'title': 'Delete'})
-							.insert({'bottom': new Element('span', {'class': 'glyphicon glyphicon-trash'}) })
+						.insert({'bottom': new Element('span')
+							.addClassName( (row.active === false && tmp.isTitle === false ) ? 'btn btn-success' : 'btn btn-danger')
+							.writeAttribute('title', ((row.active === false && tmp.isTitle === false ) ? 'Re-activate' : 'De-activate') )
+							.insert({'bottom': new Element('span') 
+								.addClassName( (row.active === false && tmp.isTitle === false ) ? 'glyphicon glyphicon-repeat' : 'glyphicon glyphicon-trash')
+							})
 							.observe('click', function(){
-								if(!confirm('Are you sure you want to delete this item?'))
+								if(!confirm('Are you sure you want to ' + (row.active === true ? 'DE-ACTIVATE' : 'RE-ACTIVATE') +' this item?'))
 									return false;
-								tmp.me._deleteItem(row, true);
+								tmp.me._deleteItem(row, row.active);
 							})
 						}) 
 					)
@@ -73,6 +108,7 @@ PageJs.prototype = Object.extend(new CRUDPageJs(), {
 		jQuery.fancybox({
 			'width'			: '95%',
 			'height'		: '95%',
+			'modal'			: true,
 			'autoScale'     : false,
 			'autoDimensions': false,
 			'fitToView'     : false,
