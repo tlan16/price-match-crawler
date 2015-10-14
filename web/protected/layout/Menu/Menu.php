@@ -20,14 +20,15 @@ class Menu extends TTemplateControl
 		$pageItem = trim($this->getPage()->menuItem);
 		$array = array(
 			'' => array('url' => '/', 'name' => 'Home', 'icon' => '<span class="glyphicon glyphicon-home"></span>')
-			,'Forum' => array(
-				'icon' => '<span class="glyphicon glyphicon-th-list"></span>',
-				'questions' => array('url' => '/questions.html', 'name' => 'Questions', 'icon' => '')
+			,'product' => array(
+				'name' => 'Products',
+				'url' => '/products.html',
+				'icon' => '<span class="glyphicon glyphicon-tag"></span>'
 			)
-			,'Statics' => array(
-				'name' => 'Statics',
-				'url' => '/statics/config.html',
-				'icon' => '<span class="glyphicon glyphicon-signal"></span>'
+			,'Resources' => array(
+				'icon' => '<span class="glyphicon glyphicon-th-list"></span>'
+				,'ingradients' => array('url' => '/ingradients.html', 'name' => 'Ingradients', 'icon' => '')
+				,'allergents' => array('url' => '/allergents.html', 'name' => 'Allergents', 'icon' => '')
 			)
 		);
 		$html = "<ul class='nav navbar-nav'>";
