@@ -22,10 +22,12 @@ DetailsPageJs.prototype = Object.extend(new BPCPageJs(), {
 		tmp.row = $(tmp.parentWindow.document.body).down('#' + tmp.parentWindow.pageJs.resultDivId + ' .item_row[item_id=' + tmp.me._item.id + ']');
 		if(tmp.row) {
 			tmp.row.replace(tmp.parentWindow.pageJs._getResultRow(tmp.me._item));
-			if(tmp.row.hasClassName('success'))
+			if(!tmp.row.hasClassName('success'))
 				tmp.row.addClassName('success');
 		} else if($(tmp.parentWindow.document.body).down('#' + tmp.parentWindow.pageJs.resultDivId + ' #item-list-body')) {
 			$(tmp.parentWindow.document.body).down('#' + tmp.parentWindow.pageJs.resultDivId + ' #item-list-body').insert({'top': tmp.parentWindow.pageJs._getResultRow(tmp.me._item) });
+			if(tmp.totalEl = $(tmp.parentWindow.document.body).down('#' + tmp.parentWindow.pageJs.totalNoOfItemsId))
+				tmp.totalEl.update(parseInt(tmp.totalEl.innerHTML) + 1);
 		}
 	}
 	,_getSaveBtn:function() {
