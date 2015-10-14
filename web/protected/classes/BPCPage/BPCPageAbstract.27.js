@@ -378,4 +378,19 @@ BPCPageJs.prototype = {
 		tmp.el = jQuery('#'+tmp.el.id);
 		return tmp.el;
 	}
+	,_getNamesString: function(objs, name) {
+		var tmp = {};
+		tmp.me = this;
+		tmp.name = (name || 'name');
+		tmp.result = "";
+		if(!Array.isArray(objs))
+			return tmp.result;
+		tmp.names = [];
+		objs.each(function(obj){
+			if(typeof obj[tmp.name] !== 'undefined')
+				tmp.names.push(obj[tmp.name]);
+		});
+		tmp.result = tmp.names.join(', ');
+		return tmp.result;
+	}
 };
