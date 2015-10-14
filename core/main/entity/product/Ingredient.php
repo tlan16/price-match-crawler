@@ -28,7 +28,7 @@ class Ingredient extends InfoEntityAbstract
 	{
 		$allergentArray = array();
 		
-		$ingredientInfoArray = IngredientInfoType::getAllByCriteria('ingredientId = ? and ingredientInfoTypeId = ?', 
+		$ingredientInfoArray = IngredientInfo::getAllByCriteria('ingredientId = ? and ingredientInfoTypeId = ?', 
 																	array($this->getId(), IngredientInfoType::ID_ALLERGENT));
 		if(count($ingredientInfoArray) > 0)
 		{
@@ -77,5 +77,30 @@ class Ingredient extends InfoEntityAbstract
 		*/
 		return $this;
 		
+	}
+	
+	/**
+	 * (non-PHPdoc)
+	 * @see InfoEntityAbstract::getJson()
+	 */
+	public function getJson($extra = array(), $reset = false)
+	{
+		$array = $extra;
+		$array['infos'] = array();
+		
+		$infoArray = $this->getInfos();
+		foreach($infoArray as $info)
+		{
+			$tmp = array();
+			$tmp['value'] = trim($info->getValue());
+			$tmp['entityName'] = trim($info->getEntityName());
+			$tmp['entityId'] = trim($info->getEntityId());
+			$infoType = $info->getType();
+			$tmp[StringUtilsAbstract::lcFirst(get_class($infoType))] = $infoType->getJson();
+			
+			$array['infos'][] = $tmp;
+		}
+		
+		return parent::getJson($array, $reset);	
 	}
 }
