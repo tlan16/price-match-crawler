@@ -141,7 +141,7 @@ class Label extends BaseEntityAbstract
 		
 		DaoMap::createIndex('useByDate');
 		DaoMap::createIndex('name');
-		DaoMap::createIndex('versonNo');
+		DaoMap::createIndex('versionNo');
 		DaoMap::commit();
 	}
 	
