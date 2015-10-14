@@ -7,7 +7,7 @@
  */
 class MaterialInfoType extends InfoTypeAbstract
 {
-	const ID_ALLERGENT = 1;
+	const ID_INGREDIENT = 1;
 	/**
 	 * (non-PHPdoc)
 	 * @see BaseEntity::__loadDaoMap()

@@ -63,6 +63,47 @@ class Material extends InfoEntityAbstract
 		return $this;	
 	}
 	
+	public function getIngredients()
+	{
+		$materialInfoArray = MaterialInfo::getAllByCriteria('materialId = ? and typeId = ?', array($this->getId(), MaterialInfoType::ID_INGREDIENT));
+		foreach($materialInfoArray as $mi)
+			$ingredientIdArray[] = (trim($mi->getEntityId()) !== '' ? trim($mi->getEntityId()) : trim($mi->getValue()));
+		
+		if(count($ingredientIdArray) <= 0)
+			return array();
+			
+		$ingredientIdArray = array_unique($ingredientIdArray);
+		$criteria = "id IN (".implode(", ", array_fill(0, count($ingredientIdArray), '?')).")";
+		
+		return Ingredient::getAllByCriteria($criteria, $ingredientIdArray, true);
+	}
+	
+	/**
+	 * (non-PHPdoc)
+	 * @see InfoEntityAbstract::getJson()
+	 */
+	public function getJson($extra = array(), $reset = false)
+	{
+		$array = $extra;
+		$array['info'] = array();
+		$array['info']['material_nutrition'] = array();
+		
+		$mnArray = $this->getAllMaterialNutritions();
+		foreach($mnArray as $mn)
+		{
+			$tmp = array();
+			$tmp['nutrition'] = $mn->getNutrition()->getJson();
+			$tmp['qty'] = $mn->getQty();
+			$tmp['serveMeasurement'] = $mn->getServeMeasurement()->getJson();
+			
+			$array['info']['material_nutrition'][] = $tmp;
+		}
+		
+		$array['info']['ingredients'] = (count(($ingredients = $this->getIngredients())) > 0 ? array_map(create_function('$a', 'return $a->getJson();'), $ingredients) : array());
+		
+		return parent::getJson($array, $reset);
+	}
+	
 	/**
 	 * (non-PHPdoc)
 	 * @see BaseEntity::__loadDaoMap()
