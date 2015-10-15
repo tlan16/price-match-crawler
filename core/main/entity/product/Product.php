@@ -137,6 +137,31 @@ class Product extends InfoEntityAbstract
 		return $materialArray;
 	}
 	
+	public function getAllMaterials()
+	{
+		$materialArray = array();
+		
+		$piArray = ProductInfo::getAllByCriteria('productId = ? and typeId = ? and entityName = ?', array($this->getId(), ProductInfoType::ID_MATERIAL, ProductInfoType::ENTITY_NAME_MATERIAL));
+		foreach($piArray as $pi)
+			$materialIdArray[] = (trim($pi->getEntityId()) !== '' ? trim($pi->getEntityId()) : trim($pi->getValue()));
+		
+		if(count($materialIdArray) > 0)
+		{
+			$materialIdArray = array_unique($materialIdArray);
+			'id IN ('.implode(', ', array_fill(0, count($materialIdArray), '?')).')';
+		}
+		
+		return $materialArray;
+	}
+	
+	public function getJson($extra = array(), $reset = false)
+	{
+		$array = $extra;
+		$array['materials'] = (count(($materialArray = $this->getAllMaterials())) > 0 ? array_map(create_function('$a', 'return $a->getJson();'), $materialArray) : array());
+
+		parent::getJson($extra, $reset);
+	}
+	
 	/**
 	 * (non-PHPdoc)
 	 * @see BaseEntity::__loadDaoMap()
