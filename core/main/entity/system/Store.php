@@ -25,6 +25,7 @@ class Store extends ResourceAbstract
 	{
 		$array = $extra;
 		$array['info'] = array();
+		$array['address'] = $this->getAddress()->getJson();
 		
 		$storeInfoArray = $this->getAllStoreInfos();
 		foreach($storeInfoArray as $storeInfo)

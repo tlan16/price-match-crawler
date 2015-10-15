@@ -8,12 +8,16 @@
 class ProductInfoType extends InfoTypeAbstract
 {
 	const ID_MATERIAL = 1;
+	const ENTITY_NAME_MATERIAL = 'Material';
 	
 	const ID_CATEGORY = 2;
+	const ENTITY_NAME_CATEGORY = 'Category';
 	
 	const ID_STORE = 3;
+	const ENTITY_NAME_STORE = 'Store';
 	
 	const ID_LABEL = 4;
+	const ENTITY_NAME_LABEL = 'Label';
 	
 	/**
 	 * (non-PHPdoc)
