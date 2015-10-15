@@ -78,6 +78,47 @@ class Material extends InfoEntityAbstract
 		return Ingredient::getAllByCriteria($criteria, $ingredientIdArray, true);
 	}
 	
+	public function setIngredient(Ingredient $ingredient)
+	{
+		return $this->addIngredient($ingredient);
+	}
+	
+	public function addIngredient(Ingredient $ingredient)
+	{
+		$materialInfo = MaterialInfo::getAllByCriteria('materialId = ? and typeId = ? and value = ?', array($this->getId(), MaterialInfoType::ID_INGREDIENT, $ingredient->getId()));
+		if(count($materialInfo) > 0)
+			$materialInfo = $materialInfo[0];
+		else
+			$materialInfo = new MaterialInfo();
+		
+		$materialInfo->setMaterial($this)
+					 ->setValue($ingredient->getId())
+					 ->setType(MaterialInfoType::get(MaterialInfoType::ID_INGREDIENT))
+					 ->setEntityId($ingredient->getId())
+					 ->setEntityName(get_class($ingredient))
+					 ->setActive(1)
+					 ->save();	
+		
+		return $this;
+	}
+	
+	public function removeIngredient(Ingredient $ingredient)
+	{
+		MaterialInfo::updateByCriteria("active = ?", 'materialId = ? and typeId = ? and value = ? and entityId = ? and entityName = ?', 
+										array(0, $this->getId(), MaterialInfoType::ID_INGREDIENT, $ingredient->getId(), $ingredient->getId(), get_class($ingredient)));
+		return $this;
+	}
+	
+	/**
+	 * This function removes all the Ingredients of a Material
+	 * @return Material
+	 */
+	public function removeAllIngredients()
+	{
+		MaterialInfo::updateByCriteria('active = ?', 'materialId = ? and entityName = ? and typeId = ?', array(0, $this->getId(), 'Ingredient', MaterialInfoType::ID_INGREDIENT));
+		return $this;
+	}
+	
 	/**
 	 * (non-PHPdoc)
 	 * @see InfoEntityAbstract::getJson()
