@@ -117,7 +117,12 @@ BPCPageJs.prototype = {
 	,getValueFromCurrency: function(currency) {
 		if(!currency)
 			return '';
-		return (currency + '').replace(/\s*/g, '').replace(/\$/g, '').replace(/,/g, '');
+		var tmp = {};
+		tmp.reg = /^-?\d*[\.]?\d+$/;
+//		tmp.result =  (currency + '').replace(/\s*/g, '').replace(/\$/g, '').replace(/,/g, '');
+//		tmp.result = tmp.reg.exec(tmp.result);
+		tmp.result = accounting.formatMoney(currency, "", 4);
+		return tmp.result;
 	}
 	//do key enter
 	,keydown: function (event, enterFunc, nFunc, keyValue) {
@@ -177,7 +182,7 @@ BPCPageJs.prototype = {
 				,'content': errMsg
 			})
 			.tooltip('show');
-			$(input).observe('keyup', function(){
+			jQuery('#' + input.id).on('keyup change dp.change', function(){
 				tmp.func = $(input).retrieve('clearErrFunc');
 				if(typeof(tmp.func) === 'function')
 					tmp.func();

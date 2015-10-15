@@ -23,7 +23,7 @@ class Label extends BaseEntityAbstract
 	private $printedBy;
 	
 	/**
-	 * @var Int ???
+	 * @var Double
 	 */
 	private $printedPrice;
 	

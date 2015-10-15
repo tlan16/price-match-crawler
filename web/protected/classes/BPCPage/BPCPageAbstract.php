@@ -117,6 +117,8 @@ abstract class BPCPageAbstract extends TPage
 		$clientScript->registerStyleSheetFile('Bootstrap.validator.css', $folder . '/css/formValidation.min.css','screen');
 		// font awesome
 		$clientScript->registerStyleSheetFile('Awesome.font.css', "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.4.0/css/font-awesome.min.css",'screen');
+		// accounting js
+		$clientScript->registerHeadScriptFile('Accounting.js', "https://cdnjs.cloudflare.com/ajax/libs/accounting.js/0.4.1/accounting.min.js");
 	}
 	/**
 	 * Getting the lastest version of Js and Css under the Class'file path

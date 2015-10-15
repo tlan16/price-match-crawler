@@ -1,0 +1,18 @@
+<%@MasterClass="Application.layout.BlankLayout"%>
+<com:TContent ID="MainContent">
+	<com:Application.controls.select2.select2 />
+	<com:Application.controls.bootstrapDateTimePicker.bootstrapDateTimePicker />
+	<com:Application.controls.CommentsDiv.CommentsDiv />
+	<com:TCallback ID="getCategoriesBtn" OnCallback="getCategories" />
+	<div class="pagewrapper productdetailswraper" id='item-div'>
+		<div id='name_div'></div>
+		<div id='printed_div'></div>
+		<div id='printed_by_div'></div>
+		<div id='expiry_div'></div>
+		<div id='version_div'></div>
+		<div id='price_div'></div>
+		<div id='product_div'></div>
+		<div id='comments_div'></div>
+		<div id='save_btn'></div>
+	</div>
+</com:TContent>

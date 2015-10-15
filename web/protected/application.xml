@@ -20,6 +20,11 @@
 			<!-- FrontEnd:: login page -->
 			<url ServiceParameter="Login.LoginController" pattern="login.html" />
 			
+			<!-- FrontEnd:: Label list page -->
+			<url ServiceParameter="Label.List.ListController" pattern="labels.html" />
+			<!-- FrontEnd:: Label Detail page -->
+			<url ServiceParameter="Label.Details.DetailsController" pattern="label/{id}.html" parameters.id="new|\d+"/>
+			
 			<!-- FrontEnd:: ServeMeasurement list page -->
 			<url ServiceParameter="ServeMeasurement.List.ListController" pattern="servemeasurements.html" />
 			<!-- FrontEnd:: ServeMeasurement Detail page -->
