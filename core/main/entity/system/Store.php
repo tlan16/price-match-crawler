@@ -2,6 +2,20 @@
 
 class Store extends ResourceAbstract
 {
+	protected $address;
+	
+	public function getAddress()
+	{
+		$this->loadManyToOne('address');
+		return $this->address;
+	}
+	
+	public function setAddress(Address $address)
+	{
+		$this->address = $address;
+		return $this;
+	}
+	
 	public function getAllStoreInfos()
 	{
 		return StoreInfo::getAllByCriteria('storeId = ?', array($this->getId()), true);
@@ -36,6 +50,8 @@ class Store extends ResourceAbstract
 	public function __loadDaoMap()
 	{
 		DaoMap::begin($this, 'str');
+		DaoMap::setManyToOne('address', 'Address', 'addr');
+		
 		parent::__loadDaoMap();
 		DaoMap::commit();
 	}
