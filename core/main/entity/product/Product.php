@@ -117,6 +117,27 @@ class Product extends InfoEntityAbstract
 	}
 	
 	/**
+	 * 
+	 * @return Ambigous <multitype:, Ambigous, multitype:BaseEntityAbstract >
+	 */
+	public function getMaterials()
+	{
+		$materialArray = array();
+		$piArray = ProductInfo::getAllByCriteria('productId = ? and typeId = ?', array($this->getId(), ProductInfoType::ID_MATERIAL), true);
+		
+		foreach($piArray as $pi)
+			$materialIdArray[] = (trim($pi->getEntityId()) !== '' ? trim($pi->getEntityId()) : trim($pi->getValue()));
+		
+		if(count($materialIdArray) > 0)
+		{
+			$materialIdArray = array_unique($materialIdArray);
+			$materialArray = Material::getAllByCriteria('id IN ('.implode(", ", array_fill(0, count($materialIdArray), '?')).')', $materialIdArray);
+		}
+
+		return $materialArray;
+	}
+	
+	/**
 	 * (non-PHPdoc)
 	 * @see BaseEntity::__loadDaoMap()
 	 */
