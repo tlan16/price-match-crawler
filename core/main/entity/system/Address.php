@@ -217,15 +217,6 @@ class Address extends BaseEntityAbstract
 	}
 	/**
 	 * (non-PHPdoc)
-	 * @see BaseEntityAbstract::preSave()
-	 */
-	public function preSave()
-	{
-		if(trim($this->getSKey()) === '')
-			$this->setSKey(self::genSKey($this->getStreet(), $this->getCity(), $this->getRegion(), $this->getCountry(), $this->getPostCode(), $this->getContactName(), $this->getContactNo()));
-	}
-	/**
-	 * (non-PHPdoc)
 	 * @see BaseEntityAbstract::getJson()
 	 */
 	public function getJson($extra = array(), $reset = false)
