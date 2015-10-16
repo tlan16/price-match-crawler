@@ -283,6 +283,31 @@ CREATE TABLE `servemeasurement` (
 	,INDEX (`updatedById`)
 	,INDEX (`name`)
 ) ENGINE=innodb DEFAULT CHARSET=utf8;
+DROP TABLE IF EXISTS `address`;
+CREATE TABLE `address` (
+	`id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+	`contactName` varchar(100) NOT NULL DEFAULT '',
+	`contactNo` varchar(50) NOT NULL DEFAULT '',
+	`street` varchar(200) NOT NULL DEFAULT '',
+	`city` varchar(20) NOT NULL DEFAULT '',
+	`region` varchar(20) NOT NULL DEFAULT '',
+	`country` varchar(20) NOT NULL DEFAULT '',
+	`postCode` varchar(10) NOT NULL DEFAULT '',
+	`active` bool NOT NULL DEFAULT 1,
+	`created` datetime NOT NULL DEFAULT '0001-01-01 00:00:00',
+	`createdById` int(10) unsigned NOT NULL DEFAULT 0,
+	`updated` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+	`updatedById` int(10) unsigned NOT NULL DEFAULT 0,
+	PRIMARY KEY (`id`)
+	,INDEX (`createdById`)
+	,INDEX (`updatedById`)
+	,INDEX (`contactName`)
+	,INDEX (`contactNo`)
+	,INDEX (`city`)
+	,INDEX (`region`)
+	,INDEX (`country`)
+	,INDEX (`postCode`)
+) ENGINE=innodb DEFAULT CHARSET=utf8;
 DROP TABLE IF EXISTS `person`;
 CREATE TABLE `person` (
 	`id` int(10) unsigned NOT NULL AUTO_INCREMENT,
@@ -333,6 +358,7 @@ CREATE TABLE `session` (
 DROP TABLE IF EXISTS `store`;
 CREATE TABLE `store` (
 	`id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+	`addressId` int(10) unsigned NOT NULL DEFAULT 0,
 	`name` varchar(100) NOT NULL DEFAULT '',
 	`description` varchar(255) NOT NULL DEFAULT '',
 	`active` bool NOT NULL DEFAULT 1,
@@ -341,6 +367,7 @@ CREATE TABLE `store` (
 	`updated` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 	`updatedById` int(10) unsigned NOT NULL DEFAULT 0,
 	PRIMARY KEY (`id`)
+	,INDEX (`addressId`)
 	,INDEX (`createdById`)
 	,INDEX (`updatedById`)
 	,INDEX (`name`)
