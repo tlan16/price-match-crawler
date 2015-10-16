@@ -20,6 +20,16 @@
 			<!-- FrontEnd:: login page -->
 			<url ServiceParameter="Login.LoginController" pattern="login.html" />
 			
+			<!-- FrontEnd:: Address list page -->
+			<url ServiceParameter="Address.List.ListController" pattern="addresses.html" />
+			<!-- FrontEnd:: Address Detail page -->
+			<url ServiceParameter="Address.Details.DetailsController" pattern="address/{id}.html" parameters.id="new|\d+"/>
+			
+			<!-- FrontEnd:: Material list page -->
+			<url ServiceParameter="Material.List.ListController" pattern="materials.html" />
+			<!-- FrontEnd:: Material Detail page -->
+			<url ServiceParameter="Material.Details.DetailsController" pattern="material/{id}.html" parameters.id="new|\d+"/>
+			
 			<!-- FrontEnd:: Label list page -->
 			<url ServiceParameter="Label.List.ListController" pattern="labels.html" />
 			<!-- FrontEnd:: Label Detail page -->

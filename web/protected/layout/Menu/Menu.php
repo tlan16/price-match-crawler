@@ -31,7 +31,9 @@ class Menu extends TTemplateControl
 				,'allergents' => array('url' => '/allergents.html', 'name' => 'Allergents', 'icon' => '')
 				,'nutritions' => array('url' => '/nutritions.html', 'name' => 'Nutritions', 'icon' => '')
 				,'servemeasurements' => array('url' => '/servemeasurements.html', 'name' => 'Serve Measurements', 'icon' => '')
-				,'labels' => array('url' => '/labels.html', 'name' => 'Label', 'icon' => '')
+				,'labels' => array('url' => '/labels.html', 'name' => 'Labels', 'icon' => '')
+				,'materials' => array('url' => '/materials.html', 'name' => 'Materials', 'icon' => '')
+				,'addresses' => array('url' => '/addresses.html', 'name' => 'Addresses', 'icon' => '')
 			)
 		);
 		$html = "<ul class='nav navbar-nav'>";

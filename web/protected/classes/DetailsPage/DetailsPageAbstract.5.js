@@ -274,7 +274,16 @@ DetailsPageJs.prototype = Object.extend(new BPCPageJs(), {
 		tmp.me = this;
 		return tmp.me;
 	}
-
+	,setPreData: function(data) {
+		if(data)
+			this._preSetData = data;
+		return this;
+	}
+	,bindAllEventNObjects: function() {
+		var tmp = {};
+		tmp.me = this;
+		return tmp.me;
+	}
 	,load: function () {
 		var tmp = {};
 		tmp.me = this;
