@@ -116,6 +116,47 @@ class Product extends InfoEntityAbstract
 		return $this;
 	}
 	
+	public function getCategory()
+	{
+		$category = false;
+		
+		$piArray = ProductInfo::getAllByCriteria('productId = ? and typeId = ? and entityName = ?', array($this->getId(), ProductInfoType::ID_CATEGORY, ProductInfoType::ENTITY_NAME_CATEGORY));
+		if(count($piArray) > 0)
+		{
+			$productInfo = $piArray[0];
+			$categoryId = (trim($productInfo->getEntityId()) !== '' ? trim($productInfo->getEntityId()) : trim($productInfo->getValue()));
+			$category = Category::get($categoryId);
+		}
+		return $category;
+	}
+	
+	public function addCategory(Category $category)
+	{
+		$productInfo = false;
+		$piArray = ProductInfo::getAllByCriteria('productId = ? and typeId = ? and entityName = ?', 
+												 array($this->getId(), ProductInfoType::ID_CATEGORY, get_class($category)));
+		if(count($piArray) > 0)
+			$productInfo = $piArray[0];
+		else
+			$productInfo = new ProductInfo();
+		
+		$productInfo->setProduct($this)
+					->setValue($category->getId())
+					->setType(ProductInfoType::get(ProductInfoType::ID_CATEGORY))
+					->setEntityName(get_class($category))
+					->setEntityId($category->getId())
+					->setActive(true)
+					->save();
+		
+		return $this;
+	}
+
+	public function removeCategory()
+	{
+		ProductInfo::updateByCriteria('active = ?', 'productId = ? and typeId = ? and entityName = ?', array(0, $this->getId(), ProductInfoType::ID_CATEGORY, ProductInfoType::ENTITY_NAME_CATEGORY));
+		return $this;
+	}
+	
 	/**
 	 * 
 	 * @return Ambigous <multitype:, Ambigous, multitype:BaseEntityAbstract >
@@ -137,29 +178,51 @@ class Product extends InfoEntityAbstract
 		return $materialArray;
 	}
 	
-	public function getAllMaterials()
+	public function addMaterial(Material $material)
 	{
-		$materialArray = array();
+		$productInfo = false;
 		
-		$piArray = ProductInfo::getAllByCriteria('productId = ? and typeId = ? and entityName = ?', array($this->getId(), ProductInfoType::ID_MATERIAL, ProductInfoType::ENTITY_NAME_MATERIAL));
-		foreach($piArray as $pi)
-			$materialIdArray[] = (trim($pi->getEntityId()) !== '' ? trim($pi->getEntityId()) : trim($pi->getValue()));
+		$productInfoArray = ProductInfo::getAllByCriteria('productId = ? and typeId = ? and entityName = ? and value = ? and entityId = ?', 
+									  					  array($this->getId(), ProductInfoType::ID_MATERIAL, get_class($material), $material->getId(), $material->getId()));
+		if(count($productInfoArray) > 0)
+			$productInfo = $productInfoArray[0];
+		else
+			$productInfo = new ProductInfo();
 		
-		if(count($materialIdArray) > 0)
-		{
-			$materialIdArray = array_unique($materialIdArray);
-			'id IN ('.implode(', ', array_fill(0, count($materialIdArray), '?')).')';
-		}
+		$productInfo->setProduct($this)
+					->setType(ProductInfoType::get(ProductInfoType::ID_MATERIAL))
+					->setValue($material->getId())
+					->setEntityName(get_class($material))
+					->setEntityId($value)
+					->setActive(true)
+					->save();
+		return $this;
+	}
+	
+	public function removeMaterial(Material $material)
+	{
 		
-		return $materialArray;
+	}
+	
+	/**
+	 * Remove all Material(s) for a product 
+	 * THis actually removes all the ProductInfo(s) for a product and type ProductInfoType::ID_MATERIAL
+	 * 
+	 * @return Product
+	 */
+	public function removeAllMaterials()
+	{
+		ProductInfo::updateByCriteria('active = ?', 'productId = ? and typeId = ? and entityName = ?', array(0, $this->getId(), ProductInfoType::ID_MATERIAL, ProductInfoType::ENTITY_NAME_MATERIAL));
+		return $this;
 	}
 	
 	public function getJson($extra = array(), $reset = false)
 	{
 		$array = $extra;
-		$array['materials'] = (count(($materialArray = $this->getAllMaterials())) > 0 ? array_map(create_function('$a', 'return $a->getJson();'), $materialArray) : array());
-
-		parent::getJson($extra, $reset);
+		$array['info'] = array();
+		$array['info']['materials'] = (count(($materialArray = $this->getMaterials())) > 0 ? array_map(create_function('$a', 'return $a->getJson();'), $materialArray) : array());
+		$array['info']['category'] = ((($category = $this->getCategory()) instanceof Category) ? $category->getJson() : '');  
+		return parent::getJson($extra, $reset);
 	}
 	
 	/**
