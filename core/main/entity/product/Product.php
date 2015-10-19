@@ -120,7 +120,7 @@ class Product extends InfoEntityAbstract
 	 * 
 	 * @return multitype:
 	 */
-	public function getCategory()
+	public function getCategories()
 	{
 		$categories = array();
 		$piArray = ProductInfo::getAllByCriteria('productId = ? and typeId = ? and entityName = ?', array($this->getId(), ProductInfoType::ID_CATEGORY, 'Category'));
@@ -229,6 +229,18 @@ class Product extends InfoEntityAbstract
 		return $this;
 	}
 	/**
+	 * remove a storece
+	 * 
+	 * @param Store  $store
+	 * 
+	 * @return Product
+	 */
+	public function addStore(Store $store)
+	{
+		ProductInfo::updateByCriteria('active = ?', 'productId = ? and typeId = ? and entityName = ? and entityId = ?', array(0, $this->getId(), ProductInfoType::ID_STORE, get_class($store), trim($store->getId())));
+		return $this;
+	}
+	/**
 	 * Print a label
 	 * 
 	 * @param UDate       $printedDate
@@ -251,7 +263,16 @@ class Product extends InfoEntityAbstract
 		$array = $extra;
 		$array['info'] = array();
 		$array['info']['materials'] = (count(($materialArray = $this->getMaterials())) > 0 ? array_map(create_function('$a', 'return $a->getJson();'), $materialArray) : array());
-		$array['info']['category'] = ((($category = $this->getCategory()) instanceof Category) ? $category->getJson() : '');  
+		$array['info']['categories'] = (count(($array = $this->getCategories())) > 0 ? array_map(create_function('$a', 'return $a->getJson();'), $array) : array());  
+		$array['info']['stores'] = array();
+		$storeInfos = ProductInfo::getAllByCriteria('productId = ? and typeId = ? and entityName = ?', array(0, $this->getId(), ProductInfoType::ID_STORE, ProductInfoType::ENTITY_NAME_STORE));
+		foreach($storeInfos as $storeInfo)
+		{
+			if(!($store = Store::get($storeInfo->getEntityId())) instanceof Store)
+				continue;
+			$unitPrice = ($storeInfo->getValue() === '0' ? $this->getUnitPrice() : $storeInfo->getValue());
+			$array['info']['stores'][] = array('store' => $store->getJson(), 'unitPrice' => $unitPrice);
+		}
 		return parent::getJson($extra, $reset);
 	}
 	

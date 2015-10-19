@@ -113,6 +113,22 @@ class Store extends InfoEntityAbstract
 		DaoMap::commit();
 	}
 	/**
+	 * Getting object
+	 *
+	 * @param int $id The id of the store
+	 *
+	 * @return Store
+	 */
+	public static function get($id)
+	{
+		$class = get_called_class();
+	
+		if(!isset(self::$_cache[$class]) || !isset(self::$_cache[$class][$id]))
+			self::$_cache[$class][$id] = parent::get($id);
+	
+		return self::$_cache[$class][$id];
+	}
+	/**
 	 * 
 	 * @param unknown $name
 	 * @param unknown $description
