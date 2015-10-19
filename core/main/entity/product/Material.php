@@ -66,6 +66,7 @@ class Material extends InfoEntityAbstract
 	public function getIngredients()
 	{
 		$materialInfoArray = MaterialInfo::getAllByCriteria('materialId = ? and typeId = ?', array($this->getId(), MaterialInfoType::ID_INGREDIENT));
+		$ingredientIdArray = array();
 		foreach($materialInfoArray as $mi)
 			$ingredientIdArray[] = (trim($mi->getEntityId()) !== '' ? trim($mi->getEntityId()) : trim($mi->getValue()));
 		
