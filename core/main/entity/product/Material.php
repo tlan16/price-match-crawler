@@ -144,10 +144,11 @@ class Material extends InfoEntityAbstract
 
 		DaoMap::commit();
 	}
-	public static function create($name, $description, array $nutritions = array())
+	public static function create($name, $description, array $ingredients = array())
 	{
 		$material = parent::create($name, $description);
-		foreach($nutritions as $nutrition)
-			$material->ad
+		foreach($ingredients as $ingredient)
+			$material->addIngredient($ingredient);
+		return $material;
 	}
 }
