@@ -115,45 +115,44 @@ class Product extends InfoEntityAbstract
 		$this->labelVersionNo = $versionNo;
 		return $this;
 	}
-	
+	/**
+	 * Getting the categories
+	 * 
+	 * @return multitype:
+	 */
 	public function getCategory()
 	{
-		$category = false;
+		$categories = array();
+		$piArray = ProductInfo::getAllByCriteria('productId = ? and typeId = ? and entityName = ?', array($this->getId(), ProductInfoType::ID_CATEGORY, 'Category'));
 		
-		$piArray = ProductInfo::getAllByCriteria('productId = ? and typeId = ? and entityName = ?', array($this->getId(), ProductInfoType::ID_CATEGORY, ProductInfoType::ENTITY_NAME_CATEGORY));
-		if(count($piArray) > 0)
-		{
-			$productInfo = $piArray[0];
-			$categoryId = (trim($productInfo->getEntityId()) !== '' ? trim($productInfo->getEntityId()) : trim($productInfo->getValue()));
-			$category = Category::get($categoryId);
+		$categoryIds = array();
+		foreach($piArray as $pi)
+			$categoryIds[] = (trim($productInfo->getEntityId()) !== '' ? trim($productInfo->getEntityId()) : trim($productInfo->getValue()));
+		
+		if(count($categoryIds) > 0) {
+			$categories = Category::getAllByCriteria('id IN (' . implode(", ", array_fill(0, count($categoryIds), '?')) . ')', $categoryIds);
 		}
-		return $category;
+		return $categories;
 	}
-	
+	/**
+	 * adding to a category
+	 * @param Category $category
+	 * @return Product
+	 */
 	public function addCategory(Category $category)
 	{
-		$productInfo = false;
-		$piArray = ProductInfo::getAllByCriteria('productId = ? and typeId = ? and entityName = ?', 
-												 array($this->getId(), ProductInfoType::ID_CATEGORY, get_class($category)));
-		if(count($piArray) > 0)
-			$productInfo = $piArray[0];
-		else
-			$productInfo = new ProductInfo();
-		
-		$productInfo->setProduct($this)
-					->setValue($category->getId())
-					->setType(ProductInfoType::get(ProductInfoType::ID_CATEGORY))
-					->setEntityName(get_class($category))
-					->setEntityId($category->getId())
-					->setActive(true)
-					->save();
-		
+		if(ProductInfo::countByCriteria('productId = ? and typeId = ? and entityName = ? and entityId = ? ', array($this->getId(), ProductInfoType::ID_CATEGORY, get_class($category), trim($category->getId()))) > 0)
+			return $this;
+		$this->addInfo(ProductInfoType::get(ProductInfoType::ID_CATEGORY), $category);
 		return $this;
 	}
-
-	public function removeCategory()
+	/**
+	 * removing a category
+	 * @return Product
+	 */
+	public function removeCategory(Category $category)
 	{
-		ProductInfo::updateByCriteria('active = ?', 'productId = ? and typeId = ? and entityName = ?', array(0, $this->getId(), ProductInfoType::ID_CATEGORY, ProductInfoType::ENTITY_NAME_CATEGORY));
+		ProductInfo::updateByCriteria('active = ?', 'productId = ? and typeId = ? and entityName = ? and entityId = ?', array(0, $this->getId(), ProductInfoType::ID_CATEGORY, get_class($category), trim($category->getId())));
 		return $this;
 	}
 	
@@ -164,7 +163,7 @@ class Product extends InfoEntityAbstract
 	public function getMaterials()
 	{
 		$materialArray = array();
-		$piArray = ProductInfo::getAllByCriteria('productId = ? and typeId = ?', array($this->getId(), ProductInfoType::ID_MATERIAL), true);
+		$piArray = ProductInfo::getAllByCriteria('productId = ? and typeId = ? and entityName = ?', array($this->getId(), ProductInfoType::ID_MATERIAL, 'Material'));
 		
 		foreach($piArray as $pi)
 			$materialIdArray[] = (trim($pi->getEntityId()) !== '' ? trim($pi->getEntityId()) : trim($pi->getValue()));
@@ -177,31 +176,32 @@ class Product extends InfoEntityAbstract
 
 		return $materialArray;
 	}
-	
+	/**
+	 * Adding material
+	 * 
+	 * @param Material $material
+	 * 
+	 * @return Product
+	 */
 	public function addMaterial(Material $material)
 	{
-		$productInfo = false;
 		
-		$productInfoArray = ProductInfo::getAllByCriteria('productId = ? and typeId = ? and entityName = ? and value = ? and entityId = ?', 
-									  					  array($this->getId(), ProductInfoType::ID_MATERIAL, get_class($material), $material->getId(), $material->getId()));
-		if(count($productInfoArray) > 0)
-			$productInfo = $productInfoArray[0];
-		else
-			$productInfo = new ProductInfo();
-		
-		$productInfo->setProduct($this)
-					->setType(ProductInfoType::get(ProductInfoType::ID_MATERIAL))
-					->setValue($material->getId())
-					->setEntityName(get_class($material))
-					->setEntityId($value)
-					->setActive(true)
-					->save();
+		if(ProductInfo::countByCriteria('productId = ? and typeId = ? and entityName = ? entityId = ?', array($this->getId(), ProductInfoType::ID_MATERIAL, get_class($material), $material->getId())) > 0)
+			return $this;
+		$this->addInfo(ProductInfoType::get(ProductInfoType::ID_MATERIAL), $material);
 		return $this;
 	}
-	
+	/**
+	 * removing a material
+	 * 
+	 * @param Material $material
+	 * 
+	 * @return Product
+	 */
 	public function removeMaterial(Material $material)
 	{
-		
+		ProductInfo::updateByCriteria('active = ?', 'productId = ? and typeId = ? and entityName = ? and entityId = ?', array(0, $this->getId(), ProductInfoType::ID_MATERIAL, get_class($material), trim($material->getId())));
+		return $this;
 	}
 	
 	/**
@@ -215,7 +215,10 @@ class Product extends InfoEntityAbstract
 		ProductInfo::updateByCriteria('active = ?', 'productId = ? and typeId = ? and entityName = ?', array(0, $this->getId(), ProductInfoType::ID_MATERIAL, ProductInfoType::ENTITY_NAME_MATERIAL));
 		return $this;
 	}
-	
+	/**
+	 * (non-PHPdoc)
+	 * @see InfoEntityAbstract::getJson()
+	 */
 	public function getJson($extra = array(), $reset = false)
 	{
 		$array = $extra;
@@ -244,5 +247,36 @@ class Product extends InfoEntityAbstract
 		DaoMap::createIndex('barcode');
 		DaoMap::commit();
 	}
-	
+	/**
+	 * Creating a product
+	 * 
+	 * @param string $name
+	 * @param string $description
+	 * @param string $barcode
+	 * @param int    $size
+	 * @param string $usedByVar
+	 * @param double $unitPrice
+	 * @param string $labelVersionNo
+	 * @param array  $materials
+	 * @param array  $categories
+	 * 
+	 * @return Product
+	 */
+	public static function create($name, $description, $barcode, $size, $usedByVar, $unitPrice, $labelVersionNo, array $materials = array(), array $categories = array())
+	{
+		$product = new Product();
+		$product->setBarcode($barcode)
+			->setSize($size)
+			->setUsedByVariance($usedByVar)
+			->setUnitPrice($unitPrice)
+			->setLabelVersionNo($labelVersionNo)
+			->setName($name)
+			->setDescription($description)
+			->save();
+		foreach($materials as $material)
+			$product->addMaterial($material);
+		foreach($categories as $category)
+			$product->addCategory($category);
+		return $product;
+	}
 }
