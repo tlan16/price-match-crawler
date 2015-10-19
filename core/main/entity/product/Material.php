@@ -114,8 +114,8 @@ class Material extends InfoEntityAbstract
 	public function getJson($extra = array(), $reset = false)
 	{
 		$array = $extra;
-		$array['info'] = array();
-		$array['info']['material_nutrition'] = array();
+		$array['infos'] = array();
+		$array['infos']['material_nutrition'] = array();
 		
 		$mnArray = $this->getAllMaterialNutritions();
 		foreach($mnArray as $mn)
@@ -125,10 +125,10 @@ class Material extends InfoEntityAbstract
 			$tmp['qty'] = $mn->getQty();
 			$tmp['serveMeasurement'] = $mn->getServeMeasurement()->getJson();
 			
-			$array['info']['material_nutrition'][] = $tmp;
+			$array['infos']['material_nutrition'][] = $tmp;
 		}
 		
-		$array['info']['ingredients'] = (count(($ingredients = $this->getIngredients())) > 0 ? array_map(create_function('$a', 'return $a->getJson();'), $ingredients) : array());
+		$array['infos']['ingredients'] = (count(($ingredients = $this->getIngredients())) > 0 ? array_map(create_function('$a', 'return $a->getJson();'), $ingredients) : array());
 		
 		return parent::getJson($array, $reset);
 	}
