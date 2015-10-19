@@ -38,7 +38,7 @@ class AuthManager extends TAuthManager
         if ($u instanceof UserAccount)
         {
             $r = Core::getRole();
-            Core::setUser($u, $r);
+            Core::setUser($u, $r, Core::getStore());
         }
 	}
 }

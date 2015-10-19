@@ -54,20 +54,34 @@ class UserProfile extends InfoAbstract
      * 
      * @return array Role
      */
-    public static function getRolesByUserAccount(UserAccount $userAccount, Store $store)
+    public static function getRolesByUserAccount(UserAccount $userAccount, Store $store = null)
     {
-    	$result = array();
-    	$objs = self::getAllByCriteria('entityName = :eName and typeId = :typeId and userAccountId = :uid and value = :storeId', array('eName' => 'Role', 'typeId' => UserProfileType::ID_ROLE, 'uid' => $userAccount->getId(), 'storeId' => $store->getId()));
-    	if(!is_array($objs) || count($objs) === 0)
-    		return $result;
-    	foreach ($objs as $obj)
-    	{
-    		$role = Role::get(intval($obj->getEntityId()));
-    		if(!$role instanceof Role)
-    			continue;
-    		$result[] = $role;
-    	}
-    	return $result;
+    	$objs = self::getAllByCriteria('entityName = :eName and typeId = :typeId and userAccountId = :uid' . ($store instanceof Store ? ' and value='. $store->getId() : ''), array('eName' => 'Role', 'typeId' => UserProfileType::ID_ROLE, 'uid' => $userAccount->getId()));
+    	$roleIds = array();
+    	foreach($objs as $obj)
+    		$roleIds[] = $obj->getEntityId();
+    	
+    	if(count($roleIds) === 0)
+    		return array();
+    	return Role::getAllByCriteria('id in (' . implode(', ', $roleIds) . ')');
+    }
+    /**
+     * get store by user account
+     *
+     * @param UserAccount $userAccount
+     *
+     * @return array Role
+     */
+    public static function getStoresByUserAccount(UserAccount $userAccount, Role $role = null)
+    {
+    	$objs = self::getAllByCriteria('entityName = :eName and typeId = :typeId and userAccountId = :uid' . ($role instanceof Role ? ' and entityId='. $role->getId() : ''), array('eName' => 'Role', 'typeId' => UserProfileType::ID_ROLE, 'uid' => $userAccount->getId()));
+    	$storeIds = array();
+    	foreach($objs as $obj)
+    		$storeIds[] = $obj->getValue();
+    	 
+    	if(count($storeIds) === 0)
+    		return array();
+    	return Store::getAllByCriteria('id in (' . implode(', ', $storeIds) . ')');
     }
     /**
      * clear all roles for a user account
