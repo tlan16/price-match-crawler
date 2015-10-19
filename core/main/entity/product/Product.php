@@ -8,23 +8,23 @@
 class Product extends InfoEntityAbstract
 {
 	private $barcode;
-	
+
 	private $size;
-	
+
 	private $usedByVariance;
-	
+
 	private $unitPrice;
-	
+
 	private $labelVersionNo;
-	
+
 	/**
-	 * Getter function for barcode 
+	 * Getter function for barcode
 	 */
 	public function getBarcode()
 	{
 		return $this->barcode;
 	}
-	
+
 	/**
 	 * Setter function for barcode
 	 * @param String $barcode
@@ -35,7 +35,7 @@ class Product extends InfoEntityAbstract
 		$this->barcode = $barcode;
 		return $this;
 	}
-	
+
 	/**
 	 * Getter function for size
 	 */
@@ -43,7 +43,7 @@ class Product extends InfoEntityAbstract
 	{
 		return $this->size;
 	}
-	
+
 	/**
 	 * Setter function for size
 	 * @param int $size
@@ -54,7 +54,7 @@ class Product extends InfoEntityAbstract
 		$this->size = $size;
 		return $this;
 	}
-	
+
 	/**
 	 * Getter function for used_by_variance
 	 */
@@ -62,7 +62,7 @@ class Product extends InfoEntityAbstract
 	{
 		return $this->usedByVariance;
 	}
-	
+
 	/**
 	 * Setter function for used_by_variance
 	 * @param String $variance
@@ -73,7 +73,7 @@ class Product extends InfoEntityAbstract
 		$this->usedByVariance = $variance;
 		return $this;
 	}
-	
+
 	/**
 	 * Getter function for Unit Price
 	 */
@@ -81,7 +81,7 @@ class Product extends InfoEntityAbstract
 	{
 		return $this->unitPrice;
 	}
-	
+
 	/**
 	 * Setter function for Unit Price
 	 * @param Int $unitPrice
@@ -92,19 +92,19 @@ class Product extends InfoEntityAbstract
 		$unitPrice = StringUtilsAbstract::getValueFromCurrency($unitPrice);
 		if(!is_numeric($unitPrice))
 			throw new Exception('Unit Price must be numeric');
-		
+
 		$this->unitPrice = $unitPrice;
 		return $this;
 	}
-	
+
 	/**
 	 * Getter function for label version no
 	 */
 	public function getLabelVersionNo()
 	{
-		return $this->labelVersionNo;		
+		return $this->labelVersionNo;
 	}
-	
+
 	/**
 	 * Setter function for labe version no
 	 * @param Int $versionNo
@@ -117,18 +117,18 @@ class Product extends InfoEntityAbstract
 	}
 	/**
 	 * Getting the categories
-	 * 
+	 *
 	 * @return multitype:
 	 */
 	public function getCategories()
 	{
 		$categories = array();
 		$piArray = ProductInfo::getAllByCriteria('productId = ? and typeId = ? and entityName = ?', array($this->getId(), ProductInfoType::ID_CATEGORY, 'Category'));
-		
+
 		$categoryIds = array();
 		foreach($piArray as $pi)
 			$categoryIds[] = (trim($productInfo->getEntityId()) !== '' ? trim($productInfo->getEntityId()) : trim($productInfo->getValue()));
-		
+
 		if(count($categoryIds) > 0) {
 			$categories = Category::getAllByCriteria('id IN (' . implode(", ", array_fill(0, count($categoryIds), '?')) . ')', $categoryIds);
 		}
@@ -155,19 +155,19 @@ class Product extends InfoEntityAbstract
 		ProductInfo::updateByCriteria('active = ?', 'productId = ? and typeId = ? and entityName = ? and entityId = ?', array(0, $this->getId(), ProductInfoType::ID_CATEGORY, get_class($category), trim($category->getId())));
 		return $this;
 	}
-	
+
 	/**
-	 * 
+	 *
 	 * @return Ambigous <multitype:, Ambigous, multitype:BaseEntityAbstract >
 	 */
 	public function getMaterials()
 	{
 		$materialArray = array();
 		$piArray = ProductInfo::getAllByCriteria('productId = ? and typeId = ? and entityName = ?', array($this->getId(), ProductInfoType::ID_MATERIAL, 'Material'));
-		
+
 		foreach($piArray as $pi)
 			$materialIdArray[] = (trim($pi->getEntityId()) !== '' ? trim($pi->getEntityId()) : trim($pi->getValue()));
-		
+
 		if(count($materialIdArray) > 0)
 		{
 			$materialIdArray = array_unique($materialIdArray);
@@ -178,14 +178,14 @@ class Product extends InfoEntityAbstract
 	}
 	/**
 	 * Adding material
-	 * 
+	 *
 	 * @param Material $material
-	 * 
+	 *
 	 * @return Product
 	 */
 	public function addMaterial(Material $material)
 	{
-		
+
 		if(ProductInfo::countByCriteria('productId = ? and typeId = ? and entityName = ? entityId = ?', array($this->getId(), ProductInfoType::ID_MATERIAL, get_class($material), $material->getId())) > 0)
 			return $this;
 		$this->addInfo(ProductInfoType::get(ProductInfoType::ID_MATERIAL), $material);
@@ -193,9 +193,9 @@ class Product extends InfoEntityAbstract
 	}
 	/**
 	 * removing a material
-	 * 
+	 *
 	 * @param Material $material
-	 * 
+	 *
 	 * @return Product
 	 */
 	public function removeMaterial(Material $material)
@@ -203,11 +203,11 @@ class Product extends InfoEntityAbstract
 		ProductInfo::updateByCriteria('active = ?', 'productId = ? and typeId = ? and entityName = ? and entityId = ?', array(0, $this->getId(), ProductInfoType::ID_MATERIAL, get_class($material), trim($material->getId())));
 		return $this;
 	}
-	
+
 	/**
-	 * Remove all Material(s) for a product 
+	 * Remove all Material(s) for a product
 	 * THis actually removes all the ProductInfo(s) for a product and type ProductInfoType::ID_MATERIAL
-	 * 
+	 *
 	 * @return Product
 	 */
 	public function clearMaterial()
@@ -217,10 +217,10 @@ class Product extends InfoEntityAbstract
 	}
 	/**
 	 * Adding a store with unit price
-	 * 
+	 *
 	 * @param Store  $store
 	 * @param number $unitprice
-	 * 
+	 *
 	 * @return Product
 	 */
 	public function addStore(Store $store, $unitprice = 0)
@@ -230,9 +230,9 @@ class Product extends InfoEntityAbstract
 	}
 	/**
 	 * remove a storece
-	 * 
+	 *
 	 * @param Store  $store
-	 * 
+	 *
 	 * @return Product
 	 */
 	public function removeStore(Store $store)
@@ -242,11 +242,11 @@ class Product extends InfoEntityAbstract
 	}
 	/**
 	 * Print a label
-	 * 
+	 *
 	 * @param UDate       $printedDate
 	 * @param UserAccount $printedBy
 	 * @param Label       $newLabel
-	 * 
+	 *
 	 * @return Product
 	 */
 	public function printLabel(UDate $printedDate = null, UserAccount $printedBy = null, Label &$newLabel = null)
@@ -263,7 +263,7 @@ class Product extends InfoEntityAbstract
 		$array = $extra;
 		$array['info'] = array();
 		$array['info']['materials'] = (count(($materialArray = $this->getMaterials())) > 0 ? array_map(create_function('$a', 'return $a->getJson();'), $materialArray) : array());
-		$array['info']['categories'] = (count(($array = $this->getCategories())) > 0 ? array_map(create_function('$a', 'return $a->getJson();'), $array) : array());  
+		$array['info']['categories'] = (count(($array = $this->getCategories())) > 0 ? array_map(create_function('$a', 'return $a->getJson();'), $array) : array());
 		$array['info']['stores'] = array();
 		$storeInfos = ProductInfo::getAllByCriteria('productId = ? and typeId = ? and entityName = ?', array($this->getId(), ProductInfoType::ID_STORE, ProductInfoType::ENTITY_NAME_STORE));
 		foreach($storeInfos as $storeInfo)
@@ -275,7 +275,7 @@ class Product extends InfoEntityAbstract
 		}
 		return parent::getJson($extra, $reset);
 	}
-	
+
 	/**
 	 * (non-PHPdoc)
 	 * @see BaseEntity::__loadDaoMap()
@@ -288,16 +288,16 @@ class Product extends InfoEntityAbstract
 		DaoMap::setStringType('usedByVariance','varchar', 20);
 		DaoMap::setIntType('unitPrice', 'double', '10,4');
 		DaoMap::setStringType('labelVersionNo','varchar', 10);
-		
-		/// load the dao map for InfoEntityAbstract /// 
+
+		/// load the dao map for InfoEntityAbstract ///
 		parent::__loadDaoMap();
-		
+
 		DaoMap::createIndex('barcode');
 		DaoMap::commit();
 	}
 	/**
 	 * Creating a product
-	 * 
+	 *
 	 * @param string $name
 	 * @param string $description
 	 * @param string $barcode
@@ -307,10 +307,10 @@ class Product extends InfoEntityAbstract
 	 * @param string $labelVersionNo
 	 * @param array  $materials
 	 * @param array  $categories
-	 * 
+	 *
 	 * @return Product
 	 */
-	public static function create($name, $description, $barcode, $size, $usedByVar, $unitPrice, $labelVersionNo, array $materials = array(), array $categories = array())
+	public static function createWithParams($name, $description, $barcode, $size, $usedByVar, $unitPrice, $labelVersionNo, array $materials = array(), array $categories = array())
 	{
 		$product = new Product();
 		$product->setBarcode($barcode)
