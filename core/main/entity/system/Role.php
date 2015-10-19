@@ -81,6 +81,22 @@ class Role extends BaseEntityAbstract
         return parent::__toString();
     }
     /**
+     * Getting object
+     *
+     * @param int $id The id of the Role
+     *
+     * @return Role
+     */
+    public static function get($id)
+    {
+    	$class = get_called_class();
+    
+    	if(!isset(self::$_cache[$class]) || !isset(self::$_cache[$class][$id]))
+    		self::$_cache[$class][$id] = parent::get($id);
+    
+    	return self::$_cache[$class][$id];
+    }
+    /**
      * (non-PHPdoc)
      * @see BaseEntity::__loadDaoMap()
      */

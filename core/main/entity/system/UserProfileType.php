@@ -6,52 +6,19 @@
  * @subpackage Entity
  * @author     lhe<helin16@gmail.com>
  */
-class UserProfileType extends BaseEntityAbstract
+class UserProfileType extends InfoTypeAbstract
 {
-	const ID_SUBSCRIPTION = 1;
-	const ID_ENROLLMENT = 2;
-	const ID_ROLE = 3;
+	const ID_ROLE = 1;
     /**
-     * The name of the UserProfile
-     * @var string
-     */
-    private $name;
-    
-    /**
-     * getter for name
-     *
-     * @return string
-     */
-    public function getName()
-    {
-        return $this->name;
-    }
-    /**
-     * Setter for name
-     *
-     * @param string $name
-     * @return UserProfileType
-     */
-    public function setName($name)
-    {
-        $this->name = $name;
-        return $this;
-    }
-    
-    /**
-     * (non-PHPdoc)
-     * @see BaseEntity::__loadDaoMap()
-     */
-    public function __loadDaoMap()
-    {
-        DaoMap::begin($this, 'up_tp');
-        DaoMap::setStringType('name', 'varchar', 100);
-        
-        parent::__loadDaoMap();
-        
-        DaoMap::createIndex('name');
-        DaoMap::commit();
-    }
+	 * (non-PHPdoc)
+	 * @see BaseEntity::__loadDaoMap()
+	 */
+	public function __loadDaoMap()
+	{
+		DaoMap::begin($this, 'user_info_type');
+		parent::__loadDaoMap();
+		DaoMap::commit();
+	}
     /**
      * create a new UserProfileType
      *
@@ -61,7 +28,7 @@ class UserProfileType extends BaseEntityAbstract
      * @throws Exception
      * @return UserProfileType
      */
-    public static function create($name, $active = true)
+    public static function create($name)
     {
     	if(($name = trim($name)) === '')
     		throw new Exception('Name cannot be empty to create a new ' . __CLASS__);
@@ -69,7 +36,6 @@ class UserProfileType extends BaseEntityAbstract
     	$obj = self::getByName($name);
     	$obj = $obj instanceof self ? $obj : new self();
     	$obj->setName($name)
-	    	->setActive($active)
 	    	->save();
     	return $obj;
     }

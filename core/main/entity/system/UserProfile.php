@@ -6,7 +6,7 @@
  * @subpackage Entity
  * @author     lhe<helin16@gmail.com>
  */
-class UserProfile extends BaseEntityAbstract
+class UserProfile extends InfoAbstract
 {
 	/**
      * The UserAccount
@@ -14,24 +14,6 @@ class UserProfile extends BaseEntityAbstract
      * @var UserAccount
      */
     protected $userAccount;
-    /**
-     * The type of the UserProfile
-     * @var UserProfileType
-     */
-    protected $type;
-    /**
-	 * The id of the entity
-	 *
-	 * @var int
-	 */
-	private $entityId;
-	/**
-	 * The name of the entity
-	 *
-	 * @var string
-	 */
-	private $entityName;
-    
 	/**
 	 * getter UserAccount
 	 *
@@ -54,69 +36,6 @@ class UserProfile extends BaseEntityAbstract
 		$this->userAccount = $userAccount;
 		return $this;
 	}
-	/**
-	 * getter for type
-	 *
-	 * @return UserProfileType
-	 */
-	public function getType()
-	{
-		$this->loadManyToOne('type');
-	    return $this->type;
-	}
-	/**
-	 * Setter for type
-	 *
-	 * @return UserProfile
-	 */
-	public function setType($type)
-	{
-	    $this->type = $type;
-	    return $this;
-	}
-	/**
-	 * Getter for EntityId
-	 *
-	 * @return int
-	 */
-	public function getEntityId()
-	{
-		return $this->entityId;
-	}
-	/**
-	 * Setter for entity
-	 *
-	 * @param int $value The entity id
-	 *
-	 * @return UserProfile
-	 */
-	public function setEntityId($value)
-	{
-		$this->entityId = $value;
-		return $this;
-	}
-	/**
-	 * Getter for entityName
-	 *
-	 * @return string
-	 */
-	public function getEntityName()
-	{
-		return $this->entityName;
-	}
-	/**
-	 * Setter for entityName
-	 *
-	 * @param string $value The entityName
-	 *
-	 * @return UserProfile
-	 */
-	public function setEntityName($value)
-	{
-		$this->entityName = $value;
-		return $this;
-	}
-    
     /**
      * (non-PHPdoc)
      * @see BaseEntity::__loadDaoMap()
@@ -125,38 +44,8 @@ class UserProfile extends BaseEntityAbstract
     {
         DaoMap::begin($this, 'up');
         DaoMap::setManyToOne("userAccount", "UserAccount", "u");
-        DaoMap::setManyToOne('type', 'UserProfileType');
-        DaoMap::setIntType('entityId');
-		DaoMap::setStringType('entityName','varchar', 100);
-        
         parent::__loadDaoMap();
-        
-        DaoMap::createIndex('entityId');
-        DaoMap::createIndex('entityName');
         DaoMap::commit();
-    }
-    /**
-     * create new UserProfile
-     * 
-     * @param UserAccount 				$userAccount
-     * @param UserProfileType 		$type
-     * @param BaseEntityAbstract 	$entity
-     * @param bool	 				$active
-     * 
-     * @return UserProfile
-     */
-    public static function create(UserAccount $userAccount, UserProfileType $type, BaseEntityAbstract $entity, $active = true)
-    {
-    	$active = (intval($active) === 1);
-    	$objs = self::getAllByCriteria('userAccountId = ? and typeId = ? and entityId = ? and entityName = ?', array($userAccount->getId(), $type->getId(), $entity->getId(), get_class($entity)), false, 1, 1);
-    	$obj = count($objs) > 0 ? $objs[0] : new self();
-    	$obj->setUserAccount($userAccount)
-    		->setType($type)
-    		->setEntityId($entity->getId())
-    		->setEntityName(get_class($entity))
-    		->setActive($active)
-    		->save();
-    	return $obj;
     }
     /**
      * get roles by user account
@@ -165,10 +54,10 @@ class UserProfile extends BaseEntityAbstract
      * 
      * @return array Role
      */
-    public static function getRolesByUserAccount(UserAccount $userAccount)
+    public static function getRolesByUserAccount(UserAccount $userAccount, Store $store)
     {
     	$result = array();
-    	$objs = self::getAllByCriteria('entityName = :eName and typeId = :typeId and userAccountId = :uid', array('eName' => 'Role', 'typeId' => UserProfileType::ID_ROLE, 'uid' => $userAccount->getId()));
+    	$objs = self::getAllByCriteria('entityName = :eName and typeId = :typeId and userAccountId = :uid and value = :storeId', array('eName' => 'Role', 'typeId' => UserProfileType::ID_ROLE, 'uid' => $userAccount->getId(), 'storeId' => $store->getId()));
     	if(!is_array($objs) || count($objs) === 0)
     		return $result;
     	foreach ($objs as $obj)
@@ -185,9 +74,9 @@ class UserProfile extends BaseEntityAbstract
      * 
      * @param UserAccount $userAccount
      */
-    public static function clearRolesByUserAccount(UserAccount $userAccount)
+    public static function clearRolesByUserAccount(UserAccount $userAccount, Store $store = null)
     {
-    	self::deleteByCriteria('userAccountId = ? and typeId = ? and entityName = ?', array($userAccount->getId(), UserProfileType::ID_ROLE, 'Role'));
+    	self::removeRoleByUserAccount($userAccount, null, $store);
     }
     /**
      * add role to a user account
@@ -197,9 +86,9 @@ class UserProfile extends BaseEntityAbstract
      * 
      * @return UserProfile
      */
-    public static function addRoleByUserAccount(UserAccount $userAccount, Role $role)
+    public static function addRoleByUserAccount(UserAccount $userAccount, Role $role, Store $store)
     {
-    	return self::create($userAccount, UserProfileType::get(UserProfileType::ID_ROLE), $role);
+    	return self::create($userAccount, UserProfileType::get(UserProfileType::ID_ROLE), $store->getId(), $role);
     }
     /**
      * remove a role for a user account
@@ -207,9 +96,15 @@ class UserProfile extends BaseEntityAbstract
      * @param UserAccount $userAccount
      * @param Role $role
      */
-    public static function removeRoleByUserAccount(UserAccount $userAccount, Role $role)
+    public static function removeRoleByUserAccount(UserAccount $userAccount, Role $role = null, Store $store = null)
     {
-    	self::deleteByCriteria('userAccountId = ? and typeId = ? and entityId = ? and entityName = ?', array($userAccount->getId(), UserProfileType::ID_ROLE, get_class($role), $role->getId()));
+    	$where = 'userAccountId = ? and typeId = ?';
+    	if($role instanceof Role) {
+    		$where .= 'and entityId = ' . $role->getId() . ' and entityName = "' . get_class($role) . '"';
+    	}
+    	if($store instanceof Store)
+    		$where .= ' AND value = ' . $store->getId();
+    	self::deleteByCriteria($where, array($userAccount->getId(), UserProfileType::ID_ROLE));
     }
 }
 ?>

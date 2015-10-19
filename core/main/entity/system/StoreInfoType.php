@@ -9,7 +9,7 @@ class StoreInfoType extends InfoTypeAbstract
 	 */
 	public function __loadDaoMap()
 	{
-		DaoMap::begin($this, 'str_info_type');
+		DaoMap::begin($this, 'store_info_type');
 		parent::__loadDaoMap();
 		DaoMap::commit();
 	}

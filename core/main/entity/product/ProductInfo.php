@@ -40,6 +40,7 @@ class ProductInfo extends InfoAbstract
 	public function __loadDaoMap()
 	{
 		DaoMap::begin($this, 'pro_info');
+		DaoMap::setManyToOne('product', 'Product');
 		parent::__loadDaoMap();
 	
 		DaoMap::commit();

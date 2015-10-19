@@ -226,14 +226,10 @@ class UserAccount extends BaseEntityAbstract
         DaoMap::setStringType('username', 'varchar', 100);
         DaoMap::setStringType('password', 'varchar', 40);
         DaoMap::setManyToOne("person", "Person", "p");
-        DaoMap::setStringType('source', 'varchar', 10, true, null);
-        DaoMap::setStringType('refId', 'varchar', 50, true, null);
         parent::__loadDaoMap();
 
         DaoMap::createUniqueIndex('username');
         DaoMap::createIndex('password');
-        DaoMap::createIndex('source');
-        DaoMap::createIndex('refId');
         DaoMap::commit();
     }
     /**
@@ -242,41 +238,27 @@ class UserAccount extends BaseEntityAbstract
      * @param string 		$username
      * @param string 		$password
      * @param Person 		$person
-     * @param string|null 	$source
-     * @param string|null 	$refId
      * 
      * @return UserAccount
      * @throws Exception
      */
-    public static function create($username, $password, Person $person, Role $role, $source = null, $refId = null)
+    public static function create($username, $password, Person $person, Role $role)
     {
     	if(($username = trim($username)) === '')
     		throw new Exception('invalid username passed in');
     	if(($password = trim($password)) === '')
     		throw new Exception('invalid password passed in');
-    	if($refId !== null && ($refId = trim($refId)) === '')
-    		throw new Exception('invalid ref passed in');
     	$password = sha1($password);
     	$where = '';
     	$param = array();
-    	if($source === null)
-    		$where .= " source IS NULL AND ";
-    	elseif(($source = trim($source)) !== '')
-    	{
-    		$where .= " source = :source AND ";
-    		$param['source'] = $source;
-    	}
-    	else $source = null;
     	$where .= " username = :uname";
     	$param['uname'] = $username;
+    	
     	$objs = self::getAllByCriteria($where, $param, false, 1, 1);
     	$obj = (count($objs) > 0 ? $objs[0] : new self() );
     	$obj->setUserName($username)
     		->setPassword($password)
     		->setPerson($person)
-    		->setSource($source)
-    		->setRefId($refId)
-    		->setActive(true)
     		->save();
     	$obj->addRole($role);
     	return $obj;
@@ -291,9 +273,9 @@ class UserAccount extends BaseEntityAbstract
      * @throws Exception
      * @return Ambigous <BaseEntityAbstract>|NULL
      */
-    public static function getUserByUsernameAndPassword($username, $password, $noHashPass = false, $localOnly = true)
+    public static function getUserByUsernameAndPassword($username, $password, $noHashPass = false)
     {
-    	$userAccounts = self::getAllByCriteria( ($localOnly === true ? "`source` is NULL AND " : "") . "`UserName` = :username AND `Password` = :password", array('username' => $username, 'password' => ($noHashPass === true ? $password : sha1($password))), true, 1, 2);
+    	$userAccounts = self::getAllByCriteria("`UserName` = :username AND `Password` = :password", array('username' => $username, 'password' => ($noHashPass === true ? $password : sha1($password))), true, 1, 2);
     	if(count($userAccounts) === 1)
     		return $userAccounts[0];
     	else if(count($userAccounts) > 1)
@@ -310,9 +292,9 @@ class UserAccount extends BaseEntityAbstract
      * @throws Exception
      * @return Ambigous <BaseEntityAbstract>|NULL
      */
-    public static function getUserByUsername($username, $localOnly = true)
+    public static function getUserByUsername($username)
     {
-    	$userAccounts = self::getAllByCriteria( ($localOnly === true ? "`source` is NULL AND " : "") . "`UserName` = :username", array('username' => $username), true, 1, 2);
+    	$userAccounts = self::getAllByCriteria("`UserName` = :username", array('username' => $username), true, 1, 2);
     	if(count($userAccounts) === 1)
     		return $userAccounts[0];
     	else if(count($userAccounts) > 1)

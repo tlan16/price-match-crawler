@@ -2,7 +2,7 @@
 
 class StoreInfo extends InfoAbstract
 {
-	private $store;
+	protected $store;
 	
 	/**
 	 * Getter funciton for Store
@@ -10,6 +10,7 @@ class StoreInfo extends InfoAbstract
 	 */
 	public function getStore()
 	{
+		$this->loadManyToOne('store');
 		return $this->store; 	
 	}
 	
@@ -30,7 +31,8 @@ class StoreInfo extends InfoAbstract
 	 */
 	public function __loadDaoMap()
 	{
-		DaoMap::begin($this, 'str_info');
+		DaoMap::begin($this, 'store_info');
+		DaoMap::setManyToOne('store', 'Store');
 		parent::__loadDaoMap();
 		DaoMap::commit();
 	}

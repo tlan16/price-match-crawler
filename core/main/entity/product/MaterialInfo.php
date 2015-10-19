@@ -39,6 +39,7 @@ class MaterialInfo extends InfoAbstract
 	public function __loadDaoMap()
 	{
 		DaoMap::begin($this, 'mat_info');
+		DaoMap::setManyToOne('material', 'Material');
 		parent::__loadDaoMap();
 		
 		DaoMap::commit();

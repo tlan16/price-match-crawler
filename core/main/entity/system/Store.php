@@ -106,7 +106,7 @@ class Store extends InfoEntityAbstract
 	 */
 	public function __loadDaoMap()
 	{
-		DaoMap::begin($this, 'str');
+		DaoMap::begin($this, 'store');
 		DaoMap::setManyToOne('address', 'Address', 'addr');
 		
 		parent::__loadDaoMap();
