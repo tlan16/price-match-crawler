@@ -45,7 +45,7 @@ class Store extends InfoEntityAbstract
 	 * 
 	 * @return Store
 	 */
-	public function addUserAccount(UserAccount $user)
+	public function giveAccess(UserAccount $user)
 	{
 		if(StoreInfo::countByCriteria('storeId = ? and typeId = ? and entityId = ? and entityName = ?', array(trim($this->getId()), trim(StoreInfoType::ID_USERACCOUNTID), trim($user->getId()), get_class($user))) > 0) {
 			return $this;
@@ -60,7 +60,7 @@ class Store extends InfoEntityAbstract
 	 * 
 	 * @return Store
 	 */
-	public function removeUserAccount(UserAccount $user)
+	public function clearAccess(UserAccount $user)
 	{
 		StoreInfo::deleteByCriteria('storeId = ? and typeId = ? and entityId = ? and entityName = ?', array(trim($this->getId()), trim(StoreInfoType::ID_USERACCOUNTID), trim($user->getId()), get_class($user)));
 		return $this;
@@ -130,7 +130,7 @@ class Store extends InfoEntityAbstract
 		foreach($userAccounts as $userAccount) {
 			if(!$userAccount instanceof UserAccount)
 				continue;
-			$store->addUserAccount($userAccount);
+			$store->giveAccess($userAccount);
 		}
 		return $store;
 	}

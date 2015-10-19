@@ -183,6 +183,40 @@ class UserAccount extends BaseEntityAbstract
     	return $array;
     }
     /**
+     * Gaining access to a store
+     * 
+     * @param Store $store
+     * 
+     * @return UserAccount
+     */
+    public function gainAccess(Store $store)
+    {
+    	$store->giveAccess($this);
+    	return $this;
+    }
+    /**
+     * removing the access of the useraccount
+     * 
+     * @param Store $store
+     * 
+     * @return UserAccount
+     */
+    public function clearAccess(Store $store)
+    {
+    	$store->clearAccess($this);
+    	return $this;
+    }
+    /**
+     * clear all access
+     * 
+     * @return UserAccount
+     */
+    public function clearAccessToAllStores()
+    {
+    	StoreInfo::deleteByCriteria('typeId = ? and entityId = ? and entityName = ?', array(trim(StoreInfoType::ID_USERACCOUNTID), trim($this->getId()), get_class($this)));
+    	return $this;
+    }
+    /**
      * (non-PHPdoc)
      * @see BaseEntity::__loadDaoMap()
      */
