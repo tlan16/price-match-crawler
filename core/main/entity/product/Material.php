@@ -71,11 +71,9 @@ class Material extends InfoEntityAbstract
 		
 		if(count($ingredientIdArray) <= 0)
 			return array();
-			
 		$ingredientIdArray = array_unique($ingredientIdArray);
 		$criteria = "id IN (".implode(", ", array_fill(0, count($ingredientIdArray), '?')).")";
-		
-		return Ingredient::getAllByCriteria($criteria, $ingredientIdArray, true);
+		return Ingredient::getAllByCriteria($criteria, $ingredientIdArray);
 	}
 	
 	public function setIngredient(Ingredient $ingredient)
@@ -85,27 +83,16 @@ class Material extends InfoEntityAbstract
 	
 	public function addIngredient(Ingredient $ingredient)
 	{
-		$materialInfo = MaterialInfo::getAllByCriteria('materialId = ? and typeId = ? and value = ?', array($this->getId(), MaterialInfoType::ID_INGREDIENT, $ingredient->getId()));
-		if(count($materialInfo) > 0)
-			$materialInfo = $materialInfo[0];
-		else
-			$materialInfo = new MaterialInfo();
-		
-		$materialInfo->setMaterial($this)
-					 ->setValue($ingredient->getId())
-					 ->setType(MaterialInfoType::get(MaterialInfoType::ID_INGREDIENT))
-					 ->setEntityId($ingredient->getId())
-					 ->setEntityName(get_class($ingredient))
-					 ->setActive(1)
-					 ->save();	
-		
+		if(MaterialInfo::countByCriteria('materialId = ? and typeId = ? and entityId = ? and entityName =?', array($this->getId(), MaterialInfoType::ID_INGREDIENT, $ingredient->getId(), get_class($ingredient))) > 0)
+			return $this;
+		$this->addInfo(MaterialInfoType::get(MaterialInfoType::ID_INGREDIENT), $ingredient);
 		return $this;
 	}
 	
 	public function removeIngredient(Ingredient $ingredient)
 	{
-		MaterialInfo::updateByCriteria("active = ?", 'materialId = ? and typeId = ? and value = ? and entityId = ? and entityName = ?', 
-										array(0, $this->getId(), MaterialInfoType::ID_INGREDIENT, $ingredient->getId(), $ingredient->getId(), get_class($ingredient)));
+		MaterialInfo::updateByCriteria("active = ?", 'materialId = ? and typeId = ?  and entityId = ? and entityName = ?', 
+										array(0, $this->getId(), MaterialInfoType::ID_INGREDIENT, $ingredient->getId(), get_class($ingredient)));
 		return $this;
 	}
 	
@@ -157,5 +144,10 @@ class Material extends InfoEntityAbstract
 
 		DaoMap::commit();
 	}
-	
+	public static function create($name, $description, array $nutritions = array())
+	{
+		$material = parent::create($name, $description);
+		foreach($nutritions as $nutrition)
+			$material->ad
+	}
 }
