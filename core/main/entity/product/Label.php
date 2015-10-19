@@ -49,9 +49,10 @@ class Label extends BaseEntityAbstract
 		$this->product = $product;
 		return $this;
 	}
-	
 	/**
+	 * Getter for the name
 	 * 
+	 * @return string
 	 */
 	public function getName()
 	{
@@ -129,6 +130,48 @@ class Label extends BaseEntityAbstract
 		
 		$this->printedPrice = $printedPrice;
 		return $this;
+	}
+	public static function generateImg($width, $height)
+	{
+		$img = imagecreatetruecolor($width, $height);
+		$white = imagecolorallocate($img, 0, 255, 255);
+		imagefill($img, 0, 0, $white);
+		
+		$black = imagecolorallocate($img, 0, 0, 0);
+// 		$productName = $this->getProduct()->getName();
+		$productName = 'A Simple Text String';
+		$baseFont = 2;
+		$lineNo = 0;
+		$lineHeight = 20;
+		self::imagecenteredstring($img, $baseFont + 2, $width, $lineHeight * $lineNo, $productName, $black);
+		$lineNo++;
+		self::imagecenteredstring($img, $baseFont, $width, $lineHeight * $lineNo, 'Price', $black);
+		$lineNo++;
+		self::imagecenteredstring($img, $baseFont + 2, $width, $lineHeight * $lineNo, '$12.50', $black);
+		$lineNo++;
+		imagestring( $img, $baseFont + 2, 5, $lineHeight * $lineNo, 'Use By: 22/10/2015', $black );
+		$lineNo++;
+		self::imagecenteredstring($img, $baseFont, $width, $lineHeight * $lineNo, 'Keep Refrigerated', $black);
+		$lineNo++;
+		imagestring( $img, $baseFont + 2, 5, $lineHeight * $lineNo, 'Allergen Warning:', $black );
+		$lineNo++;
+		self::imagecenteredstring($img, $baseFont, $width, $lineHeight * $lineNo, 'Contain: FISH', $black);
+		$lineNo++;
+		imagestring( $img, $baseFont + 2, 5, $lineHeight * $lineNo, 'Ingredients:', $black );
+		
+		
+		// Output the image
+		$file = '/tmp/label_' . md5('Label' . '|' . trim(UDate::now()));
+		imagejpeg($img, $file, 75);
+		
+		// Free up memory
+		imagedestroy($img);
+		return $file;
+	}
+	public static function imagecenteredstring ( &$img, $font, $xMax, $y, $str, $color ) {
+		$textWidth = imagefontwidth( $font ) * strlen( $str );
+		$xLoc = ( $xMax - 0 - $textWidth ) / 2 + 0 + $font;
+		imagestring( $img, $font, $xLoc, $y, $str, $color );
 	}
 	/**
 	 * (non-PHPdoc)
