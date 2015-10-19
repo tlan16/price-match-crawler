@@ -31,7 +31,11 @@ class Label extends BaseEntityAbstract
 	 * @var Integer
 	 */
 	private $versionNo;
-	
+	/**
+	 * The product
+	 * 
+	 * @var Product
+	 */
 	protected $product;
 	
 	public function getProduct()
@@ -126,7 +130,31 @@ class Label extends BaseEntityAbstract
 		$this->printedPrice = $printedPrice;
 		return $this;
 	}
-	
+	/**
+	 * (non-PHPdoc)
+	 * @see BaseEntityAbstract::preSave()
+	 */
+	public function preSave()
+	{
+		if(trim($this->getId()) === '') { //creating a new one
+			if($this->getName() === '')
+				$this->setName($this->getProduct()->getName());
+			if(trim($this->getPrintedDate()) === '' || trim($this->getPrintedDate()) === trim(UDate::zeroDate()))
+				$this->setPrintedDate(UDate::now());
+			if(trim($this->getUseByDate()) === '' || trim($this->getUseByDate()) === trim(UDate::zeroDate()))
+				$this->setUseByDate(UDate::now()->modify($this->getProduct()->getUsedByVariance()));
+			if(!$this->getPrintedBy() instanceof UserAccount)
+				$this->setPrintedBy(Core::getUser());
+			if(trim($this->getVersionNo()) === '')
+				$this->setVersionNo($this->getProduct()->getLabelVersionNo());
+			if(trim($this->getPrintedPrice()) === '')
+				$this->setPrintedPrice($this->getProduct()->getUnitPrice());
+		}
+	}
+	/**
+	 * (non-PHPdoc)
+	 * @see BaseEntityAbstract::__loadDaoMap()
+	 */
 	public function __loadDaoMap()
 	{
 		DaoMap::begin($this, 'lbl');
@@ -144,6 +172,22 @@ class Label extends BaseEntityAbstract
 		DaoMap::createIndex('versionNo');
 		DaoMap::commit();
 	}
-	
+	/**
+	 * Creating a label
+	 * @param Product     $product
+	 * @param UDate       $printedDate
+	 * @param UserAccount $printedBy
+	 * @return BaseEntityAbstract
+	 */
+	public static function create(Product $product, UDate $printedDate = null, UserAccount $printedBy = null)
+	{
+		$label = new Label();
+		$label->setProduct($product);
+		if($printedDate instanceof UDate)
+			$label->setPrintedDate($printedDate);
+		if($printedBy instanceof UserAccount)
+			$label->setPrintedBy($printedBy);
+		return $label->save();
+	}
 	
 }
