@@ -235,7 +235,7 @@ class Product extends InfoEntityAbstract
 	 * 
 	 * @return Product
 	 */
-	public function addStore(Store $store)
+	public function removeStore(Store $store)
 	{
 		ProductInfo::updateByCriteria('active = ?', 'productId = ? and typeId = ? and entityName = ? and entityId = ?', array(0, $this->getId(), ProductInfoType::ID_STORE, get_class($store), trim($store->getId())));
 		return $this;
