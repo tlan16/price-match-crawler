@@ -30,7 +30,7 @@ class WebUser extends TUser
 	
 	public function saveToString()
 	{	
-		$a=array(Core::serialize(),parent::saveToString());
+		$a = array(Core::serialize(), parent::saveToString());
 		return serialize($a);
 	}
 	
