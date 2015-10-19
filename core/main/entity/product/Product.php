@@ -265,7 +265,7 @@ class Product extends InfoEntityAbstract
 		$array['info']['materials'] = (count(($materialArray = $this->getMaterials())) > 0 ? array_map(create_function('$a', 'return $a->getJson();'), $materialArray) : array());
 		$array['info']['categories'] = (count(($array = $this->getCategories())) > 0 ? array_map(create_function('$a', 'return $a->getJson();'), $array) : array());  
 		$array['info']['stores'] = array();
-		$storeInfos = ProductInfo::getAllByCriteria('productId = ? and typeId = ? and entityName = ?', array(0, $this->getId(), ProductInfoType::ID_STORE, ProductInfoType::ENTITY_NAME_STORE));
+		$storeInfos = ProductInfo::getAllByCriteria('productId = ? and typeId = ? and entityName = ?', array($this->getId(), ProductInfoType::ID_STORE, ProductInfoType::ENTITY_NAME_STORE));
 		foreach($storeInfos as $storeInfo)
 		{
 			if(!($store = Store::get($storeInfo->getEntityId())) instanceof Store)
