@@ -81,7 +81,6 @@ class Material extends InfoEntityAbstract
 	{
 		return $this->addIngredient($ingredient);
 	}
-	
 	public function addIngredient(Ingredient $ingredient)
 	{
 		if(MaterialInfo::countByCriteria('materialId = ? and typeId = ? and entityId = ? and entityName =?', array($this->getId(), MaterialInfoType::ID_INGREDIENT, $ingredient->getId(), get_class($ingredient))) > 0)
@@ -89,7 +88,12 @@ class Material extends InfoEntityAbstract
 		$this->addInfo(MaterialInfoType::get(MaterialInfoType::ID_INGREDIENT), $ingredient);
 		return $this;
 	}
-	
+	public function clearIngredients()
+	{
+		MaterialInfo::deleteByCriteria('materialId = ? and typeId = ? and entityName = ?', 
+										array($this->getId(), MaterialInfoType::ID_INGREDIENT, 'Ingredient') );
+		return $this;
+	}
 	public function removeIngredient(Ingredient $ingredient)
 	{
 		MaterialInfo::updateByCriteria("active = ?", 'materialId = ? and typeId = ?  and entityId = ? and entityName = ?', 
