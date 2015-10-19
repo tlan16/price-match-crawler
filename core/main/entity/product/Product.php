@@ -210,9 +210,36 @@ class Product extends InfoEntityAbstract
 	 * 
 	 * @return Product
 	 */
-	public function removeAllMaterials()
+	public function clearMaterial()
 	{
 		ProductInfo::updateByCriteria('active = ?', 'productId = ? and typeId = ? and entityName = ?', array(0, $this->getId(), ProductInfoType::ID_MATERIAL, ProductInfoType::ENTITY_NAME_MATERIAL));
+		return $this;
+	}
+	/**
+	 * Adding a store with unit price
+	 * 
+	 * @param Store  $store
+	 * @param number $unitprice
+	 * 
+	 * @return Product
+	 */
+	public function addStore(Store $store, $unitprice = 0)
+	{
+		$this->addInfo(ProductInfoType::get(ProductInfoType::ID_STORE), $store, $unitprice, true);
+		return $this;
+	}
+	/**
+	 * Print a label
+	 * 
+	 * @param UDate       $printedDate
+	 * @param UserAccount $printedBy
+	 * @param Label       $newLabel
+	 * 
+	 * @return Product
+	 */
+	public function printLabel(UDate $printedDate = null, UserAccount $printedBy = null, Label &$newLabel = null)
+	{
+		$newLabel = Label::create($product, $printedDate, $printedBy);
 		return $this;
 	}
 	/**
