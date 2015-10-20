@@ -93,7 +93,17 @@ PageJs.prototype = Object.extend(new CRUDPageJs(), {
 					)
 				: 
 					(new Element('span', {'class': 'btn-group btn-group-xs'})
-						.insert({'bottom': tmp.editBtn = new Element('span', {'class': 'btn btn-primary', 'title': 'Delete'})
+						.insert({'bottom': new Element('span')
+							.addClassName( (row.active === false && tmp.isTitle === false ) ? 'btn btn-success' : 'btn btn-info')
+							.writeAttribute('data-loading-text', '<i class="fa fa-refresh fa-spin"></i>')
+							.insert({'bottom': new Element('span') 
+								.addClassName( (row.active === false && tmp.isTitle === false ) ? 'glyphicon glyphicon-repeat' : 'glyphicon glyphicon-print')
+							})
+							.observe('click', function(){
+								tmp.me._printItem(this, row);
+							})
+						}) 
+						.insert({'bottom': tmp.editBtn = new Element('span', {'class': 'btn btn-primary', 'title': 'Edit'})
 							.insert({'bottom': new Element('span', {'class': 'glyphicon glyphicon-pencil'}) })
 							.observe('click', function(){
 								tmp.me._openDetailsPage(row);
@@ -137,6 +147,37 @@ PageJs.prototype = Object.extend(new CRUDPageJs(), {
 			'beforeClose'	    : function() {
 			}
  		});
+		return tmp.me;
+	}
+	,_printItem: function(btn, item) {
+		var tmp = {};
+		tmp.me = this;
+		tmp.me.postAjax(tmp.me.getCallbackId('printLabel'), {'id': item.id}, {
+			'onLoading': function () {
+				jQuery(btn).button('loading');
+			}
+			,'onSuccess': function(sender, param) {
+				try{
+					tmp.result = tmp.me.getResp(param, false, true);
+					if(!tmp.result || !tmp.result.item)
+						return;
+					$url = 'data:image/png;base64,' + tmp.result.item;
+					tmp.newWind = window.open('data:image/png;base64,' + tmp.result.item);
+					if(!tmp.newWind) {
+						tmp.me.showModalBox('<b>Window Popup Blocked</b>', 'Your browser has blocked the popup from this site, please <a href="' + $url + '" target="__BLANK" class="btn btn-sm btn-info"> click here </a> to view the label for now. <div>Please change your browser setting to allow popup from this site in the future.</b>');
+					} else {
+						tmp.newWind.print();
+					}
+					
+				} catch (e) {
+					tmp.me.showModalBox('<span class="text-danger">ERROR:</span>', e, true);
+					$(btn).show();
+				}
+			}
+			,'onComplete': function() {
+				jQuery(btn).button('reset');
+			}
+		});
 		return tmp.me;
 	}
 	,_updateItem: function(btn, entityId, newValue, method) {
