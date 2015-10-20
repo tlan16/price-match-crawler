@@ -120,7 +120,6 @@ CRUDPageJs.prototype = Object.extend(new BPCPageJs(), {
 	,_openDetailsPage: function(row) {
 		var tmp = {};
 		tmp.me = this;
-		console.debug('/' + tmp.me._focusEntity.toLowerCase() + '/' + (row ? row.id : 'new') + '.html');
 		jQuery.fancybox({
 			'width'			: '95%',
 			'height'		: '95%',
