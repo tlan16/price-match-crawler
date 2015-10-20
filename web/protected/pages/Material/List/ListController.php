@@ -95,30 +95,30 @@ class ListController extends CRUDPageAbstract
 							}
 							break;
 						}
-					case 'mat.nutritions':
+					case 'mat.ingredients':
 						{
-// 							$allergents = explode(',', trim($value));
-// 							if(count($value) > 0)
-// 							{
-// 								$ps = array();
-// 								$keys = array();
-// 								foreach($allergents as $index => $value){
-// 									$key = md5($field . '_' . $index);
-// 									$keys[] = ':' . $key;
-// 									$ps[$key] = trim($value);
-// 								}
-// 								$key = md5($field . '_' . 'entityName');
-// 								$ps[$key] = 'Allergent';
-// 								$query->eagerLoad('Ingredient.infos', 'inner join', 'ingr_info_algt', 'mat.id = ingr_info_algt.ingredientId and ingr_info_algt.entityName = :' . $key . ' and ingr_info_algt.entityId in (' . implode(',', $keys) . ')');
-// 								$params = array_merge($params, $ps);
-// 							}
+							$ingredients = explode(',', trim($value));
+							if(count($value) > 0)
+							{
+								$ps = array();
+								$keys = array();
+								foreach($ingredients as $index => $value){
+									$key = md5($field . '_' . $index);
+									$keys[] = ':' . $key;
+									$ps[$key] = trim($value);
+								}
+								$key = md5($field . '_' . 'entityName');
+								$ps[$key] = 'Ingredient';
+								$query->eagerLoad('Material.infos', 'inner join', 'mat_info_ingr', 'mat.id = mat_info_ingr.materialId and mat_info_ingr.entityName = :' . $key . ' and mat_info_ingr.entityId in (' . implode(',', $keys) . ')');
+								$params = array_merge($params, $ps);
+							}
 							break;
 						}
 					case 'mat.serveMeasurements':
 						{
 							break;
 						}
-					case 'mat.ingredients':
+					case 'mat.nutritions':
 						{
 							break;
 						}
@@ -135,95 +135,6 @@ class ListController extends CRUDPageAbstract
 			$results['items'] = array();
 			foreach($objects as $obj)
 				$results['items'][] = $obj->getJson();
-		}
-		catch(Exception $ex)
-		{
-			$errors[] = $ex->getMessage();
-		}
-		$param->ResponseData = StringUtilsAbstract::getJson($results, $errors);
-	}
-	/**
-	 * save the items
-	 *
-	 * @param unknown $sender
-	 * @param unknown $param
-	 * @throws Exception
-	 *
-	 */
-	public function saveItem($sender, $param)
-	{
-		$results = $errors = array();
-		try
-		{
-			$class = trim($this->_focusEntity);
-			if(!isset($param->CallbackParameter->item))
-				throw new Exception("System Error: no item information passed in!");
-			$item = (isset($param->CallbackParameter->item->id) && ($item = $class::get($param->CallbackParameter->item->id)) instanceof $class) ? $item : null;
-			$name = trim($param->CallbackParameter->item->name);
-			$description = trim($param->CallbackParameter->item->description);
-			$allowMultiple = (!isset($param->CallbackParameter->item->allowMultiple) || $param->CallbackParameter->item->allowMultiple !== true ? false : true);
-			
-			if($item instanceof $class)
-			{
-				$item->setName($name)
-					->setDescription($description)
-					->setAllowMultiple($allowMultiple)
-					->save();
-			}
-			else
-			{
-				$item = $class::create($name, $description);
-			}
-			$results['item'] = $item->getJson();
-		}
-		catch(Exception $ex)
-		{
-			$errors[] = $ex->getMessage();
-		}
-		$param->ResponseData = StringUtilsAbstract::getJson($results, $errors);
-	}
-	public function updateItem($sender, $param)
-	{
-		$results = $errors = array();
-		try
-		{
-			$class = trim($this->_focusEntity);
-			if(!isset($param->CallbackParameter->itemId) || ($itemId = intval($param->CallbackParameter->itemId)) === 0 || !($item = $class::get($itemId)) instanceof $class)
-				throw new Exception('Invalid itemId passed in');
-			if(!isset($param->CallbackParameter->entityId) || ( strtolower(trim($param->CallbackParameter->entityId)) !== 'new' && ($entityId = intval($param->CallbackParameter->entityId)) === 0 ))
-				throw new Exception('Invalid entityId passed in');
-			if(!isset($param->CallbackParameter->method) || ($method = trim($param->CallbackParameter->method)) === '')
-				throw new Exception('Invalid method passed in');
-			
-			switch ($method)
-			{
-				case 'removeTopic':
-					{
-						if(QuestionInfo::get($entityId) instanceof QuestionInfo)
-							QuestionInfo::deleteByCriteria('id=?',array($entityId));
-						break;
-					}
-				case 'addTopic':
-					{
-						if(($obj = Topic::get($entityId)) instanceof Topic)
-							$item->addTopic($obj);
-						break;
-					}
-				case 'removeUnit':
-					{
-						if(QuestionInfo::get($entityId) instanceof QuestionInfo)
-							QuestionInfo::deleteByCriteria('id=?',array($entityId));
-						break;
-					}
-				case 'addUnit':
-					{
-						if(($obj = Unit::get($entityId)) instanceof Unit)
-							$item->addUnit($obj);
-						break;
-					}
-			}
-			
-			$results['item'] = $item->getJson();
 		}
 		catch(Exception $ex)
 		{
