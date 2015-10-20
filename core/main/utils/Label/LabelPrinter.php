@@ -7,13 +7,16 @@ abstract class LabelPrinter
         $white = imagecolorallocate($img, 255, 255, 255);
         imagefill($img, 0, 0, $white);
 
-        $startY = 0;
         $startX = 10;
-        $black = imagecolorallocate($img, 0, 0, 0);
         $baseFont = 9;
+        $black = imagecolorallocate($img, 0, 0, 0);
+        $fontFile = dirname(__FILE__) . '/arial.ttf';
+        $versionNo = $label->getVersionNo();
+        $dimensions = imagettfbbox(7, 0, $fontFile, $versionNo);
+        imagettftext($img, 7, 0, $width - abs($dimensions[4] - $dimensions[0]) - $startX, 15, $black, $fontFile, $versionNo);
+        $startY = abs($dimensions[7] - $dimensions[1]);
         $lineNo = 1;
         $lineHeight = 24;
-        $fontFile = dirname(__FILE__) . '/arial.ttf';
         self::_imagecenteredstring($img, $baseFont + 5, $width, $startY + $lineHeight * ($lineNo++), $label->getProduct()->getName(), $black, $fontFile);
         self::_imagecenteredstring($img, $baseFont, $width, $startY + $lineHeight * ($lineNo++), 'Price', $black, $fontFile);
         self::_imagecenteredstring($img, $baseFont + 2, $width, $startY + $lineHeight * ($lineNo), StringUtilsAbstract::getCurrency($label->getPrintedPrice()), $black, $fontFile);
