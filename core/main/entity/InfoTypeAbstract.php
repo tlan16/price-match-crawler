@@ -3,13 +3,13 @@ class InfoTypeAbstract extends BaseEntityAbstract
 {
 	/**
 	 * The cache of the object
-	 * 
+	 *
 	 * @var array
 	 */
 	protected static $_cache;
 	/**
 	 * The name of the type
-	 * 
+	 *
 	 * @var string
 	 */
 	private $name;
@@ -19,24 +19,24 @@ class InfoTypeAbstract extends BaseEntityAbstract
 	 * @var string
 	 */
 	private $description = '';
-	
+
 	/**
 	 * Getter for the name
-	 * 
+	 *
 	 * @return string
 	 */
-	public function getName() 
+	public function getName()
 	{
 	    return $this->name;
 	}
 	/**
 	 * Setter for the name
-	 * 
+	 *
 	 * @param string $value The name of the type
-	 * 
+	 *
 	 * @return InfoTypeAbstract
 	 */
-	public function setName($value) 
+	public function setName($value)
 	{
 	    $this->name = $value;
 	    return $this;
@@ -62,18 +62,18 @@ class InfoTypeAbstract extends BaseEntityAbstract
 	}
 	/**
 	 * Getting object
-	 * 
+	 *
 	 * @param int $typeId The id of the type
-	 * 
+	 *
 	 * @return InfoTypeAbstract
 	 */
 	public static function get($typeId)
 	{
 		$class = get_called_class();
-		
+
 		if(!isset(self::$_cache[$class]) || !isset(self::$_cache[$class][$typeId]))
 			self::$_cache[$class][$typeId] = parent::get($typeId);
-		
+
 		return self::$_cache[$class][$typeId];
 	}
 	/**
@@ -84,22 +84,21 @@ class InfoTypeAbstract extends BaseEntityAbstract
 	{
 		DaoMap::setStringType('name','varchar', 100);
 		DaoMap::setStringType('description','varchar', 255);
-		
+
 		parent::__loadDaoMap();
-		
+
 		DaoMap::createIndex('name');
 	}
 	/**
 	 * To create a new self
-	 * 
+	 *
 	 * @param string $name
 	 * @param string $description
-	 * @param bool	 $active
-	 * 
+	 *
 	 * @return InfoTypeAbstract
 	 * @throws Exception
 	 */
-	public static function create($name, $description = '', $active = true) 
+	public static function create($name, $description = '')
 	{
 		$class = get_called_class();
 		if(($name = trim($name)) === '')
@@ -110,7 +109,6 @@ class InfoTypeAbstract extends BaseEntityAbstract
 		$obj = count($objs) > 0 ? $objs[0] : new $class();
 		$obj->setName($name)
 			->setDescription($description)
-			->setActive($active)
 			->save();
 		return $obj;
 	}

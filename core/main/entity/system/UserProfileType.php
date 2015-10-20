@@ -24,11 +24,11 @@ class UserProfileType extends InfoTypeAbstract
      *
      * @param string $name
      * @param bool	 $active
-     * 
+     *
      * @throws Exception
      * @return UserProfileType
      */
-    public static function create($name)
+    public static function create($name, $description = '')
     {
     	if(($name = trim($name)) === '')
     		throw new Exception('Name cannot be empty to create a new ' . __CLASS__);
@@ -44,7 +44,7 @@ class UserProfileType extends InfoTypeAbstract
      *
      * @param string $name
      * @param bool	 $activeOnly
-     * 
+     *
      * @return UserProfileType|null
      */
     public static function getByName($name, $activeOnly = true)
