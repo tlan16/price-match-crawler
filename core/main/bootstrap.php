@@ -29,6 +29,7 @@ abstract class SystemCoreAbstract
 			$base . '/utils/',
 			$base . '/utils/connector/',
 			$base . '/utils/html_parser/',
+			$base . '/utils/Label/',
 			$base . '/utils/PDF/',
 			$base . '/utils/PhpBarcode/',
 			$base . '/utils/parseCSV/',
@@ -48,6 +49,8 @@ spl_autoload_register(array('SystemCoreAbstract','autoload'));
 // Bootstrap the Prado framework
 require_once dirname(__FILE__) . '/../3rdParty/PHPExcel/Classes/PHPExcel.php';
 require_once dirname(__FILE__) . '/../3rdParty/PHPMailer/PHPMailerAutoload.php';
+require_once dirname(__FILE__) . '/../3rdParty/PhpBarcode/PhpBarcode.php';
+require_once dirname(__FILE__) . '/../3rdParty/phpqrcode/phpqrcode.php';
 require_once dirname(__FILE__) . '/../3rdParty/framework/prado.php';
 
 ?>

@@ -186,7 +186,7 @@ class Product extends InfoEntityAbstract
 	public function addMaterial(Material $material)
 	{
 
-		if(ProductInfo::countByCriteria('productId = ? and typeId = ? and entityName = ? entityId = ?', array($this->getId(), ProductInfoType::ID_MATERIAL, get_class($material), $material->getId())) > 0)
+		if(ProductInfo::countByCriteria('productId = ? and typeId = ? and entityName = ? AND entityId = ?', array($this->getId(), ProductInfoType::ID_MATERIAL, get_class($material), $material->getId())) > 0)
 			return $this;
 		$this->addInfo(ProductInfoType::get(ProductInfoType::ID_MATERIAL), $material);
 		return $this;

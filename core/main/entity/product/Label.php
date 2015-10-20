@@ -81,7 +81,7 @@ class Label extends BaseEntityAbstract
 
 	public function getUseByDate()
 	{
-		return $this->useByDate;
+		return new UDate(trim($this->useByDate));
 	}
 
 	public function setUseByDate($date)
@@ -133,62 +133,7 @@ class Label extends BaseEntityAbstract
 	}
 	public function generateImg($width, $height)
 	{
-		$img = imagecreatetruecolor($width, $height);
-		$white = imagecolorallocate($img, 0, 255, 255);
-		imagefill($img, 0, 0, $white);
-
-		$black = imagecolorallocate($img, 0, 0, 0);
-		$productName = $this->getProduct()->getName();
-		$baseFont = 9;
-		$lineNo = 1;
-		$lineHeight = 24;
-		$fontFile = dirname(__FILE__) . '/../../../3rdParty/arial.ttf';
-		$this->_imagecenteredstring($img, $baseFont + 4, $width, $lineHeight * $lineNo, $productName, $black, $fontFile);
-		$lineNo++;
-		$this->_imagecenteredstring($img, $baseFont, $width, $lineHeight * $lineNo, 'Price', $black, $fontFile);
-		$lineNo++;
-		$this->_imagecenteredstring($img, $baseFont + 2, $width, $lineHeight * $lineNo, '$12.50', $black, $fontFile);
-		$lineNo++;
-		imagettftext($img, $baseFont + 2, 0, 5, $lineHeight * $lineNo, $black, $fontFile, 'Use By: 22/10/2015');
-		$lineNo++;
-		$this->_imagecenteredstring($img, $baseFont, $width, $lineHeight * $lineNo, 'Keep Refrigerated', $black, $fontFile);
-		$lineNo++;
-		imagettftext($img, $baseFont + 2, 0, 5, $lineHeight * $lineNo, $black, $fontFile, 'Allergen Warning:');
-		$lineNo++;
-		$this->_imagecenteredstring($img, $baseFont, $width, $lineHeight * $lineNo, 'Contain: FISH', $black, $fontFile);
-		$lineNo++;
-		imagettftext($img, $baseFont + 2, 0, 5, $lineHeight * $lineNo, $black, $fontFile, 'Ingredients:');
-		$ingredientsTxtArr = array();
-		foreach($this->getProduct()->getMaterials() as $material) {
-		    foreach($material->getIngredients() as $ingredient)
-		        $ingredientsTxtArr[] = $ingredient->getName();
-		}
-		$lineNo++;
-		$this->_imagecenteredstring($img, $baseFont, $width, $lineHeight * $lineNo, implode(', ', $ingredientsTxtArr), $black, $fontFile);
-
-		// Output the image
-		$file = '/tmp/label_' . md5('Label' . '|' . trim(UDate::now()));
-		imagejpeg($img, $file, 75);
-
-		// Free up memory
-		imagedestroy($img);
-		return $file;
-	}
-	/**
-	 * centering the text for the iamge
-	 *
-	 * @param unknown $img
-	 * @param unknown $fontSize
-	 * @param unknown $xMax
-	 * @param unknown $y
-	 * @param unknown $str
-	 * @param unknown $color
-	 * @param string $fontFile
-	 */
-	private function _imagecenteredstring ( &$img, $fontSize, $xMax, $y, $str, $color, $fontFile = null ) {
-		$textWidth = imagefontwidth( $fontSize ) * strlen( $str );
-		$xLoc = ( $xMax - 0 - $textWidth ) / 2;
-		imagettftext($img, $fontSize, 0, $xLoc, $y, $color, $fontFile, $str);
+		return LabelPrinter::generateImg($this, $width, $height);
 	}
 	/**
 	 * (non-PHPdoc)

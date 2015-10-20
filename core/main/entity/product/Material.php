@@ -65,22 +65,36 @@ class Material extends InfoEntityAbstract
 
 	public function getIngredients()
 	{
-		$materialInfoArray = MaterialInfo::getAllByCriteria('materialId = ? and typeId = ?', array($this->getId(), MaterialInfoType::ID_INGREDIENT));
+		$materialInfoArray = MaterialInfo::getAllByCriteria('materialId = ? and typeId = ? and entityName = ?', array($this->getId(), MaterialInfoType::ID_INGREDIENT, 'Ingredient'));
 		$ingredientIdArray = array();
 		foreach($materialInfoArray as $mi)
 			$ingredientIdArray[] = (trim($mi->getEntityId()) !== '' ? trim($mi->getEntityId()) : trim($mi->getValue()));
 
-		if(count($ingredientIdArray) <= 0)
+		if(count($ingredientIdArray) === 0)
 			return array();
+
 		$ingredientIdArray = array_unique($ingredientIdArray);
-		$criteria = "id IN (".implode(", ", array_fill(0, count($ingredientIdArray), '?')).")";
+		$criteria = "id IN (" . implode(", ", array_fill(0, count($ingredientIdArray), '?')) . ")";
 		return Ingredient::getAllByCriteria($criteria, $ingredientIdArray);
 	}
-
+	/**
+	 * set/adding a ingredient
+	 *
+	 * @param Ingredient $ingredient
+	 *
+	 * @return Material
+	 */
 	public function setIngredient(Ingredient $ingredient)
 	{
 		return $this->addIngredient($ingredient);
 	}
+	/**
+	 * Adding a ingredient
+	 *
+	 * @param Ingredient $ingredient
+	 *
+	 * @return Material
+	 */
 	public function addIngredient(Ingredient $ingredient)
 	{
 		if(MaterialInfo::countByCriteria('materialId = ? and typeId = ? and entityId = ? and entityName =?', array($this->getId(), MaterialInfoType::ID_INGREDIENT, $ingredient->getId(), get_class($ingredient))) > 0)
@@ -88,10 +102,13 @@ class Material extends InfoEntityAbstract
 		$this->addInfo(MaterialInfoType::get(MaterialInfoType::ID_INGREDIENT), $ingredient);
 		return $this;
 	}
+	/**
+	 *
+	 * @return Material
+	 */
 	public function clearIngredients()
 	{
-		MaterialInfo::deleteByCriteria('materialId = ? and typeId = ? and entityName = ?',
-										array($this->getId(), MaterialInfoType::ID_INGREDIENT, 'Ingredient') );
+		MaterialInfo::deleteByCriteria('materialId = ? and typeId = ? and entityName = ?', array($this->getId(), MaterialInfoType::ID_INGREDIENT, 'Ingredient') );
 		return $this;
 	}
 	public function removeIngredient(Ingredient $ingredient)
