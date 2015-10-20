@@ -1,12 +1,12 @@
 <?php
 /**
- * UserProfile Entity
+ * UserAccountInfo Entity
  *
  * @package    Core
  * @subpackage Entity
  * @author     lhe<helin16@gmail.com>
  */
-class UserProfile extends InfoAbstract
+class UserAccountInfo extends InfoAbstract
 {
 	/**
      * The UserAccount
@@ -27,9 +27,9 @@ class UserProfile extends InfoAbstract
 	/**
 	 * Setter UserAccount
 	 *
-	 * @param UserAccount $userAccount The UserAccount that this UserProfileType belongs to
+	 * @param UserAccount $userAccount The UserAccount that this UserAccountInfoType belongs to
 	 *
-	 * @return UserProfileType
+	 * @return UserAccountInfoType
 	 */
 	public function setUserAccount(UserAccount $userAccount)
 	{
@@ -56,7 +56,7 @@ class UserProfile extends InfoAbstract
      */
     public static function getRolesByUserAccount(UserAccount $userAccount, Store $store = null)
     {
-    	$objs = self::getAllByCriteria('entityName = :eName and typeId = :typeId and userAccountId = :uid' . ($store instanceof Store ? ' and value='. $store->getId() : ''), array('eName' => 'Role', 'typeId' => UserProfileType::ID_ROLE, 'uid' => $userAccount->getId()));
+    	$objs = self::getAllByCriteria('entityName = :eName and typeId = :typeId and userAccountId = :uid' . ($store instanceof Store ? ' and value='. $store->getId() : ''), array('eName' => 'Role', 'typeId' => UserAccountInfoType::ID_ROLE, 'uid' => $userAccount->getId()));
     	$roleIds = array();
     	foreach($objs as $obj)
     		$roleIds[] = $obj->getEntityId();
@@ -73,7 +73,7 @@ class UserProfile extends InfoAbstract
      */
     public static function getStoresByUserAccount(UserAccount $userAccount, Role $role = null)
     {
-    	$objs = self::getAllByCriteria('entityName = :eName and typeId = :typeId and userAccountId = :uid' . ($role instanceof Role ? ' and entityId='. $role->getId() : ''), array('eName' => 'Role', 'typeId' => UserProfileType::ID_ROLE, 'uid' => $userAccount->getId()));
+    	$objs = self::getAllByCriteria('entityName = :eName and typeId = :typeId and userAccountId = :uid' . ($role instanceof Role ? ' and entityId='. $role->getId() : ''), array('eName' => 'Role', 'typeId' => UserAccountInfoType::ID_ROLE, 'uid' => $userAccount->getId()));
     	$storeIds = array();
     	foreach($objs as $obj)
     		$storeIds[] = $obj->getValue();
@@ -97,11 +97,11 @@ class UserProfile extends InfoAbstract
      * @param UserAccount $userAccount
      * @param Role $role
      *
-     * @return UserProfile
+     * @return UserAccountInfo
      */
     public static function addRoleByUserAccount(UserAccount $userAccount, Role $role, Store $store)
     {
-    	return self::create($userAccount, UserProfileType::get(UserProfileType::ID_ROLE), $store->getId(), $role);
+    	return self::create($userAccount, UserAccountInfoType::get(UserAccountInfoType::ID_ROLE), $store->getId(), $role);
     }
     /**
      * remove a role for a user account
@@ -117,7 +117,7 @@ class UserProfile extends InfoAbstract
     	}
     	if($store instanceof Store)
     		$where .= ' AND value = ' . $store->getId();
-    	self::deleteByCriteria($where, array($userAccount->getId(), UserProfileType::ID_ROLE));
+    	self::deleteByCriteria($where, array($userAccount->getId(), UserAccountInfoType::ID_ROLE));
     }
 }
 ?>

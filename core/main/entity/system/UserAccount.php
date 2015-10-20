@@ -309,7 +309,7 @@ class UserAccount extends BaseEntityAbstract
      */
     public function getRoles(Store $store = null)
     {
-    	return UserProfile::getRolesByUserAccount($this, $store);
+    	return UserAccountInfo::getRolesByUserAccount($this, $store);
     }
     /**
      * getter Stores
@@ -318,7 +318,7 @@ class UserAccount extends BaseEntityAbstract
      */
     public function getStores(Role $role = null)
     {
-    	return UserProfile::getStoresByUserAccount($this, $role);
+    	return UserAccountInfo::getStoresByUserAccount($this, $role);
     }
     /**
      * Clear all the roles
@@ -327,7 +327,7 @@ class UserAccount extends BaseEntityAbstract
      */
     public function clearRoles()
     {
-    	UserProfile::clearRolesByUserAccount($this);
+    	UserAccountInfo::clearRolesByUserAccount($this);
     	return $this;
     }
     /**
@@ -339,7 +339,7 @@ class UserAccount extends BaseEntityAbstract
      */
     public function addRole(Role $role, Store $store)
     {
-    	UserProfile::addRoleByUserAccount($this, $role, $store);
+    	UserAccountInfo::addRoleByUserAccount($this, $role, $store);
     	return $this;
     }
     /**
@@ -351,7 +351,7 @@ class UserAccount extends BaseEntityAbstract
      */
     public function removeRole(Role $role, Store $store)
     {
-    	UserProfile::removeRoleByUserAccount($this, $role, $store);
+    	UserAccountInfo::removeRoleByUserAccount($this, $role, $store);
     	return $this;
     }
 }

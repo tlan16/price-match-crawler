@@ -447,8 +447,8 @@ CREATE TABLE `useraccount` (
 	,INDEX (`refId`)
 	,UNIQUE INDEX (`username`)
 ) ENGINE=innodb DEFAULT CHARSET=utf8;
-DROP TABLE IF EXISTS `userprofile`;
-CREATE TABLE `userprofile` (
+DROP TABLE IF EXISTS `useraccountinfo`;
+CREATE TABLE `useraccountinfo` (
 	`id` int(10) unsigned NOT NULL AUTO_INCREMENT,
 	`userAccountId` int(10) unsigned NOT NULL DEFAULT 0,
 	`typeId` int(10) unsigned NOT NULL DEFAULT 0,
@@ -469,8 +469,8 @@ CREATE TABLE `userprofile` (
 	,INDEX (`value`)
 	,INDEX (`entityName`)
 ) ENGINE=innodb DEFAULT CHARSET=utf8;
-DROP TABLE IF EXISTS `userprofiletype`;
-CREATE TABLE `userprofiletype` (
+DROP TABLE IF EXISTS `useraccountinfotype`;
+CREATE TABLE `useraccountinfotype` (
 	`id` int(10) unsigned NOT NULL AUTO_INCREMENT,
 	`name` varchar(100) NOT NULL DEFAULT '',
 	`active` bool NOT NULL DEFAULT 1,

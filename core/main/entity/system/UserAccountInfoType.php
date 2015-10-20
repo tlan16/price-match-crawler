@@ -1,12 +1,12 @@
 <?php
 /**
- * UserProfileType Entity
+ * UserAccountInfoType Entity
  *
  * @package    Core
  * @subpackage Entity
  * @author     lhe<helin16@gmail.com>
  */
-class UserProfileType extends InfoTypeAbstract
+class UserAccountInfoType extends InfoTypeAbstract
 {
 	const ID_ROLE = 1;
     /**
@@ -20,13 +20,13 @@ class UserProfileType extends InfoTypeAbstract
 		DaoMap::commit();
 	}
     /**
-     * create a new UserProfileType
+     * create a new UserAccountInfoType
      *
      * @param string $name
      * @param bool	 $active
      *
      * @throws Exception
-     * @return UserProfileType
+     * @return UserAccountInfoType
      */
     public static function create($name, $description = '')
     {
@@ -40,12 +40,12 @@ class UserProfileType extends InfoTypeAbstract
     	return $obj;
     }
     /**
-     * get UserProfileType by name
+     * get UserAccountInfoType by name
      *
      * @param string $name
      * @param bool	 $activeOnly
      *
-     * @return UserProfileType|null
+     * @return UserAccountInfoType|null
      */
     public static function getByName($name, $activeOnly = true)
     {
