@@ -40,6 +40,8 @@ class DetailsController extends DetailsPageAbstract
 				'name' => 'name_div'
 				,'description' => 'description_div'
 				,'ingredients' => 'ingredients_div'
+				,'new_material_nutrition' => 'new_material_nutrition_div'
+				,'material_nutrition' => 'material_nutrition_div'
 				,'comments' => 'comments_div'
 				,'saveBtn' => 'save_btn'
 		)) . ";";
