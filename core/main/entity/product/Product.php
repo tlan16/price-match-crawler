@@ -251,7 +251,7 @@ class Product extends InfoEntityAbstract
 	 */
 	public function printLabel(UDate $printedDate = null, UserAccount $printedBy = null, Label &$newLabel = null)
 	{
-		$newLabel = Label::create($product, $printedDate, $printedBy);
+		$newLabel = Label::create($this, $printedDate, $printedBy);
 		return $this;
 	}
 	/**

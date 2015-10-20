@@ -25,7 +25,7 @@ class InfoEntityAbstract extends BaseEntityAbstract
 	 * @var multiple:InfoAbstract
 	 */
 	protected $infos;
-	
+
 	/**
 	 * getter for name
 	 *
@@ -95,18 +95,18 @@ class InfoEntityAbstract extends BaseEntityAbstract
 	protected function getInfo($typeId, BaseEntityAbstract $entity = null, $value = '', $reset = false)
 	{
 		DaoMap::loadMap($this);
-		
+
 		$entityId = 0;
 		$entityName = '';
-		
+
 		if($entity !== null)
-		{	
+		{
 			$entityId = $entity->getId();
 			$entityName = get_class($entity);
 		}
-		
+
 		$cacheKey = get_called_class().$entityName.$entityId;
-		
+
 		if(!isset($this->_cache[$cacheKey]) || $reset === true)
 		{
 			if(!isset(DaoMap::$map[strtolower(get_class($this))]['infos']) || ($class = trim(DaoMap::$map[strtolower(get_class($this))]['infos']['class'])) === '')
@@ -115,11 +115,11 @@ class InfoEntityAbstract extends BaseEntityAbstract
 			$sql = 'select id from ' . strtolower($class) . ' `info` where `info`.active = 1 and `info`.' . strtolower(get_class($this)) . 'Id = ? and `info`.typeId = ?';
 			$params =  array($this->getId(), $typeId);
 			//if($entityName === null || trim($entityName) !== '')
-			
+
 			$sql .= " and `info`.entityName = ? ";
 			$sql .= " and `info`.entityId = ? ";
-			$params = array_merge($params, array($entityName, $entityId)); 
-			
+			$params = array_merge($params, array($entityName, $entityId));
+
 			$sql .= ' and `info`.value = ? ';
 			$params[] = trim($value);
 
@@ -170,7 +170,7 @@ class InfoEntityAbstract extends BaseEntityAbstract
 		{
 			//check whether we have one already
 			$infos = $this->getInfo($typeId, $entity, $value);
-			$info = count($infos) > 0 ? $infos[0] : $class::create($this, $infoType, $value, $entity);		
+			$info = count($infos) > 0 ? $infos[0] : $class::create($this, $infoType, $value, $entity);
 			$info->setActive(true)->save();
 		}
 
@@ -211,7 +211,7 @@ class InfoEntityAbstract extends BaseEntityAbstract
 	}
 	private function _getPersonJson(Person $person)
 	{
-		return array('id'=> $person->getId(), 
+		return array('id'=> $person->getId(),
 					'firstName'=> $person->getFirstName(),
 					'lastName'=> $person->getLastName(),
 					'fullName'=> $person->getFullName(),
@@ -227,22 +227,22 @@ class InfoEntityAbstract extends BaseEntityAbstract
 		DaoMap::setOneToMany("infos", get_class($this) . "Info", strtolower(get_class($this)) . "_info");
 		DaoMap::setStringType('name', 'varchar', 100);
 		DaoMap::setStringType('description','varchar', 255);
-		
+
 		parent::__loadDaoMap();
-		
+
 		DaoMap::createIndex('name');
 	}
-/**
+	/**
 	 * To create a new self
-	 * 
+	 *
 	 * @param string $name
 	 * @param string $description
 	 * @param bool	 $active
-	 * 
+	 *
 	 * @return InfoEntityAbstract
 	 * @throws Exception
 	 */
-	public static function create($name, $description = '') 
+	public static function create($name, $description = '')
 	{
 		$class = get_called_class();
 		if(($name = trim($name)) === '')
