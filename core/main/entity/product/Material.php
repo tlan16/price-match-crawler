@@ -39,7 +39,18 @@ class Material extends InfoEntityAbstract
 		MaterialNutrition::updateByCriteria('active = ?', 'materialId = ? and nutritionId = ?', array(0, $this->getId(), $nutrition->getId()));
 		return $this;
 	}
-
+	
+	/**
+	 * clears all nutrition related to this Material
+	 * 
+	 * @return Material 
+	 */
+	public function clearMaterialNutrition()
+	{
+		MaterialNutrition::updateByCriteria('active = ?', 'materialId = ?', array(0, $this->getId()));
+		return $this;
+	}
+	
 	/**
 	 * This function adds Nutrition to a Material
 	 *
