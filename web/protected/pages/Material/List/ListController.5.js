@@ -58,6 +58,7 @@ PageJs.prototype = Object.extend(new CRUDPageJs(), {
 	,_getResultRow: function(row, isTitle) {
 		var tmp = {};
 		tmp.me = this;
+		console.debug(row);
 		tmp.isTitle = (isTitle || false);
 		tmp.tag = (tmp.isTitle === true ? 'strong' : 'span');
 		tmp.row = new Element('span', {'class': 'row'})
@@ -68,7 +69,7 @@ PageJs.prototype = Object.extend(new CRUDPageJs(), {
 			.writeAttribute('item_id', row.id)
 			.insert({'bottom': new Element(tmp.tag, {'class': 'name col-md-6'}).update(row.name) })
 			.insert({'bottom': new Element(tmp.tag, {'class': 'description col-md-2'}).update(row.description) })
-			.insert({'bottom': new Element(tmp.tag, {'class': 'allergents col-md-2'}).update(tmp.isTitle === true ? 'Allgergents' : tmp.me._getNamesString(row.infos.allergents)) })
+			.insert({'bottom': new Element(tmp.tag, {'class': 'ingredients col-md-2'}).update(tmp.isTitle === true ? 'Ingredients' : tmp.me._getNamesString(row.infos.ingredients)) })
 			.insert({'bottom': new Element(tmp.tag, {'class': 'text-right btns col-md-2'}).update(
 				tmp.isTitle === true ?  
 					(new Element('span', {'class': 'btn btn-primary btn-xs', 'title': 'New'})

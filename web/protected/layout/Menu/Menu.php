@@ -27,7 +27,7 @@ class Menu extends TTemplateControl
 			)
 			,'Resources' => array(
 				'icon' => '<span class="glyphicon glyphicon-th-list"></span>'
-				,'ingradients' => array('url' => '/ingradients.html', 'name' => 'Ingradients', 'icon' => '')
+				,'ingredients' => array('url' => '/ingredients.html', 'name' => 'Ingredients', 'icon' => '')
 				,'allergents' => array('url' => '/allergents.html', 'name' => 'Allergents', 'icon' => '')
 				,'nutritions' => array('url' => '/nutritions.html', 'name' => 'Nutritions', 'icon' => '')
 				,'servemeasurements' => array('url' => '/servemeasurements.html', 'name' => 'Serve Measurements', 'icon' => '')

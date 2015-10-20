@@ -4,6 +4,7 @@
 var DetailsPageJs = new Class.create();
 DetailsPageJs.prototype = Object.extend(new BPCPageJs(), {
 	_item: null //the item we are dealing with
+	,_readOnlyMode: false
 	,_dirty: false
 	/**
 	 * Getting a form group for forms
@@ -61,9 +62,9 @@ DetailsPageJs.prototype = Object.extend(new BPCPageJs(), {
 				tmp.me.closeFancyBox();
 			});
 		
-		tmp.container.update('')
-			.insert({'bottom': tmp.me._getFormGroup(tmp.title, tmp.save).addClassName('col-md-6') })
-			.insert({'bottom': tmp.me._getFormGroup(tmp.title, tmp.cancel).addClassName('pull-right col-md-6') })
+		tmp.container.update('').addClassName('row')
+			.insert({'bottom': tmp.me._getFormGroup(tmp.title, tmp.save).addClassName('col-xs-6') })
+			.insert({'bottom': tmp.me._getFormGroup(tmp.title, tmp.cancel).addClassName('pull-right col-xs-6') })
 		;
 		
 		if(tmp.me._dirty === false)
@@ -80,7 +81,7 @@ DetailsPageJs.prototype = Object.extend(new BPCPageJs(), {
 		tmp.me = this;
 		tmp.title = (title || tmp.me.ucfirst(saveItem));
 		tmp.required = (required === true);
-		tmp.className = (className || 'col-md-12');
+		tmp.className = (className || 'col-xs-12');
 		tmp.format = (format || 'DD/MM/YYYY');
 		
 		if(!container.id)
@@ -117,14 +118,9 @@ DetailsPageJs.prototype = Object.extend(new BPCPageJs(), {
 			}
 			else tmp.newValue = '';
 			
-			console.debug(tmp.newValue);
 			tmp.input.writeAttribute('dirty', value !== tmp.newValue);
 			tmp.me._refreshDirty()._getSaveBtn();
 		});
-		
-//		typeof jQuery(document).datetimepicker
-//		tmp.date = jQuery('#' + item.id).data('DateTimePicker').date();
-//		tmp.me._searchCriteria[tmp.field] = tmp.date ? new Date(tmp.date.local().format('YYYY-MM-DDT' + (tmp.field === 'orderDate_from' || tmp.field === 'invDate_from' ? '00:00:00' : '23:59:59'))) : '';
 		
 		return tmp.me;
 	}
@@ -133,7 +129,7 @@ DetailsPageJs.prototype = Object.extend(new BPCPageJs(), {
 		tmp.me = this;
 		tmp.title = (title || tmp.me.ucfirst(saveItem));
 		tmp.required = (required === true);
-		tmp.className = (className || 'col-md-12');
+		tmp.className = (className || 'col-xs-12');
 		tmp.isCurrency = (isCurrency === true);
 		
 		if(!container.id)
@@ -174,12 +170,13 @@ DetailsPageJs.prototype = Object.extend(new BPCPageJs(), {
 		tmp.me._dirty = tmp.dirty;
 		return tmp.me;
 	}
-	,_getSelect2Div:function(searchEntityName, saveItem, value, container, title, required, select2Options) {
+	,_getSelect2Div:function(searchEntityName, saveItem, value, container, title, required, select2Options, className) {
 		var tmp = {};
 		tmp.me = this;
 		tmp.title = (title || tmp.me.ucfirst(saveItem));
 		tmp.required = (required === true);
 		tmp.select2Options = (select2Options || null);
+		tmp.className = (className || 'col-xs-12');
 		
 		if(!container.id)
 			tmp.me._signRandID(container);
@@ -190,15 +187,17 @@ DetailsPageJs.prototype = Object.extend(new BPCPageJs(), {
 			.writeAttribute('required', tmp.required)
 			.writeAttribute('save-item', saveItem);
 		
-		tmp.container.update(tmp.me._getFormGroup(tmp.title, tmp.select2).addClassName('col-md-12') );
+		tmp.container.update(tmp.me._getFormGroup(tmp.title, tmp.select2).addClassName(tmp.className) );
 		
 		tmp.me._signRandID(tmp.select2);
 		
 		tmp.data = [];
 		if(tmp.me._item && tmp.me._item.id) {
-			value.each(function(item){
-				tmp.data.push({'id': item.id, 'text': item.name, 'data': item});
-			});
+			if(Array.isArray(value)) {
+				value.each(function(item){
+					tmp.data.push({'id': item.id, 'text': item.name, 'data': item});
+				});
+			} else tmp.data = value;
 		}
 		
 		tmp.selectBox = jQuery('#'+tmp.select2.id).select2(tmp.select2Options ? tmp.select2Options : {
@@ -230,7 +229,7 @@ DetailsPageJs.prototype = Object.extend(new BPCPageJs(), {
 			tmp.selectBox.attr('dirty', tmp.selectBox.val() !== tmp.me._getNamesString(value,'id',','));
 			tmp.me._refreshDirty()._getSaveBtn();
 		});
-		if(tmp.me._item.id && tmp.me._item.infos && tmp.me._item.infos.allergents)
+		if(tmp.data)
 			tmp.selectBox.select2('data', tmp.data);
 		return tmp.me;
 	}
@@ -288,7 +287,29 @@ DetailsPageJs.prototype = Object.extend(new BPCPageJs(), {
 		var tmp = {};
 		tmp.me = this;
 		tmp.me._init();
-		$(tmp.me.getHTMLID('itemDiv')).update(tmp.me._getItemDiv());
+		
+		$(tmp.me.getHTMLID('itemDiv')).addClassName('row');
+		tmp.me
+			._getInputDiv('name', (tmp.me._item.name || ''), $(tmp.me._containerIds.name), null ,true)
+			._getInputDiv('description', (tmp.me._item.description || ''), $(tmp.me._containerIds.description))
+			._getSaveBtn()
+		;
+		return tmp.me;
+	}
+	,_getCommentsDiv() {
+		var tmp = {};
+		tmp.me = this;
+
+		tmp.container = $(tmp.me._containerIds.comments);
+		
+		tmp.comments = new Element('div');
+		
+		tmp.container.insert({'bottom': tmp.me._getFormGroup('Comments', tmp.comments, true).addClassName('col-md-12') });
+		
+		tmp.me._signRandID(tmp.comments);
+		
+		new CommentsDivJs(tmp.me, tmp.me._focusEntity, tmp.me._item.id)._setDisplayDivId(tmp.comments.id).render();
+		
 		return tmp.me;
 	}
 });
