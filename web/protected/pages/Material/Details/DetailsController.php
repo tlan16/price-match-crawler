@@ -74,23 +74,42 @@ class DetailsController extends DetailsPageAbstract
 			$ingredientIds = array();
 			if (isset ( $params->CallbackParameter->ingredients ) && ($tmp = trim($params->CallbackParameter->ingredients)) !== '' )
 				$ingredientIds = explode(',', $tmp);
-			else $description = trim($params->CallbackParameter->description);
 			if (isset ( $params->CallbackParameter->id ) && !($entity = $focusEntity::get(intval($params->CallbackParameter->id))) instanceof $focusEntity )
 				throw new Exception ( 'System Error: invalid id passed in.' );
 			
+			$ingredients = array();
+			foreach ($ingredientIds as $ingredientId)
+			{
+				if(($ingredientId = intval($ingredientId)) !== 0 && ($ingredient = Ingredient::get($ingredientId)) instanceof Ingredient)
+					$ingredients[] = $ingredient;
+			}
+				
+			$material_nutritions = array();
+			foreach ($params->CallbackParameter->material_nutrition as $material_nutrition)
+			{
+				if (!isset ($material_nutrition->nutrition) || ($nutritionId = intval( $material_nutrition->nutrition )) === 0 || !($nutrition = Nutrition::get($nutritionId)) instanceof Nutrition)
+					continue;
+				if (!isset ($material_nutrition->qty) || ($qty = trim ( $material_nutrition->qty )) === '')
+					continue;
+				if (!isset ($material_nutrition->serveMeasurement) || ($serveMeasurementId = intval ( $material_nutrition->serveMeasurement )) === 0 || !($serveMeasurement = ServeMeasurement::get($serveMeasurementId)) instanceof ServeMeasurement)
+					continue;
+				$material_nutritions[] = array('nutrition' => $nutrition, 'qty' => $qty, 'serveMeasurement' => $serveMeasurement);
+			}
+				
 			Dao::beginTransaction();
 			
 			if(!isset($entity) || !$entity instanceof $focusEntity)
-				$entity = $focusEntity::create($name,$description);
-			else $entity->setName($name)->setDescription($description);
-			
-			$entity->clearIngredients();
-			foreach ($ingredientIds as $ingredientId)
-			{
-				if(($ingredient = Ingredient::get($ingredientId)) instanceof Ingredient)
+				$entity = $focusEntity::createWithParams($name, $description, $ingredients);
+			else {
+				$entity->setName($name)->setDescription($description)->clearIngredients();
+				foreach ($ingredients as $ingredient)
 					$entity->addIngredient($ingredient);
 			}
-				
+			
+			$entity->clearMaterialNutrition();
+			foreach ($material_nutritions as $material_nutrition)
+				$entity->addNutrition($material_nutrition['nutrition'], $material_nutrition['qty'], $material_nutrition['serveMeasurement']);
+			
 			$results ['item'] = $entity->save()->getJson ();
 			Dao::commitTransaction ();
 		}

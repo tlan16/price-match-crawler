@@ -23,7 +23,7 @@ PageJs.prototype = Object.extend(new DetailsPageJs(), {
 		});
 		return tmp.me;
 	}
-	,_addNewNutritionBtn(container) {
+	,_addNewNutritionBtn: function(container) {
 		var tmp = {};
 		tmp.me = this;
 		tmp.container = (container || null);
@@ -43,7 +43,7 @@ PageJs.prototype = Object.extend(new DetailsPageJs(), {
 		tmp.container.update(tmp.me._getFormGroup('', tmp.newBtn).addClassName('col-xs-12'));
 		return tmp.me;
 	}
-	,_getNutritionRowDeleteBtn(material_nutrition, className) {
+	,_getNutritionRowDeleteBtn: function(material_nutrition, className) {
 		var tmp = {};
 		tmp.me = this;
 		tmp.material_nutrition = (material_nutrition || null);
@@ -69,7 +69,7 @@ PageJs.prototype = Object.extend(new DetailsPageJs(), {
 			;
 		return tmp.deleteBtn;
 	}
-	,_addNutritionRow(material_nutrition, container) {
+	,_addNutritionRow: function(material_nutrition, container) {
 		var tmp = {};
 		tmp.me = this;
 		tmp.material_nutrition = (material_nutrition || null);
@@ -145,5 +145,20 @@ PageJs.prototype = Object.extend(new DetailsPageJs(), {
 			._getSelect2Div('ServeMeasurement', 'serveMeasurement', (tmp.material_nutrition ? {'id': tmp.material_nutrition.serveMeasurement.id, 'text': tmp.material_nutrition.serveMeasurement.name, 'data': tmp.material_nutrition.serveMeasurement} : null), tmp.servemeasurement, null, true, tmp.serveMeasurementSelect2Options)
 		;
 		return tmp.me;
+	}
+	,collectData: function() {
+		var tmp = {};
+		tmp.me = this;
+		tmp.data = tmp.me._collectFormData($(tmp.me.getHTMLID('itemDiv')), 'save-item');
+		if(!tmp.data)
+			return null;
+		tmp.data['material_nutrition'] = [];
+		$(tmp.me.getHTMLID('itemDiv')).getElementsBySelector('.material_nutrition[material_nutrition_id]').each(function(item){
+			tmp.material_nutrition = tmp.me._collectFormData($(item), 'save-item');
+			if(tmp.material_nutrition)
+				tmp.data['material_nutrition'].push(tmp.material_nutrition);
+		});
+		
+		return tmp.data;
 	}
 });
