@@ -36,7 +36,7 @@ PageJs.prototype = Object.extend(new DetailsPageJs(), {
 		tmp.me
 			._getInputDiv('name', (tmp.me._item.name || ''), $(tmp.me._containerIds.name), null ,true)
 			._getInputDiv('description', (tmp.me._item.description || ''), $(tmp.me._containerIds.description))
-			._getSelect2Div('Allergent', 'allergents', tmp.me._item.id ? tmp.me._item.infos.allergents : [], $(tmp.me._containerIds.allergents), null)
+			._getSelect2Div('Ingredient', 'ingredients', tmp.me._item.id ? tmp.me._item.infos.ingredients : [], $(tmp.me._containerIds.ingredients), null)
 			._getSaveBtn()
 		;
 		return tmp.me;

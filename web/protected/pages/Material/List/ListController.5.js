@@ -3,22 +3,7 @@
  */
 var PageJs = new Class.create();
 PageJs.prototype = Object.extend(new CRUDPageJs(), {
-	_getTitleRowData: function() {
-		return {'id': "ID", 'active': 'Active', 'name': 'Name', 'description': 'Description'};
-	}
-	,_bindSearchKey: function() {
-		var tmp = {}
-		tmp.me = this;
-		$('searchPanel').getElementsBySelector('[search_field]').each(function(item) {
-			item.observe('keydown', function(event) {
-				tmp.me.keydown(event, function() {
-					$('searchBtn').click();
-				});
-			})
-		});
-		return this;
-	}
-	,loadSelect2: function() {
+	loadSelect2: function() {
 		var tmp = {};
 		tmp.me = this;
 		
@@ -29,7 +14,7 @@ PageJs.prototype = Object.extend(new CRUDPageJs(), {
 			jQuery(this).select2(tmp.options);
 		});
 		
-		tmp.selectBox = jQuery('[search_field="ingr.allergents"]').select2({
+		tmp.selectBox = jQuery('[search_field="mat.ingredients"]').select2({
 			minimumInputLength: 1,
 			allowClear: true,
 			multiple: true,
@@ -39,7 +24,33 @@ PageJs.prototype = Object.extend(new CRUDPageJs(), {
 				,url: '/ajax/getAll'
 				,type: 'GET'
 				,data: function (params) {
-					return {"searchTxt": 'name like ?', 'searchParams': ['%' + params + '%'], 'entityName': 'Allergent', 'pageNo': 1};
+					return {"searchTxt": 'name like ?', 'searchParams': ['%' + params + '%'], 'entityName': 'Ingredient', 'pageNo': 1};
+				}
+				,results: function(data, page, query) {
+					tmp.result = [];
+					if(data.resultData && data.resultData.items) {
+						data.resultData.items.each(function(item){
+							tmp.result.push({'id': item.id, 'text': item.name, 'data': item});
+						});
+					}
+					return { 'results' : tmp.result };
+				}
+			}
+			,cache: true
+			,escapeMarkup: function (markup) { return markup; } // let our custom formatter work
+		});
+		
+		tmp.selectBox = jQuery('[search_field="mat.nutritions"]').select2({
+			minimumInputLength: 1,
+			allowClear: true,
+			multiple: true,
+			width: "100%",
+			ajax: {
+				delay: 250
+				,url: '/ajax/getAll'
+				,type: 'GET'
+				,data: function (params) {
+					return {"searchTxt": 'name like ?', 'searchParams': ['%' + params + '%'], 'entityName': 'Nutrition', 'pageNo': 1};
 				}
 				,results: function(data, page, query) {
 					tmp.result = [];
@@ -55,6 +66,28 @@ PageJs.prototype = Object.extend(new CRUDPageJs(), {
 			,escapeMarkup: function (markup) { return markup; } // let our custom formatter work
 		});
 	}
+	,_getNutritionNameString(row) {
+		var tmp = {};
+		tmp.me = this;
+		tmp.result = '';
+		tmp.names = [];
+		tmp.glue = ', ';
+		
+		if(row.infos.material_nutrition && Array.isArray(row.infos.material_nutrition) && row.infos.material_nutrition.length > 0) {
+			row.infos.material_nutrition.each(function(item){
+				if(item.nutrition && item.nutrition.name) {
+					tmp.name = item.nutrition.name;
+					if(item.qty && item.serveMeasurement && item.serveMeasurement.name)
+						tmp.name += '(' + item.qty + ' ' + item.serveMeasurement.name + ')';
+					tmp.names.push(tmp.name);
+				}
+			});
+		}
+		
+		if(tmp.names.length > 0)
+			tmp.result = tmp.names.join(tmp.glue);
+		return tmp.result;
+	}
 	,_getResultRow: function(row, isTitle) {
 		var tmp = {};
 		tmp.me = this;
@@ -66,10 +99,11 @@ PageJs.prototype = Object.extend(new CRUDPageJs(), {
 			.addClassName('list-group-item')
 			.addClassName('item_row')
 			.writeAttribute('item_id', row.id)
-			.insert({'bottom': new Element(tmp.tag, {'class': 'name col-md-6'}).update(row.name) })
-			.insert({'bottom': new Element(tmp.tag, {'class': 'description col-md-2'}).update(row.description) })
-			.insert({'bottom': new Element(tmp.tag, {'class': 'allergents col-md-2'}).update(tmp.isTitle === true ? 'Allgergents' : tmp.me._getNamesString(row.infos.allergents)) })
-			.insert({'bottom': new Element(tmp.tag, {'class': 'text-right btns col-md-2'}).update(
+			.insert({'bottom': new Element(tmp.tag, {'class': 'name col-sm-4 col-xs-12'}).update(row.name) })
+			.insert({'bottom': new Element(tmp.tag, {'class': 'description col-sm-2 col-xs-12'}).update(row.description) })
+			.insert({'bottom': new Element(tmp.tag, {'class': 'ingredients col-sm-2 col-xs-12'}).update(tmp.isTitle === true ? 'Ingredients' : tmp.me._getNamesString(row.infos.ingredients)) })
+			.insert({'bottom': new Element(tmp.tag, {'class': 'nutritions col-sm-2 col-xs-12'}).update(tmp.isTitle === true ? 'Nutritions' : tmp.me._getNutritionNameString(row) ) })
+			.insert({'bottom': new Element(tmp.tag, {'class': 'text-right btns col-sm-2 col-xs-12'}).update(
 				tmp.isTitle === true ?  
 					(new Element('span', {'class': 'btn btn-primary btn-xs', 'title': 'New'})
 						.insert({'bottom': new Element('span', {'class': 'glyphicon glyphicon-plus'}) })
@@ -102,56 +136,5 @@ PageJs.prototype = Object.extend(new CRUDPageJs(), {
 			) })
 		;
 		return tmp.row;
-	}
-	,_openDetailsPage: function(row) {
-		var tmp = {};
-		tmp.me = this;
-		jQuery.fancybox({
-			'width'			: '95%',
-			'height'		: '95%',
-			'modal'			: true,
-			'autoScale'     : false,
-			'autoDimensions': false,
-			'fitToView'     : false,
-			'autoSize'      : false,
-			'type'			: 'iframe',
-			'href'			: '/material/' + (row ? row.id : 'new') + '.html',
-			'helpers'		: {
-				'overlay': {
-			    	'locked': false
-				}
-			},
-			'beforeClose'	    : function() {
-			}
- 		});
-		return tmp.me;
-	}
-	,_updateItem: function(btn, entityId, newValue, method) {
-		var tmp = {};
-		tmp.me = this;
-		tmp.itemId = $(btn).up('.item_row[item_id]').readAttribute('item_id');
-		tmp.data = {'itemId': tmp.itemId, 'entityId': entityId, 'newValue': newValue, 'method': method};
-		if(tmp.data === null)
-			return;
-
-		tmp.me.postAjax(tmp.me.getCallbackId('updateItem'), tmp.data, {
-			'onLoading': function () {
-				$(btn).hide();
-			}
-			,'onSuccess': function(sender, param) {
-				try{
-					tmp.result = tmp.me.getResp(param, false, true);
-					if(!tmp.result || !tmp.result.item)
-						return;
-					tmp.row = $(tmp.me.resultDivId).down('#'+tmp.me.resultDivId+'-body').down('.item_row[item_id=' + tmp.result.item.id + ']');
-					tmp.newRow = tmp.me._getResultRow(tmp.result.item).addClassName('list-group-item').addClassName('item_row').writeAttribute('item_id', tmp.result.item.id);
-					tmp.row.replace(tmp.newRow);
-				} catch (e) {
-					tmp.me.showModalBox('<span class="text-danger">ERROR:</span>', e, true);
-					$(btn).show();
-				}
-			}
-		});
-		return tmp.me;
 	}
 });

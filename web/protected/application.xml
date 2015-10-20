@@ -51,10 +51,10 @@
 			<!-- FrontEnd:: Nutrition Detail page -->
 			<url ServiceParameter="Nutrition.Details.DetailsController" pattern="nutrition/{id}.html" parameters.id="new|\d+"/>
 			
-			<!-- FrontEnd:: Ingradient list page -->
-			<url ServiceParameter="Ingradient.List.ListController" pattern="ingradients.html" />
-			<!-- FrontEnd:: Ingradient Detail page -->
-			<url ServiceParameter="Ingradient.Details.DetailsController" pattern="ingradient/{id}.html" parameters.id="new|\d+"/>
+			<!-- FrontEnd:: Ingredient list page -->
+			<url ServiceParameter="Ingredient.List.ListController" pattern="ingredients.html" />
+			<!-- FrontEnd:: Ingredient Detail page -->
+			<url ServiceParameter="Ingredient.Details.DetailsController" pattern="ingredient/{id}.html" parameters.id="new|\d+"/>
 			
 			<!-- FrontEnd:: Allergent list page -->
 			<url ServiceParameter="Allergent.List.ListController" pattern="allergents.html" />

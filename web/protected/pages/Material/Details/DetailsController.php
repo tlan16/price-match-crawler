@@ -39,7 +39,7 @@ class DetailsController extends DetailsPageAbstract
 		$js .= "pageJs._containerIds=" . json_encode(array(
 				'name' => 'name_div'
 				,'description' => 'description_div'
-				,'allergents' => 'allergents_div'
+				,'ingredients' => 'ingredients_div'
 				,'comments' => 'comments_div'
 				,'saveBtn' => 'save_btn'
 		)) . ";";
@@ -69,9 +69,9 @@ class DetailsController extends DetailsPageAbstract
 			$description = '';
 			if (isset ( $params->CallbackParameter->description ) )
 				$description = trim($params->CallbackParameter->description);
-			$allergentIds = array();
-			if (isset ( $params->CallbackParameter->allergents ) && ($tmp = trim($params->CallbackParameter->allergents)) !== '' )
-				$allergentIds = explode(',', $tmp);
+			$ingredientIds = array();
+			if (isset ( $params->CallbackParameter->ingredients ) && ($tmp = trim($params->CallbackParameter->ingredients)) !== '' )
+				$ingredientIds = explode(',', $tmp);
 			else $description = trim($params->CallbackParameter->description);
 			if (isset ( $params->CallbackParameter->id ) && !($entity = $focusEntity::get(intval($params->CallbackParameter->id))) instanceof $focusEntity )
 				throw new Exception ( 'System Error: invalid id passed in.' );
@@ -82,11 +82,11 @@ class DetailsController extends DetailsPageAbstract
 				$entity = $focusEntity::create($name,$description);
 			else $entity->setName($name)->setDescription($description);
 			
-			$entity->clearAllergents();
-			foreach ($allergentIds as $allergentId)
+			$entity->clearIngredients();
+			foreach ($ingredientIds as $ingredientId)
 			{
-				if(($allergent = Allergent::get($allergentId)) instanceof Allergent)
-					$entity->addAllergent($allergent);
+				if(($ingredient = Ingredient::get($ingredientId)) instanceof Ingredient)
+					$entity->addIngredient($ingredient);
 			}
 				
 			$results ['item'] = $entity->save()->getJson ();

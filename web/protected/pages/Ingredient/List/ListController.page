@@ -11,19 +11,26 @@
 			</div>
 			<div class="panel-body search-panel" style="/**display: none;**/">
 				<div class="row">
-					<div class="col-sm-3">
+					<div class="col-md-3">
 						<div class="form-group form-group-sm input-group">
                            <label for="ingr.name" class="input-group-addon">Name:</label>
                            <input type="text" class="form-control input-sm" search_field="ingr.name" placeholder="The Name of the <%= $this->getFocusEntity() %>">
                        </div>
 					</div>
-					<div class="col-sm-3">
+					<div class="col-md-3">
 						<div class="form-group form-group-sm input-group">
                            <label for="ingr.description" class="input-group-addon">Description:</label>
                            <input type="text" class="form-control input-sm" search_field="ingr.description" placeholder="The Description of the <%= $this->getFocusEntity() %>">
                        </div>
 					</div>
-					<div class="col-sm-1">
+					<div class="col-md-4">
+						<div class="form-group form-group-sm input-group">
+                           <label for="ingr.allergents" class="control-label input-group-addon">Allergents?</label>
+                           <input class="form-control input-sm select2" search_field="ingr.allergents" data-minimum-results-for-search="Infinity" data-width="100%" data-multiple="true">
+                           </input>
+                       </div>
+					</div>
+					<div class="col-md-2">
 						<div class="form-group form-group-sm input-group">
                            <label for="ingr.active" class="control-label input-group-addon">Active?</label>
                            <select class="form-control input-sm select2" search_field="ingr.active" data-minimum-results-for-search="Infinity" data-width="100%">
@@ -31,13 +38,6 @@
                            		<option value="0">NO</option>
                            		<option value="3">ALL</option>
                            </select>
-                       </div>
-					</div>
-					<div class="col-sm-4">
-						<div class="form-group form-group-sm input-group">
-                           <label for="ingr.allergents" class="control-label input-group-addon">Allergents?</label>
-                           <input class="form-control input-sm select2" search_field="ingr.allergents" data-minimum-results-for-search="Infinity" data-width="100%" data-multiple="true">
-                           </input>
                        </div>
 					</div>
 				</div>
