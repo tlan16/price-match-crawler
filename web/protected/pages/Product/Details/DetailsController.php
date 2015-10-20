@@ -83,9 +83,9 @@ class DetailsController extends DetailsPageAbstract
 			$useByVariance = isset ( $params->CallbackParameter->useByVariance ) ? intval($params->CallbackParameter->useByVariance) : '';
 			$unitPrice = StringUtilsAbstract::getValueFromCurrency(isset ( $params->CallbackParameter->unitPrice ) ? trim(isset ( $params->CallbackParameter->unitPrice)) : 0);
 			$allStores = (isset ( $params->CallbackParameter->allStores ) && intval($params->CallbackParameter->allStores) === 1);
-			$materials = array();
-			$categories = array();
-			$stores = array();
+			$materials = $this->_idsToObjs($params->CallbackParameter, 'materials', 'Material');
+			$categories = $this->_idsToObjs($params->CallbackParameter, 'categories', 'Category');
+			$stores = $this->_idsToObjs($params->CallbackParameter, 'stores', 'Store');
 			
 			if(!$entity instanceof $focusEntity) {
 				$entity = Product::createWithParams($name, $description, $barcode, $size, $useByVariance, $unitPrice, $labelVersionNo, $materials, $categories);
@@ -120,6 +120,13 @@ class DetailsController extends DetailsPageAbstract
 			$errors[] = $ex->getMessage();
 		}
 		$params->ResponseData = StringUtilsAbstract::getJson($results, $errors);
+	}
+	
+	private function _idsToObjs($param, $name, $entityName)
+	{
+		if(!isset($param->$name) || ($ids = trim($param->$name)) === 0 || count($ids = explode(',', $ids)) === 0)
+			return array();
+		return $entityName::getAllByCriteria('id IN ('.implode(", ", array_fill(0, count($ids), '?')).')', $ids);
 	}
 }
 ?>

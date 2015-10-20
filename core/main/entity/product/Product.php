@@ -122,17 +122,13 @@ class Product extends InfoEntityAbstract
 	 */
 	public function getCategories()
 	{
-		$categories = array();
-		$piArray = ProductInfo::getAllByCriteria('productId = ? and typeId = ? and entityName = ?', array($this->getId(), ProductInfoType::ID_CATEGORY, 'Category'));
-
 		$categoryIds = array();
-		foreach($piArray as $pi)
+		$piArray = ProductInfo::getAllByCriteria('productId = ? and typeId = ? and entityName = ?', array($this->getId(), ProductInfoType::ID_CATEGORY, 'Category'));
+		foreach($piArray as $productInfo)
 			$categoryIds[] = (trim($productInfo->getEntityId()) !== '' ? trim($productInfo->getEntityId()) : trim($productInfo->getValue()));
-
-		if(count($categoryIds) > 0) {
-			$categories = Category::getAllByCriteria('id IN (' . implode(", ", array_fill(0, count($categoryIds), '?')) . ')', $categoryIds);
-		}
-		return $categories;
+		if(count($categoryIds) === 0)
+			return array();
+		return Category::getAllByCriteria('id IN (' . implode(", ", array_fill(0, count($categoryIds), '?')) . ')', $categoryIds);
 	}
 	/**
 	 * adding to a category
@@ -168,24 +164,22 @@ class Product extends InfoEntityAbstract
 	}
 
 	/**
-	 *
-	 * @return Ambigous <multitype:, Ambigous, multitype:BaseEntityAbstract >
+	 * Getting all the Materials
+	 * 
+	 * @return array
 	 */
 	public function getMaterials()
 	{
-		$materialArray = array();
-		$piArray = ProductInfo::getAllByCriteria('productId = ? and typeId = ? and entityName = ?', array($this->getId(), ProductInfoType::ID_MATERIAL, ProductInfoType::ENTITY_NAME_MATERIAL));
 		$materialIdArray = array();
+		$piArray = ProductInfo::getAllByCriteria('productId = ? and typeId = ? and entityName = ?', array($this->getId(), ProductInfoType::ID_MATERIAL, ProductInfoType::ENTITY_NAME_MATERIAL));
 		foreach($piArray as $pi)
 			$materialIdArray[] = (trim($pi->getEntityId()) !== '' ? trim($pi->getEntityId()) : trim($pi->getValue()));
 
-		if(count($materialIdArray) > 0)
-		{
-			$materialIdArray = array_unique($materialIdArray);
-			$materialArray = Material::getAllByCriteria('id IN ('.implode(", ", array_fill(0, count($materialIdArray), '?')).')', $materialIdArray);
-		}
-
-		return $materialArray;
+		if(count($materialIdArray) === 0)
+			return array();
+		
+		$materialIdArray = array_unique($materialIdArray);
+		return Material::getAllByCriteria('id IN ('.implode(", ", array_fill(0, count($materialIdArray), '?')).')', $materialIdArray);
 	}
 	/**
 	 * Adding material
@@ -225,6 +219,25 @@ class Product extends InfoEntityAbstract
 	{
 		ProductInfo::updateByCriteria('active = ?', 'productId = ? and typeId = ? and entityName = ?', array(0, $this->getId(), ProductInfoType::ID_MATERIAL, ProductInfoType::ENTITY_NAME_MATERIAL));
 		return $this;
+	}
+	/**
+	 * Getting all the stores
+	 *
+	 * @param Store  $store
+	 *
+	 * @return Product
+	 */
+	public function getStores()
+	{
+		$storeInfos = ProductInfo::getAllByCriteria('productId = ? and typeId = ? and entityName = ?', array($this->getId(), ProductInfoType::ID_STORE, ProductInfoType::ENTITY_NAME_STORE));
+		$ids = array();
+		foreach($storeInfos as $info)
+			$ids[] = (trim($info->getEntityId()) !== '' ? trim($info->getEntityId()) : trim($pi->getValue()));
+		
+		if(count($ids) === 0)
+			return array();
+		$ids = array_unique($ids);
+		return Store::getAllByCriteria('id IN ('.implode(", ", array_fill(0, count($ids), '?')).')', $ids);
 	}
 	/**
 	 * Adding a store with unit price
@@ -273,6 +286,10 @@ class Product extends InfoEntityAbstract
 		ProductInfo::updateByCriteria('active = ?', 'productId = ? and typeId = ? and entityName = ?', array(0, $this->getId(), ProductInfoType::ID_STORE, ProductInfoType::ENTITY_NAME_STORE));
 		return $this;
 	}
+	public function isSellinAllStores()
+	{
+		return ProductInfo::countByCriteria('typeId = ? and entityName = ? and productId = ? and active = 1 and entityId = 0', array(ProductInfoType::ID_STORE, ProductInfoType::ENTITY_NAME_STORE, $this->getId())) > 0;
+	}
 	/**
 	 * Print a label
 	 *
@@ -294,20 +311,13 @@ class Product extends InfoEntityAbstract
 	public function getJson($extra = array(), $reset = false)
 	{
 		$array = $extra;
-		$array['info'] = array();
-		$array['info']['materials'] = (count(($array = $this->getMaterials())) > 0 ? array_map(create_function('$a', 'return $a->getJson();'), $array) : array(1));
-		$array['info']['categories'] = (count(($array = $this->getCategories())) > 0 ? array_map(create_function('$a', 'return $a->getJson();'), $array) : array());
-		$array['info']['sellInAllStores'] = (ProductInfo::countByCriteria('typeId = ? and entityName = ? and productId = ? and active = 1', array(ProductInfoType::ID_STORE, ProductInfoType::ENTITY_NAME_STORE, $this->getId())) > 0);
-		if($array['info']['sellInAllStores'] !== true) {
-			$array['info']['stores'] = array();
-			$storeInfos = ProductInfo::getAllByCriteria('productId = ? and typeId = ? and entityName = ?', array($this->getId(), ProductInfoType::ID_STORE, ProductInfoType::ENTITY_NAME_STORE));
-			foreach($storeInfos as $storeInfo)
-			{
-				if(!($store = Store::get($storeInfo->getEntityId())) instanceof Store)
-					continue;
-				$unitPrice = ($storeInfo->getValue() === '0' ? $this->getUnitPrice() : $storeInfo->getValue());
-				$array['info']['stores'][] = array('store' => $store->getJson(), 'unitPrice' => $unitPrice);
-			}
+		$array['materials'] = array_map(create_function('$a', 'return $a->getJson();'), $this->getMaterials());
+		$array['categories'] = array_map(create_function('$a', 'return $a->getJson();'), $this->getCategories());
+		$array['sellInAllStores'] = $this->isSellinAllStores();
+		if($array['sellInAllStores'] !== true) {
+			$array['stores'] = array();
+			foreach($this->getStores() as $store)
+				$array['stores'][] = $store->getJson();
 		}
 		return parent::getJson($array, $reset);
 	}
