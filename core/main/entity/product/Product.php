@@ -164,7 +164,7 @@ class Product extends InfoEntityAbstract
 	{
 		$materialArray = array();
 		$piArray = ProductInfo::getAllByCriteria('productId = ? and typeId = ? and entityName = ?', array($this->getId(), ProductInfoType::ID_MATERIAL, 'Material'));
-
+		$materialIdArray = array();
 		foreach($piArray as $pi)
 			$materialIdArray[] = (trim($pi->getEntityId()) !== '' ? trim($pi->getEntityId()) : trim($pi->getValue()));
 
