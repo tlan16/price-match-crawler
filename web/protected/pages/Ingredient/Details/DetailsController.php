@@ -72,7 +72,6 @@ class DetailsController extends DetailsPageAbstract
 			$allergentIds = array();
 			if (isset ( $params->CallbackParameter->allergents ) && ($tmp = trim($params->CallbackParameter->allergents)) !== '' )
 				$allergentIds = explode(',', $tmp);
-			else $description = trim($params->CallbackParameter->description);
 			if (isset ( $params->CallbackParameter->id ) && !($entity = $focusEntity::get(intval($params->CallbackParameter->id))) instanceof $focusEntity )
 				throw new Exception ( 'System Error: invalid id passed in.' );
 			
