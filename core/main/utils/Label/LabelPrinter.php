@@ -16,7 +16,7 @@ abstract class LabelPrinter
         self::_imagecenteredstring($img, $baseFont + 5, $width, $lineHeight * ($lineNo++), $productName, $black, $fontFile);
         self::_imagecenteredstring($img, $baseFont, $width, $lineHeight * ($lineNo++), 'Price', $black, $fontFile);
         self::_imagecenteredstring($img, $baseFont + 2, $width, $lineHeight * ($lineNo), StringUtilsAbstract::getCurrency($label->getPrintedPrice()), $black, $fontFile);
-        $qrImgFile = self::_qrCodeImage('http://test.com');
+        $qrImgFile = self::_qrCodeImage('http://www.sushiandco.com.au/');
         $qrCodeImg = imagecreatefrompng($qrImgFile);
         list($qrCodeImg_width, $qrCodeImg_height) = getimagesize($qrImgFile);
         imagecopy($img, $qrCodeImg, ($width - $qrCodeImg_width)/2, $lineHeight * ($lineNo++), 0, 0, $qrCodeImg_width, $qrCodeImg_height);
@@ -29,7 +29,7 @@ abstract class LabelPrinter
         imagettftext($img, $baseFont + 2, 0, 5, $lineHeight * ($lineNo++), $black, $fontFile, 'Ingredients:');
         $ingredientsTxtArr = self::_getIngredientNames($label->getProduct());
         self::_imagecenteredstring($img, $baseFont, $width, $lineHeight * $lineNo, wordwrap(implode(', ', $ingredientsTxtArr), 35, "\n"), $black, $fontFile);
-        $lineNo = $lineNo + 6;
+        $lineNo = $lineNo + 5;
         self::_imagecenteredstring($img, $baseFont + 2, $width, $lineHeight * ($lineNo++), 'Nutrition Panel', $black, $fontFile);
         $mNutritions = self::_getMaterialNutrions($label->getProduct());
         foreach($mNutritions as $mNutrition) {
@@ -39,13 +39,14 @@ abstract class LabelPrinter
         $barcodeImg = PhpBarcode::getBarcodeImg($label->getProduct()->getBarcode());
         $barcodeImg_width = imagesx ($barcodeImg);
         $barcodeImg_height = imagesy ($barcodeImg);
-        imagecopy($img, $barcodeImg, ($width/2 - $barcodeImg_width/2), $lineHeight * ($lineNo++), 0, 0, $barcodeImg_width, $barcodeImg_height);
+        imagecopy($img, $barcodeImg, ($width/2 - $barcodeImg_width/2), $height - $barcodeImg_height, 0, 0, $barcodeImg_width, $barcodeImg_height);
         // Output the image
         $file = '/tmp/label_' . md5('Label' . '|' . trim(UDate::now()));
         imagejpeg($img, $file, 75);
 
         // Free up memory
         imagedestroy($img);
+        unlink($qrImgFile);
         return $file;
     }
     private static function _qrCodeImage($text) {
