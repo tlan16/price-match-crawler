@@ -45,7 +45,7 @@ DetailsPageJs.prototype = Object.extend(new BPCPageJs(), {
 			.update('Save')
 			.observe('click',function(e){
 				tmp.btn = $(this);
-				tmp.data = tmp.me._collectFormData($(tmp.me.getHTMLID('itemDiv')), 'save-item');
+				tmp.data = tmp.me.collectData();
 				if(tmp.btn.readAttribute('disabled') === true || tmp.btn.readAttribute('disabled') === 'disabled' || tmp.data === null)
 					return tmp.me;
 				tmp.me._disableAll($(tmp.me.getHTMLID('itemDiv')));
@@ -70,6 +70,11 @@ DetailsPageJs.prototype = Object.extend(new BPCPageJs(), {
 		if(tmp.me._dirty === false)
 			tmp.save.hide();
 		return tmp.me;
+	}
+	,collectData: function() {
+		var tmp = {};
+		tmp.me = this;
+		return tmp.me._collectFormData($(tmp.me.getHTMLID('itemDiv')), 'save-item');
 	}
 	,closeFancyBox:function () {
 		if(parent.jQuery && parent.jQuery.fancybox)
