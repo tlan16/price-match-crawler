@@ -56,6 +56,11 @@
 			<!-- FrontEnd:: Ingredient Detail page -->
 			<url ServiceParameter="Ingredient.Details.DetailsController" pattern="ingredient/{id}.html" parameters.id="new|\d+"/>
 			
+			<!-- FrontEnd:: Category list page -->
+			<url ServiceParameter="Category.List.ListController" pattern="categories.html" />
+			<!-- FrontEnd:: Category Detail page -->
+			<url ServiceParameter="Category.Details.DetailsController" pattern="category/{id}.html" parameters.id="new|\d+"/>
+			
 			<!-- FrontEnd:: Allergent list page -->
 			<url ServiceParameter="Allergent.List.ListController" pattern="allergents.html" />
 			<!-- FrontEnd:: Allergent Detail page -->
