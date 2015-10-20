@@ -16,15 +16,21 @@ PageJs.prototype = Object.extend(new DetailsPageJs(), {
 		tmp.me = this;
 		tmp.me._init();
 		$(tmp.me.getHTMLID('itemDiv')).addClassName('row');
+		tmp.sellinAllStore = (tmp.me._item.sellInAllStores === true);
 		tmp.storeTitle = new Element('div', {'class': 'row'})
-			.insert({'bottom': new Element('div', {'class': 'col-md-8'}).update('Selling in Stores:') })
-			.insert({'bottom': new Element('div', {'class': 'col-md-4 text-right'})
+			.insert({'bottom': new Element('div', {'class': 'col-xs-6'}).update('Selling in Stores:') })
+			.insert({'bottom': new Element('div', {'class': 'col-xs-6 text-right'})
 				.insert({'bottom': new Element('label')
 					.update(' selling in all stores')
-					.insert({'top': new Element('input', {'type': 'checkbox', 'save-item': 'allStores', 'dirty': false, 'checked': (tmp.me._item.info && tmp.me._item.info.sellInAllStores === true)})
+					.insert({'top': new Element('input', {'type': 'checkbox', 'save-item': 'allStores', 'dirty': false, 'checked': tmp.sellinAllStore})
 						.observe('change', function(){
 							this.writeAttribute('dirty', true );
 							tmp.me._refreshDirty()._getSaveBtn();
+							if(this.checked === true) {
+								$(this).up('.form-group').down('.form-control').hide();
+							} else {
+								$(this).up('.form-group').down('.form-control').show();
+							}
 						})
 					})
 				})
@@ -43,6 +49,9 @@ PageJs.prototype = Object.extend(new DetailsPageJs(), {
 			._getSelect2Div('Store', 'stores', tmp.me._item.id ? tmp.me._item.stores : [], $(tmp.me._containerIds.stores), tmp.storeTitle )
 			._getSaveBtn()
 		;
+		if(tmp.sellinAllStore === true) {
+			$(tmp.me._containerIds.stores).down('.form-control').hide();
+		}
 		return tmp.me;
 	}
 	/**

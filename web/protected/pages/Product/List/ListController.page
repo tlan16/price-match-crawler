@@ -23,16 +23,6 @@
                            <input type="text" class="form-control input-sm" search_field="nut.description" placeholder="The Description of the <%= $this->getFocusEntity() %>">
                        </div>
 					</div>
-					<div class="col-sm-1">
-						<div class="form-group form-group-sm input-group">
-                           <label for="nut.active" class="control-label input-group-addon">Active?</label>
-                           <select class="form-control input-sm select2" search_field="nut.active" data-minimum-results-for-search="Infinity" data-width="100%">
-                           		<option value="1">YES</option>
-                           		<option value="0">NO</option>
-                           		<option value="3">ALL</option>
-                           </select>
-                       </div>
-					</div>
 				</div>
 			</div>
 		</div>
