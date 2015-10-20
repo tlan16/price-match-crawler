@@ -9,7 +9,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
 </com:THead>
 <body>
-    <com:TForm>
+    <com:TForm Attributes.novalidate="true">
     	<div class="container-fluid">
         	<com:TContentPlaceHolder ID="MainContent" />
     	</div>
