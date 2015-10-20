@@ -15,10 +15,6 @@ class ProductInfoType extends InfoTypeAbstract
 	
 	const ID_STORE = 3;
 	const ENTITY_NAME_STORE = 'Store';
-	
-	const ID_LABEL = 4;
-	const ENTITY_NAME_LABEL = 'Label';
-	
 	/**
 	 * (non-PHPdoc)
 	 * @see BaseEntity::__loadDaoMap()
