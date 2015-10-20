@@ -141,8 +141,7 @@ class Material extends InfoEntityAbstract
 		$mnArray = $this->getAllMaterialNutritions();
 		foreach($mnArray as $mn)
 		{
-			$tmp = array();
-			$tmp['id'] = $mn->getId();
+			$tmp = $mn->getJson();
 			$tmp['nutrition'] = $mn->getNutrition()->getJson();
 			$tmp['qty'] = $mn->getQty();
 			$tmp['serveMeasurement'] = $mn->getServeMeasurement()->getJson();
