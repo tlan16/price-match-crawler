@@ -136,7 +136,7 @@ class Store extends InfoEntityAbstract
 	 * 
 	 * @return Store
 	 */
-	public static function create($name, $description, Address $addr, array $userAccounts = array())
+	public static function createWithParams($name, $description, Address $addr, array $userAccounts = array())
 	{
 		$store = new Store();
 		$store = $store->setName($name)

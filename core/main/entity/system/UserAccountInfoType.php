@@ -8,7 +8,7 @@
  */
 class UserAccountInfoType extends InfoTypeAbstract
 {
-	const ID_ROLE = 1;
+	const ID_ROLE = 3;
     /**
 	 * (non-PHPdoc)
 	 * @see BaseEntity::__loadDaoMap()
