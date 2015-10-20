@@ -49,9 +49,9 @@ class UserProfile extends InfoAbstract
     }
     /**
      * get roles by user account
-     * 
+     *
      * @param UserAccount $userAccount
-     * 
+     *
      * @return array Role
      */
     public static function getRolesByUserAccount(UserAccount $userAccount, Store $store = null)
@@ -60,7 +60,6 @@ class UserProfile extends InfoAbstract
     	$roleIds = array();
     	foreach($objs as $obj)
     		$roleIds[] = $obj->getEntityId();
-    	
     	if(count($roleIds) === 0)
     		return array();
     	return Role::getAllByCriteria('id in (' . implode(', ', $roleIds) . ')');
@@ -78,14 +77,14 @@ class UserProfile extends InfoAbstract
     	$storeIds = array();
     	foreach($objs as $obj)
     		$storeIds[] = $obj->getValue();
-    	 
+
     	if(count($storeIds) === 0)
     		return array();
     	return Store::getAllByCriteria('id in (' . implode(', ', $storeIds) . ')');
     }
     /**
      * clear all roles for a user account
-     * 
+     *
      * @param UserAccount $userAccount
      */
     public static function clearRolesByUserAccount(UserAccount $userAccount, Store $store = null)
@@ -94,10 +93,10 @@ class UserProfile extends InfoAbstract
     }
     /**
      * add role to a user account
-     * 
+     *
      * @param UserAccount $userAccount
      * @param Role $role
-     * 
+     *
      * @return UserProfile
      */
     public static function addRoleByUserAccount(UserAccount $userAccount, Role $role, Store $store)
@@ -106,7 +105,7 @@ class UserProfile extends InfoAbstract
     }
     /**
      * remove a role for a user account
-     * 
+     *
      * @param UserAccount $userAccount
      * @param Role $role
      */
