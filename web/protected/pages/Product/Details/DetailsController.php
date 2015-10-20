@@ -39,8 +39,14 @@ class DetailsController extends DetailsPageAbstract
 		$js .= "pageJs._containerIds=" . json_encode(array(
 				'name' => 'name_div'
 				,'description' => 'description_div'
-				,'allergents' => 'allergents_div'
-				,'comments' => 'comments_div'
+				,'barcode' => 'barcode_div'
+				,'unitPrice' => 'unitPrice_div'
+				,'size' => 'size_div'
+				,'useByVariance' => 'useByVariance_div'
+				,'labelVersion' => 'labelVersion_div'
+				,'categories' => 'categories_div'
+				,'materials' => 'materials_div'
+				,'stores' => 'stores_div'
 				,'saveBtn' => 'save_btn'
 		)) . ";";
 		$js .= "pageJs.load();";
@@ -59,27 +65,53 @@ class DetailsController extends DetailsPageAbstract
 	 */
 	public function saveItem($sender, $params)
 	{
-
 		$results = $errors = array();
 		try
 		{
+			Dao::beginTransaction();
+			$entity = null;
 			$focusEntity = $this->getFocusEntity();
-			if (!isset ( $params->CallbackParameter->name ) || ($name = trim ( $params->CallbackParameter->name )) === '')
-				throw new Exception ( 'System Error: invalid name passed in.' );
-			$description = '';
-			if (isset ( $params->CallbackParameter->description ) )
-				$description = trim($params->CallbackParameter->description);
-			else $description = trim($params->CallbackParameter->description);
 			if (isset ( $params->CallbackParameter->id ) && !($entity = $focusEntity::get(intval($params->CallbackParameter->id))) instanceof $focusEntity )
 				throw new Exception ( 'System Error: invalid id passed in.' );
 			
-			Dao::beginTransaction();
+			if (!isset ( $params->CallbackParameter->name ) || ($name = trim ( $params->CallbackParameter->name )) === '')
+				throw new Exception ( 'System Error: invalid name passed in.' );
+			$description = isset ( $params->CallbackParameter->description ) ? trim($params->CallbackParameter->description) : '';
+			$size = isset ( $params->CallbackParameter->size ) ? trim($params->CallbackParameter->size) : '';
+			$barcode = isset ( $params->CallbackParameter->barcode ) ? trim($params->CallbackParameter->barcode) : '';
+			$labelVersionNo = isset ( $params->CallbackParameter->labelVersionNo ) ? trim($params->CallbackParameter->labelVersionNo) : '';
+			$useByVariance = isset ( $params->CallbackParameter->useByVariance ) ? intval($params->CallbackParameter->useByVariance) : '';
+			$unitPrice = StringUtilsAbstract::getValueFromCurrency(isset ( $params->CallbackParameter->unitPrice ) ? trim(isset ( $params->CallbackParameter->unitPrice)) : 0);
+			$allStores = (isset ( $params->CallbackParameter->allStores ) && intval($params->CallbackParameter->allStores) === 1);
+			$materials = array();
+			$categories = array();
+			$stores = array();
 			
-			if(!isset($entity) || !$entity instanceof $focusEntity)
-				$entity = $focusEntity::create($name,$description);
-			else $entity->setName($name)->setDescription($description);
+			if(!$entity instanceof $focusEntity) {
+				$entity = Product::createWithParams($name, $description, $barcode, $size, $useByVariance, $unitPrice, $labelVersionNo, $materials, $categories);
+			} else {
+				$entity->setBarcode($barcode)
+					->setSize($size)
+					->setUsedByVariance($useByVariance)
+					->setLabelVersionNo($labelVersionNo)
+					->clearMaterial()
+					->clearCategory()
+					->clearStore()
+					->setName($name)
+					->setDescription($description);
+				foreach($materials as $material)
+					$entity->addMaterial($material);
+				foreach($categories as $category)
+					$entity->addCategory($category);
+			}
+			if($allStores === true)	{
+				$entity->addToAllStore();
+			} else {
+				foreach($stores as $store)
+					$entity->addStore($store);
+			}
 			
-			$results ['item'] = $entity->save()->getJson ();
+			$results ['item'] = $entity->getJson();
 			Dao::commitTransaction ();
 		}
 		catch(Exception $ex)

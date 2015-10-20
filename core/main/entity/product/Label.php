@@ -146,8 +146,12 @@ class Label extends BaseEntityAbstract
 				$this->setName($this->getProduct()->getName());
 			if(trim($this->getPrintedDate()) === '' || trim($this->getPrintedDate()) === trim(UDate::zeroDate()))
 				$this->setPrintedDate(UDate::now());
-			if(trim($this->getUseByDate()) === '' || trim($this->getUseByDate()) === trim(UDate::zeroDate()))
-				$this->setUseByDate(UDate::now()->modify($this->getProduct()->getUsedByVariance()));
+			if(trim($this->getUseByDate()) === '' || trim($this->getUseByDate()) === trim(UDate::zeroDate())) {
+				$useByDate = UDate::now();
+				if( ($variance = intval($this->getProduct()->getUsedByVariance())) > 0)
+					$useByDate->modify('+' . $variance + ' day');
+				$this->setUseByDate($useByDate);
+			}
 			if(!$this->printedBy instanceof UserAccount)
 				$this->setPrintedBy(Core::getUser());
 			if(trim($this->getVersionNo()) === '')

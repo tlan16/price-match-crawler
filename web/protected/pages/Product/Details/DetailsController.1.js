@@ -11,31 +11,36 @@ PageJs.prototype = Object.extend(new DetailsPageJs(), {
 	,setPreData: function() {
 		return this;
 	}
-	,_getCommentsDiv() {
-		var tmp = {};
-		tmp.me = this;
-
-		tmp.container = $(tmp.me._containerIds.comments);
-		
-		tmp.comments = new Element('div');
-		
-		tmp.container.insert({'bottom': tmp.me._getFormGroup('Comments', tmp.comments, true).addClassName('col-md-12') });
-		
-		tmp.me._signRandID(tmp.comments);
-		
-		new CommentsDivJs(tmp.me, 'Question', tmp.me._item.id)._setDisplayDivId(tmp.comments.id).render();
-		
-		return tmp.me;
-	}
 	,load: function () {
 		var tmp = {};
 		tmp.me = this;
 		tmp.me._init();
-		
 		$(tmp.me.getHTMLID('itemDiv')).addClassName('row');
+		tmp.storeTitle = new Element('div', {'class': 'row'})
+			.insert({'bottom': new Element('div', {'class': 'col-md-8'}).update('Selling in Stores:') })
+			.insert({'bottom': new Element('div', {'class': 'col-md-4 text-right'})
+				.insert({'bottom': new Element('label')
+					.update(' selling in all stores')
+					.insert({'top': new Element('input', {'type': 'checkbox', 'save-item': 'allStores', 'dirty': false, 'checked': (tmp.me._item.info && tmp.me._item.info.sellInAllStores === true)})
+						.observe('change', function(){
+							this.writeAttribute('dirty', true );
+							tmp.me._refreshDirty()._getSaveBtn();
+						})
+					})
+				})
+			})
+			;
 		tmp.me
 			._getInputDiv('name', (tmp.me._item.name || ''), $(tmp.me._containerIds.name), null ,true)
 			._getInputDiv('description', (tmp.me._item.description || ''), $(tmp.me._containerIds.description))
+			._getInputDiv('unitPrice', tmp.me.getCurrency((tmp.me._item.unitPrice || 0), ''), $(tmp.me._containerIds.unitPrice), 'Unit Price ($)',true, undefined, true)
+			._getInputDiv('barcode',(tmp.me._item.barcode || ''), $(tmp.me._containerIds.barcode))
+			._getInputDiv('size',(tmp.me._item.size || ''), $(tmp.me._containerIds.size))
+			._getInputDiv('labelVersionNo',(tmp.me._item.labelVersionNo || ''), $(tmp.me._containerIds.labelVersion), 'Label Version',true)
+			._getInputDiv('useByVariance',(tmp.me._item.usedByVariance || ''), $(tmp.me._containerIds.useByVariance), 'Days By From Printed',true)
+			._getSelect2Div('Material', 'materials', tmp.me._item.id ? tmp.me._item.materials : [], $(tmp.me._containerIds.materials), null)
+			._getSelect2Div('Category', 'categories', tmp.me._item.id ? tmp.me._item.categories : [], $(tmp.me._containerIds.categories), null)
+			._getSelect2Div('Store', 'stores', tmp.me._item.id ? tmp.me._item.stores : [], $(tmp.me._containerIds.stores), tmp.storeTitle )
 			._getSaveBtn()
 		;
 		return tmp.me;
