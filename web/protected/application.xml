@@ -21,6 +21,12 @@
 			<url ServiceParameter="Login.LoginController" pattern="login.html" />
 			
 			<!-- FrontEnd:: Address list page -->
+			<url ServiceParameter="Product.List.ListController" pattern="products.html" />
+			<!-- FrontEnd:: Address Detail page -->
+			<url ServiceParameter="Product.Details.DetailsController" pattern="product/{id}.html" parameters.id="new|\d+"/>
+			
+			
+			<!-- FrontEnd:: Address list page -->
 			<url ServiceParameter="Address.List.ListController" pattern="addresses.html" />
 			<!-- FrontEnd:: Address Detail page -->
 			<url ServiceParameter="Address.Details.DetailsController" pattern="address/{id}.html" parameters.id="new|\d+"/>
@@ -86,7 +92,7 @@
 
 	<!-- configuration for available services -->
 	<services>
-		<service id="page" class="TPageService" DefaultPage="Allergent.List.ListController">
+		<service id="page" class="TPageService" DefaultPage="Product.List.ListController">
 		    <pages MasterClass="Application.layout.PageLayout" Theme="default" />
 			<modules>
 				<module id="auth" class="Application.classes.WebUser.AuthManager" UserManager="users" ReturnUrl="/" LoginPage="Login.LoginController" AuthExpire="3600" />
