@@ -121,12 +121,9 @@ class Store extends InfoEntityAbstract
 	 */
 	public static function get($id)
 	{
-		$class = get_called_class();
-	
-		if(!isset(self::$_cache[$class]) || !isset(self::$_cache[$class][$id]))
-			self::$_cache[$class][$id] = parent::get($id);
-	
-		return self::$_cache[$class][$id];
+		if(!self::cacheExsits($id))
+			self::addCache($id, parent::get($id));
+		return self::getCache($id);
 	}
 	/**
 	 * 

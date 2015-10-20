@@ -4,10 +4,19 @@
 	<com:Application.controls.CommentsDiv.CommentsDiv />
 	<com:TCallback ID="getCategoriesBtn" OnCallback="getCategories" />
 	<div class="pagewrapper productdetailswraper" id='item-div'>
+		<h3 class="text-center"><%= $this->getFocusEntity() %></h3>
 		<div id='name_div'></div>
 		<div id='description_div'></div>
-		<div id='allergents_div'></div>
-		<div id='comments_div'></div>
+		<div class="row">
+			<div id="unitPrice_div" class="col-md-2"></div>
+			<div id="size_div" class="col-md-2"></div>
+			<div id="barcode_div" class="col-md-3"></div>
+			<div id="labelVersion_div" class="col-md-3"></div>
+			<div id="useByVariance_div" class="col-md-2"></div>
+		</div>
+		<div id='stores_div'></div>
+		<div id='categories_div'></div>
+		<div id='materials_div'></div>
 		<div id='save_btn'></div>
 	</div>
 </com:TContent>

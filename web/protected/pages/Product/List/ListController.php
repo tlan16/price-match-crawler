@@ -42,7 +42,7 @@ class ListController extends CRUDPageAbstract
 				$pageSize = $param->CallbackParameter->pagination->pageSize;
 			}
 			$stats = array();
-			$class::getQuery()->eagerLoad('Product.infos', 'inner join', 'pro_info', '(pro_info.productId = pro.id and pro_info.active = 1 and pro_info.typeId = ? and pro_info.entityName = ? and pro_info.entityId = ?)');
+			$class::getQuery()->eagerLoad('Product.infos', 'inner join', 'pro_info', '(pro_info.productId = pro.id and pro_info.active = 1 and pro_info.typeId = ? and pro_info.entityName = ? and (pro_info.entityId = ? or pro_info.entityId = 0))');
 			$objects = $class::getAllByCriteria('pro.active = 1', array(ProductInfoType::ID_STORE, ProductInfoType::ENTITY_NAME_STORE, Core::getStore()->getId()), true, $pageNo, $pageSize, array(), $stats);
 			
 			$results['pageStats'] = $stats;

@@ -66,10 +66,9 @@ PageJs.prototype = Object.extend(new CRUDPageJs(), {
 			.addClassName('list-group-item')
 			.addClassName('item_row')
 			.writeAttribute('item_id', row.id)
-			.insert({'bottom': new Element(tmp.tag, {'class': 'name col-md-2'}).update(row.name) })
-			.insert({'bottom': new Element(tmp.tag, {'class': 'description col-md-4'}).update(row.description) })
-			.insert({'bottom': new Element(tmp.tag, {'class': 'barcode col-md-1'}).update(row.barcode) })
-			.insert({'bottom': new Element(tmp.tag, {'class': 'unitPrice col-md-1'}).update(tmp.isTitle === true ? row.unitPrice : tmp.me.getCurrency(row.unitPrice)) })
+			.insert({'bottom': new Element(tmp.tag, {'class': 'name col-md-4'}).update(row.name) })
+			.insert({'bottom': new Element(tmp.tag, {'class': 'barcode col-md-2'}).update(row.barcode) })
+			.insert({'bottom': new Element(tmp.tag, {'class': 'unitPrice col-md-2'}).update(tmp.isTitle === true ? row.unitPrice : tmp.me.getCurrency(row.unitPrice)) })
 			.insert({'bottom': new Element(tmp.tag, {'class': 'size col-md-1'}).update(row.size) })
 			.insert({'bottom': new Element(tmp.tag, {'class': 'size col-md-2'}).update(tmp.isTitle === true ? row.categories : row.categories) })
 			.insert({'bottom': new Element(tmp.tag, {'class': 'text-right btns col-md-1'}).update(
