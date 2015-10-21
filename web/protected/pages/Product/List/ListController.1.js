@@ -83,15 +83,7 @@ PageJs.prototype = Object.extend(new CRUDPageJs(), {
 			.insert({'bottom': new Element(tmp.tag, {'class': 'size col-md-1 hidden-sm col-xs-12' + ( tmp.isTitle === true ? 'hidden-xs' :'')}).update(row.size) })
 			.insert({'bottom': new Element(tmp.tag, {'class': 'size col-sm-2 col-xs-12' + ( tmp.isTitle === true ? 'hidden-xs' :'')}).update(tmp.isTitle === true ? row.categories : tmp.me._getOjbNames(row.categories).join(', ')) })
 			.insert({'bottom': new Element(tmp.tag, {'class': 'text-right btns col-sm-2 col-xs-12'}).update(
-				tmp.isTitle === true ?
-					(new Element('span', {'class': 'btn btn-primary btn-xs', 'title': 'New'})
-						.insert({'bottom': new Element('span', {'class': 'glyphicon glyphicon-plus'}) })
-						.insert({'bottom': ' NEW' })
-						.observe('click', function(){
-							tmp.me._openDetailsPage();
-						})
-					)
-				:
+				tmp.isTitle === true ? '' :
 					(new Element('span', {'class': 'btn-group'})
 						.insert({'bottom': new Element('span')
 							.addClassName( (row.active === false && tmp.isTitle === false ) ? 'btn btn-success' : 'btn btn-info')
@@ -149,6 +141,14 @@ PageJs.prototype = Object.extend(new CRUDPageJs(), {
  		});
 		return tmp.me;
 	}
+	,_openLabel: function(data) {
+		var tmp = {};
+		tmp.me = this;
+		tmp.newWindow = window.open('', 'width=300,height=800');
+		tmp.newWindow.document.write('<img src="' + data + '"/>');
+		tmp.newWindow.document.close();
+		return tmp.newWindow;
+	}
 	,_printItem: function(btn, item) {
 		var tmp = {};
 		tmp.me = this;
@@ -161,11 +161,12 @@ PageJs.prototype = Object.extend(new CRUDPageJs(), {
 					tmp.result = tmp.me.getResp(param, false, true);
 					if(!tmp.result || !tmp.result.item)
 						return;
-					$url = 'data:image/png;base64,' + tmp.result.item;
-					tmp.newWind = window.open('data:image/png;base64,' + tmp.result.item);
+					$imgData = 'data:image/png;base64,' + tmp.result.item;
+					tmp.newWind = tmp.me._openLabel($imgData);
 					if(!tmp.newWind) {
-						tmp.me.showModalBox('<b>Window Popup Blocked</b>', 'Your browser has blocked the popup from this site, please <a href="' + $url + '" target="__BLANK" class="btn btn-xs btn-info"> click here </a> to view the label for now. <div>Please change your browser setting to allow popup from this site in the future.</b>');
+						tmp.me.showModalBox('<b>Window Popup Blocked</b>', 'Your browser has blocked the popup from this site, please <a href="' + $imgData + '" target="__BLANK" class="btn btn-xs btn-info"> click here </a> to view the label for now. <div>Please change your browser setting to allow popup from this site in the future.</b>');
 					} else {
+						tmp.newWind.focus();
 						tmp.newWind.print();
 					}
 
