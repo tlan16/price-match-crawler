@@ -310,7 +310,7 @@ class Product extends InfoEntityAbstract
 	 */
 	public function preSave()
 	{
-	    if(($this->getActive() === null || intval($this->getActive()) === 1) && preg_match('/^\d{12,13}$/', trim($this->getBarcode())))
+	    if(($this->getActive() === null || intval($this->getActive()) === 1) && preg_match('/^\d{12,13}$/', trim($this->getBarcode())) === 0)
 	        throw new Exception('The barcode needs to be 12 or 13 digits long.');
 	}
 	/**
