@@ -98,7 +98,8 @@ class DetailsController extends DetailsPageAbstract
 					->clearCategory()
 					->clearStore()
 					->setName($name)
-					->setDescription($description);
+					->setDescription($description)
+					->save();
 				foreach($materials as $material)
 					$entity->addMaterial($material);
 				foreach($categories as $category)
