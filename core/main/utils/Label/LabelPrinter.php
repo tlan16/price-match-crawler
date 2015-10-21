@@ -7,19 +7,20 @@ abstract class LabelPrinter
         $white = imagecolorallocate($img, 255, 255, 255);
         imagefill($img, 0, 0, $white);
 
+        $lineNo = 2;
+        $lineHeight = 24;
         $startX = 10;
         $baseFont = 9;
         $black = imagecolorallocate($img, 0, 0, 0);
         $fontFile = dirname(__FILE__) . '/arial.ttf';
         $versionNo = $label->getVersionNo();
         $dimensions = imagettfbbox(7, 0, $fontFile, $versionNo);
-        imagettftext($img, 7, 0, $width - abs($dimensions[4] - $dimensions[0]) - $startX, 15, $black, $fontFile, $versionNo);
-        $startY = abs($dimensions[7] - $dimensions[1]);
-        $lineNo = 1;
-        $lineHeight = 24;
+        imagettftext($img, 7, 0, $width - abs($dimensions[4] - $dimensions[0]) - $startX, 18, $black, $fontFile, $versionNo);
+        $startY = abs($dimensions[7] - $dimensions[1]) - 10;
+        
         self::_imagecenteredstring($img, $baseFont + 5, $width, $startY + $lineHeight * ($lineNo++), $label->getProduct()->getName(), $black, $fontFile);
         self::_imagecenteredstring($img, $baseFont, $width, $startY + $lineHeight * ($lineNo++), 'Price', $black, $fontFile);
-        self::_imagecenteredstring($img, $baseFont + 2, $width, $startY + $lineHeight * ($lineNo), StringUtilsAbstract::getCurrency($label->getPrintedPrice()), $black, $fontFile);
+        self::_imagecenteredstring($img, $baseFont + 5, $width, $startY + $lineHeight * ($lineNo), StringUtilsAbstract::getCurrency($label->getPrintedPrice()), $black, $fontFile);
         $qrImgFile = self::_qrCodeImage('http://www.sushiandco.com.au/');
         $qrCodeImg = imagecreatefrompng($qrImgFile);
         list($qrCodeImg_width, $qrCodeImg_height) = getimagesize($qrImgFile);
@@ -27,16 +28,16 @@ abstract class LabelPrinter
         imagecopy($img, $qrCodeImg, ($width - $qrCodeImg_width)/2, $yPos, 0, 0, $qrCodeImg_width, $qrCodeImg_height);
         $startY = $yPos + $qrCodeImg_height + 10;
         $lineNo = 0;
-        imagettftext($img, $baseFont + 2, 0, $startX, $startY + $lineHeight * ($lineNo++), $black, $fontFile, 'Use By: ' . $label->getUseByDate()->format('d/m/Y'));
-        self::_imagecenteredstring($img, $baseFont, $width, $startY + $lineHeight * ($lineNo++) - 5, 'Keep Refrigerated', $black, $fontFile);
-        imagettftext($img, $baseFont + 2, 0, $startX, $startY + $lineHeight * ($lineNo++), $black, $fontFile, 'Allergent Warning:');
+        imagettftext($img, $baseFont + 5, 0, $startX, $startY + $lineHeight * ($lineNo++), $black, $fontFile, 'Use By: ' . $label->getUseByDate()->format('d/m/Y'));
+        self::_imagecenteredstring($img, $baseFont +2, $width, $startY + $lineHeight * ($lineNo++), 'Keep Refrigerated', $black, $fontFile);
+        imagettftext($img, $baseFont + 5, 0, $startX, $startY + $lineHeight * ($lineNo++), $black, $fontFile, 'Allergent Warning:');
         $alleNames = self::_getAllergentNames($label->getProduct());
         $alleTexts = wordwrap('Contains: ' . implode(', ', $alleNames), 35, "\n");
         foreach(explode("\n", $alleTexts) as $index => $textLine) {
 	        self::_imagecenteredstring($img, $baseFont, $width, $startY + $lineHeight * ($lineNo++) - ($index === 0 ? 5: 15), $textLine, $black, $fontFile);
         }
         
-        imagettftext($img, $baseFont + 2, 0, $startX, $startY + $lineHeight * ($lineNo++), $black, $fontFile, 'Ingredients:');
+        imagettftext($img, $baseFont + 5, 0, $startX, $startY + $lineHeight * ($lineNo++), $black, $fontFile, 'Ingredients:');
         $ingredientsTxtArr = self::_getIngredientNames($label->getProduct());
         $ingreText = wordwrap(implode(', ', $ingredientsTxtArr), 35, "\n");
         foreach(explode("\n", $ingreText) as $index => $textLine) {
@@ -55,7 +56,7 @@ abstract class LabelPrinter
         $mNutritions = self::_getMaterialNutrions($label->getProduct());
         $startY = $bottomBase_y - (count($mNutritions) + 1) * $lineHeight;
         $lineNo = 0;
-        self::_imagecenteredstring($img, $baseFont + 2, $width, $startY + $lineHeight * ($lineNo++), 'Nutrition Panel', $black, $fontFile);
+        self::_imagecenteredstring($img, $baseFont + 5, $width, $startY + $lineHeight * ($lineNo++), 'Nutrition Panel', $black, $fontFile);
         foreach($mNutritions as $mNutrition) {
             imagettftext($img, $baseFont, 0, $startX, $startY + $lineHeight * $lineNo, $black, $fontFile, $mNutrition->getNutrition()->getName() . ' (' . $mNutrition->getServeMeasurement()->getName() . ')');
             imagettftext($img, $baseFont, 0, $startX + ($width * 0.85), $startY + $lineHeight * ($lineNo++), $black, $fontFile, $mNutrition->getQty());

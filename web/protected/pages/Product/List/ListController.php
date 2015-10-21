@@ -129,7 +129,7 @@ class ListController extends CRUDPageAbstract
 				throw new Exception ( 'System Error: invalid id passed in.' );
 			$newLabel = null;
 			$entity->printLabel(null, null, $newLabel);
-			$imgFile = $newLabel->generateImg(300, 600);
+			$imgFile = $newLabel->generateImg(270, 800);
 			$results['item'] = base64_encode(file_get_contents($imgFile));
 		}
 		catch(Exception $ex)
