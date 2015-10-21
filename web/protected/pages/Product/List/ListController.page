@@ -60,10 +60,13 @@
 		<div class="panel panel-default">
 			<div class="panel-heading">
 				Found <label id="total-found-count">0</label> <%= $this->getFocusEntity() %>(s):
+				<div class="pull-right">
+				    <span class="btn btn-xs btn-primary" onclick="pageJs._openDetailsPage()"><i class='glyphicon glyphicon-plus'></i> NEW</span>
+				</div>
 			</div>
 			<div class="panel-body" style="padding: 0;">
                 <div id="item-list" style="margin-bottom: 0;"></div>
             </div>
-		</div> 
+		</div>
 	</div>
 </com:TContent>
