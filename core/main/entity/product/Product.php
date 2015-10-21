@@ -310,8 +310,12 @@ class Product extends InfoEntityAbstract
 	 */
 	public function preSave()
 	{
-	    if(($this->getActive() === null || intval($this->getActive()) === 1) && preg_match('/^\d{12,13}$/', trim($this->getBarcode())) === 0)
-	        throw new Exception('The barcode needs to be 12 or 13 digits long.');
+	    if(($this->getActive() === null || intval($this->getActive()) === 1)) {
+	        if(preg_match('/^\d{12,13}$/', trim($this->getBarcode())) === 0)
+    	        throw new Exception('The barcode needs to be 12 or 13 digits long.');
+	        if(preg_match('/^\d+$/', trim($this->getUsedByVariance())) === 0)
+    	        throw new Exception('The number of Days From Printed needs to be digits only');
+	    }
 	}
 	/**
 	 * (non-PHPdoc)

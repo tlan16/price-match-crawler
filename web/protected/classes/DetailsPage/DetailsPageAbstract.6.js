@@ -56,7 +56,7 @@ DetailsPageJs.prototype = Object.extend(new BPCPageJs(), {
 				tmp.me.saveItem(tmp.input, tmp.data);
 			});
 		tmp.cancel = new Element('i')
-			.addClassName('btn btn-danger btn-md')
+			.addClassName('btn btn-default btn-md')
 			.update('Cancel')
 			.observe('click',function(e){
 				tmp.me.closeFancyBox();

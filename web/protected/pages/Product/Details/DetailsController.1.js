@@ -40,7 +40,7 @@ PageJs.prototype = Object.extend(new DetailsPageJs(), {
 			._getInputDiv('name', (tmp.me._item.name || ''), $(tmp.me._containerIds.name), null ,true)
 			._getInputDiv('description', (tmp.me._item.description || ''), $(tmp.me._containerIds.description))
 			._getInputDiv('unitPrice', tmp.me.getCurrency((tmp.me._item.unitPrice || 0), ''), $(tmp.me._containerIds.unitPrice), 'Unit Price ($)',true, undefined, true)
-			._getInputDiv('barcode',(tmp.me._item.barcode || ''), $(tmp.me._containerIds.barcode))
+			._getInputDiv('barcode',(tmp.me._item.barcode || ''), $(tmp.me._containerIds.barcode), 'Barcode', true)
 			._getInputDiv('size',(tmp.me._item.size || ''), $(tmp.me._containerIds.size))
 			._getInputDiv('labelVersionNo',(tmp.me._item.labelVersionNo || ''), $(tmp.me._containerIds.labelVersion), 'Label Version',true)
 			._getInputDiv('useByVariance',(tmp.me._item.usedByVariance || ''), $(tmp.me._containerIds.useByVariance), 'Days By From Printed',true)
