@@ -29,12 +29,19 @@ abstract class LabelPrinter
         $lineNo = 0;
         imagettftext($img, $baseFont + 2, 0, $startX, $startY + $lineHeight * ($lineNo++), $black, $fontFile, 'Use By: ' . $label->getUseByDate()->format('d/m/Y'));
         self::_imagecenteredstring($img, $baseFont, $width, $startY + $lineHeight * ($lineNo++) - 5, 'Keep Refrigerated', $black, $fontFile);
-        imagettftext($img, $baseFont + 2, 0, $startX, $startY + $lineHeight * ($lineNo++), $black, $fontFile, 'Allergen Warning:');
+        imagettftext($img, $baseFont + 2, 0, $startX, $startY + $lineHeight * ($lineNo++), $black, $fontFile, 'Allergent Warning:');
         $alleNames = self::_getAllergentNames($label->getProduct());
-        self::_imagecenteredstring($img, $baseFont, $width, $startY + $lineHeight * ($lineNo++) - 5, ('Contains: ' . implode(', ', $alleNames)), $black, $fontFile);
+        $alleTexts = wordwrap('Contains: ' . implode(', ', $alleNames), 35, "\n");
+        foreach(explode("\n", $alleTexts) as $index => $textLine) {
+	        self::_imagecenteredstring($img, $baseFont, $width, $startY + $lineHeight * ($lineNo++) - ($index === 0 ? 5: 15), $textLine, $black, $fontFile);
+        }
+        
         imagettftext($img, $baseFont + 2, 0, $startX, $startY + $lineHeight * ($lineNo++), $black, $fontFile, 'Ingredients:');
         $ingredientsTxtArr = self::_getIngredientNames($label->getProduct());
-        self::_imagecenteredstring($img, $baseFont, $width, $startY + $lineHeight * $lineNo - 5, wordwrap(implode(', ', $ingredientsTxtArr), 35, "\n"), $black, $fontFile);
+        $ingreText = wordwrap(implode(', ', $ingredientsTxtArr), 35, "\n");
+        foreach(explode("\n", $ingreText) as $index => $textLine) {
+	        self::_imagecenteredstring($img, $baseFont, $width, $startY + $lineHeight * ($lineNo++) - ($index === 0 ? 5: 15), $textLine, $black, $fontFile);
+        }
 
 
         //start from the bottom now
@@ -56,7 +63,7 @@ abstract class LabelPrinter
 
         // Output the image
         $file = '/tmp/label_' . md5('Label' . '|' . trim(UDate::now()));
-        imagejpeg($img, $file, 75);
+        imagejpeg($img, $file, 100);
 
         // Free up memory
         imagedestroy($img);
