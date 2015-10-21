@@ -114,7 +114,7 @@
 	</services>
 	<!-- application parameters -->
 	<parameters>
-		<parameter id="AppTitle" value="Sushi Co Management System" />
+		<parameter id="AppTitle" value="Sushi & Co. Management System" />
 		<parameter id="AppVersion" value="1.0.0" />
 	</parameters>
 
