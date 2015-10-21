@@ -165,7 +165,7 @@ class Product extends InfoEntityAbstract
 
 	/**
 	 * Getting all the Materials
-	 * 
+	 *
 	 * @return array
 	 */
 	public function getMaterials()
@@ -177,7 +177,7 @@ class Product extends InfoEntityAbstract
 
 		if(count($materialIdArray) === 0)
 			return array();
-		
+
 		$materialIdArray = array_unique($materialIdArray);
 		return Material::getAllByCriteria('id IN ('.implode(", ", array_fill(0, count($materialIdArray), '?')).')', $materialIdArray);
 	}
@@ -233,7 +233,7 @@ class Product extends InfoEntityAbstract
 		$ids = array();
 		foreach($storeInfos as $info)
 			$ids[] = (trim($info->getEntityId()) !== '' ? trim($info->getEntityId()) : trim($pi->getValue()));
-		
+
 		if(count($ids) === 0)
 			return array();
 		$ids = array_unique($ids);
@@ -254,7 +254,7 @@ class Product extends InfoEntityAbstract
 	}
 	/**
 	 * Adding this product to all stores
-	 * 
+	 *
 	 * @return Product
 	 */
 	public function addToAllStore()
@@ -303,6 +303,15 @@ class Product extends InfoEntityAbstract
 	{
 		$newLabel = Label::create($this, $printedDate, $printedBy);
 		return $this;
+	}
+	/**
+	 * (non-PHPdoc)
+	 * @see BaseEntityAbstract::preSave()
+	 */
+	public function preSave()
+	{
+	    if(($this->getActive() === null || intval($this->getActive()) === 1) && preg_match('/^\d{12,13}$/', trim($this->getBarcode())))
+	        throw new Exception('The barcode needs to be 12 or 13 digits long.');
 	}
 	/**
 	 * (non-PHPdoc)
