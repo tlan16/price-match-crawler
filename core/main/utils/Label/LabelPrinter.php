@@ -42,8 +42,8 @@ abstract class LabelPrinter
         $barcodeImg = PhpBarcode::getBarcodeImg($label->getProduct()->getBarcode());
         $barcodeImg_width = imagesx ($barcodeImg);
         $barcodeImg_height = imagesy ($barcodeImg);
-        imagecopy($img, $barcodeImg, ($width/2 - $barcodeImg_width/2), $height - $barcodeImg_height, 0, 0, $barcodeImg_width, $barcodeImg_height);
-        $bottomBase_y = $height - $barcodeImg_height;
+        $bottomBase_y = $height - $barcodeImg_height - 1;
+        imagecopy($img, $barcodeImg, ($width/2 - $barcodeImg_width/2), $bottomBase_y, 0, 0, $barcodeImg_width, $barcodeImg_height);
 
         $mNutritions = self::_getMaterialNutrions($label->getProduct());
         $startY = $bottomBase_y - (count($mNutritions) + 1) * $lineHeight;
