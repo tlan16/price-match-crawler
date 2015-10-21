@@ -74,15 +74,15 @@ PageJs.prototype = Object.extend(new CRUDPageJs(), {
 			.addClassName('list-group-item')
 			.addClassName('item_row')
 			.writeAttribute('item_id', row.id)
-			.insert({'bottom': new Element(tmp.tag, {'class': 'name col-sm-3 ' + ( tmp.isTitle === true ? 'hidden-xs' :'')}).update(tmp.isTitle === true ? row.name : new Element('div')
+			.insert({'bottom': new Element(tmp.tag, {'class': 'name col-sm-3 col-xs-12' + ( tmp.isTitle === true ? 'hidden-xs' :'')}).update(tmp.isTitle === true ? row.name : new Element('div')
 				.insert({'bottom': new Element('div').update(row.name) })
 				.insert({'bottom': new Element('div').insert({'bottom': new Element('i').update(new Element('small').update(row.description))}) })
 			) })
-			.insert({'bottom': new Element(tmp.tag, {'class': 'barcode col-sm-2 ' + ( tmp.isTitle === true ? 'hidden-xs' :'')}).update(row.barcode) })
-			.insert({'bottom': new Element(tmp.tag, {'class': 'unitPrice col-sm-2 ' + ( tmp.isTitle === true ? 'hidden-xs' :'')}).update(tmp.isTitle === true ? row.unitPrice : tmp.me.getCurrency(row.unitPrice)) })
-			.insert({'bottom': new Element(tmp.tag, {'class': 'size col-md-1 hidden-sm ' + ( tmp.isTitle === true ? 'hidden-xs' :'')}).update(row.size) })
-			.insert({'bottom': new Element(tmp.tag, {'class': 'size col-sm-2 ' + ( tmp.isTitle === true ? 'hidden-xs' :'')}).update(tmp.isTitle === true ? row.categories : tmp.me._getOjbNames(row.categories).join(', ')) })
-			.insert({'bottom': new Element(tmp.tag, {'class': 'text-right btns col-sm-2'}).update(
+			.insert({'bottom': new Element(tmp.tag, {'class': 'barcode col-sm-2 col-xs-12' + ( tmp.isTitle === true ? 'hidden-xs' :'')}).update(row.barcode) })
+			.insert({'bottom': new Element(tmp.tag, {'class': 'unitPrice col-sm-2 col-xs-12' + ( tmp.isTitle === true ? 'hidden-xs' :'')}).update(tmp.isTitle === true ? row.unitPrice : tmp.me.getCurrency(row.unitPrice)) })
+			.insert({'bottom': new Element(tmp.tag, {'class': 'size col-md-1 hidden-sm col-xs-12' + ( tmp.isTitle === true ? 'hidden-xs' :'')}).update(row.size) })
+			.insert({'bottom': new Element(tmp.tag, {'class': 'size col-sm-2 col-xs-12' + ( tmp.isTitle === true ? 'hidden-xs' :'')}).update(tmp.isTitle === true ? row.categories : tmp.me._getOjbNames(row.categories).join(', ')) })
+			.insert({'bottom': new Element(tmp.tag, {'class': 'text-right btns col-sm-2 col-xs-12'}).update(
 				tmp.isTitle === true ?
 					(new Element('span', {'class': 'btn btn-primary btn-xs', 'title': 'New'})
 						.insert({'bottom': new Element('span', {'class': 'glyphicon glyphicon-plus'}) })
