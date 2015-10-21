@@ -73,7 +73,7 @@ class DetailsController extends DetailsPageAbstract
 			$focusEntity = $this->getFocusEntity();
 			if (isset ( $params->CallbackParameter->id ) && !($entity = $focusEntity::get(intval($params->CallbackParameter->id))) instanceof $focusEntity )
 				throw new Exception ( 'System Error: invalid id passed in.' );
-			
+
 			if (!isset ( $params->CallbackParameter->name ) || ($name = trim ( $params->CallbackParameter->name )) === '')
 				throw new Exception ( 'System Error: invalid name passed in.' );
 			$description = isset ( $params->CallbackParameter->description ) ? trim($params->CallbackParameter->description) : '';
@@ -86,7 +86,7 @@ class DetailsController extends DetailsPageAbstract
 			$materials = $this->_idsToObjs($params->CallbackParameter, 'materials', 'Material');
 			$categories = $this->_idsToObjs($params->CallbackParameter, 'categories', 'Category');
 			$stores = $this->_idsToObjs($params->CallbackParameter, 'stores', 'Store');
-			
+
 			if(!$entity instanceof $focusEntity) {
 				$entity = Product::createWithParams($name, $description, $barcode, $size, $useByVariance, $unitPrice, $labelVersionNo, $materials, $categories);
 			} else {
@@ -107,10 +107,11 @@ class DetailsController extends DetailsPageAbstract
 			if($allStores === true)	{
 				$entity->addToAllStore();
 			} else {
+			    if(count($stores) === 0)
+			        throw new Exception('You need at least one store for this product!');
 				foreach($stores as $store)
 					$entity->addStore($store);
 			}
-			
 			$results ['item'] = $entity->getJson();
 			Dao::commitTransaction ();
 		}
@@ -121,7 +122,7 @@ class DetailsController extends DetailsPageAbstract
 		}
 		$params->ResponseData = StringUtilsAbstract::getJson($results, $errors);
 	}
-	
+
 	private function _idsToObjs($param, $name, $entityName)
 	{
 		if(!isset($param->$name) || ($ids = trim($param->$name)) === 0 || count($ids = explode(',', $ids)) === 0)
