@@ -1,23 +1,42 @@
 <?php
-require_once dirname(__FILE__) . '/PhpBarcode_Code39.php';
+require_once dirname(__FILE__) . '/barcodegen/class/BCGFontFile.php';
+require_once dirname(__FILE__) . '/barcodegen/class/BCGColor.php';
+require_once dirname(__FILE__) . '/barcodegen/class/BCGDrawing.php';
+require_once dirname(__FILE__) . '/barcodegen/class/BCGean13.barcode.php';
+
 class PhpBarcode
 {
-    public static function getBarcodeImg($text, $textPos="", $noText = false, $type = 'Code39', $imgtype = 'png', $debug = false)
+    public static function getBarcodeImg($text, $debug = false)
     {
-    	$textPos = (trim ( $textPos ) == "") ? PhpBarcode_Code39::$TextPos_Below : "";
+        try
+        {
+            $font = new BCGFontFile(dirname(__FILE__) . '/barcodegen/font/Arial.ttf', 12);
+            $color_black = new BCGColor(0, 0, 0);
+            $color_white = new BCGColor(255, 255, 255);
 
-		// Make sure no bad files are included
-		if (! preg_match ( '/^[a-zA-Z0-9_-]+$/', $type ))
-			throw new Exception ( 'Invalid barcode type ' . $type );
-		if (! include_once (dirname ( __FILE__ ) . '/PhpBarcode_' . $type . '.php'))
-			throw new Exception ( $type . ' barcode is not supported' );
+            // Barcode Part
+            $code = new BCGean13();
+            $code->setScale(2);
+            $code->setThickness(30);
+            $code->setForegroundColor($color_black);
+            $code->setBackgroundColor($color_white);
+            $code->setFont($font);
+            $code->parse($text);
 
-		$classname = 'PhpBarcode_' . $type;
-		if (! in_array ( 'draw', get_class_methods ( $classname ) ))
-			throw new Exception ( "Unable to find draw method in '$classname' class" );
-		$text = strtoupper ( trim ( $text ) );
-		$obj = new $classname( $text, $textPos );
-		return $obj->draw ( $text, $noText, $imgtype );
+            // Drawing Part
+            $drawing = new BCGDrawing('', $color_white);
+            $drawing->setBarcode($code);
+            $drawing->draw();
+            $tmpFile = '/tmp/barcode_' . md5($text . trim(UDate::now()));
+            $drawing->setFilename($tmpFile);
+            $drawing->finish(BCGDrawing::IMG_FORMAT_PNG);
+
+			return imagecreatefrompng($tmpFile);
+        }
+        catch(Exception $ex)
+        {
+                throw $ex;
+        }
     }
 }
 ?>

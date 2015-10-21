@@ -38,7 +38,7 @@ try {
 	    }
 	}
 
-	$obj = Product::createWithParams('test', 'test description', '987654321', '123', '+3 day', '23.40', 'v1', Material::getAll());
+	$obj = Product::createWithParams('test', 'test description', '9348466001232', '123', '+3 day', '23.40', 'v1', Material::getAll());
 	$newLabel = null;
 	$obj->printLabel(null, null, $newLabel);
 	$imgPath = $newLabel->generateImg(200, 600);

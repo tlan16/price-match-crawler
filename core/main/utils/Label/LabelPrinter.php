@@ -28,24 +28,32 @@ abstract class LabelPrinter
         $startY = $yPos + $qrCodeImg_height + 10;
         $lineNo = 0;
         imagettftext($img, $baseFont + 2, 0, $startX, $startY + $lineHeight * ($lineNo++), $black, $fontFile, 'Use By: ' . $label->getUseByDate()->format('d/m/Y'));
-        self::_imagecenteredstring($img, $baseFont, $width, $startY + $lineHeight * ($lineNo++), 'Keep Refrigerated', $black, $fontFile);
+        self::_imagecenteredstring($img, $baseFont, $width, $startY + $lineHeight * ($lineNo++) - 5, 'Keep Refrigerated', $black, $fontFile);
         imagettftext($img, $baseFont + 2, 0, $startX, $startY + $lineHeight * ($lineNo++), $black, $fontFile, 'Allergen Warning:');
         $alleNames = self::_getAllergentNames($label->getProduct());
-        self::_imagecenteredstring($img, $baseFont, $width, $startY + $lineHeight * ($lineNo++), ('Contain: ' . implode(', ', $alleNames)), $black, $fontFile);
+        self::_imagecenteredstring($img, $baseFont, $width, $startY + $lineHeight * ($lineNo++) - 5, ('Contains: ' . implode(', ', $alleNames)), $black, $fontFile);
         imagettftext($img, $baseFont + 2, 0, $startX, $startY + $lineHeight * ($lineNo++), $black, $fontFile, 'Ingredients:');
         $ingredientsTxtArr = self::_getIngredientNames($label->getProduct());
-        self::_imagecenteredstring($img, $baseFont, $width, $startY + $lineHeight * $lineNo, wordwrap(implode(', ', $ingredientsTxtArr), 35, "\n"), $black, $fontFile);
-        $lineNo = $lineNo + 5;
-        self::_imagecenteredstring($img, $baseFont + 2, $width, $startY + $lineHeight * ($lineNo++), 'Nutrition Panel', $black, $fontFile);
-        $mNutritions = self::_getMaterialNutrions($label->getProduct());
-        foreach($mNutritions as $mNutrition) {
-            imagettftext($img, $baseFont, 0, $startX, $startY + $lineHeight * $lineNo, $black, $fontFile, $mNutrition->getNutrition()->getName() . ' (' . $mNutrition->getServeMeasurement()->getName() . ')');
-            imagettftext($img, $baseFont, 0, $startX + ($width * 0.85), $startY + $lineHeight * ($lineNo++), $black, $fontFile, $mNutrition->getQty());
-        }
+        self::_imagecenteredstring($img, $baseFont, $width, $startY + $lineHeight * $lineNo - 5, wordwrap(implode(', ', $ingredientsTxtArr), 35, "\n"), $black, $fontFile);
+
+
+        //start from the bottom now
+        //draw the barcode
         $barcodeImg = PhpBarcode::getBarcodeImg($label->getProduct()->getBarcode());
         $barcodeImg_width = imagesx ($barcodeImg);
         $barcodeImg_height = imagesy ($barcodeImg);
         imagecopy($img, $barcodeImg, ($width/2 - $barcodeImg_width/2), $height - $barcodeImg_height, 0, 0, $barcodeImg_width, $barcodeImg_height);
+        $bottomBase_y = $height - $barcodeImg_height;
+
+        $mNutritions = self::_getMaterialNutrions($label->getProduct());
+        $startY = $bottomBase_y - (count($mNutritions) + 1) * $lineHeight;
+        $lineNo = 0;
+        self::_imagecenteredstring($img, $baseFont + 2, $width, $startY + $lineHeight * ($lineNo++), 'Nutrition Panel', $black, $fontFile);
+        foreach($mNutritions as $mNutrition) {
+            imagettftext($img, $baseFont, 0, $startX, $startY + $lineHeight * $lineNo, $black, $fontFile, $mNutrition->getNutrition()->getName() . ' (' . $mNutrition->getServeMeasurement()->getName() . ')');
+            imagettftext($img, $baseFont, 0, $startX + ($width * 0.85), $startY + $lineHeight * ($lineNo++), $black, $fontFile, $mNutrition->getQty());
+        }
+
         // Output the image
         $file = '/tmp/label_' . md5('Label' . '|' . trim(UDate::now()));
         imagejpeg($img, $file, 75);
