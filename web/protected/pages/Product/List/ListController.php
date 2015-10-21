@@ -42,10 +42,64 @@ class ListController extends CRUDPageAbstract
 				$pageNo = $param->CallbackParameter->pagination->pageNo;
 				$pageSize = $param->CallbackParameter->pagination->pageSize;
 			}
+				
+			$serachCriteria = isset($param->CallbackParameter->searchCriteria) ? json_decode(json_encode($param->CallbackParameter->searchCriteria), true) : array();
+	
+			$where = array(1);
+			$params = array();
+			$query = $class::getQuery();
+			foreach($serachCriteria as $field => $value)
+			{
+				if((is_array($value) && count($value) === 0) || (is_string($value) && ($value = trim($value)) === ''))
+					continue;
+	
+				switch ($field)
+				{
+					case 'pro.name':
+					case 'pro.description':
+					case 'pro.barcode':
+					case 'pro.usedByVariance':
+					case 'pro.description':
+					case 'pro.description':
+						{
+							$searchTokens = array();
+							StringUtilsAbstract::permute(preg_split("/[\s,]+/", $value), $searchTokens);
+							$likeArray = array();
+							foreach($searchTokens as $index => $tokenArray) 
+							{
+								$key = md5($field . $index);
+								$params[$key] = '%' . implode('%', $tokenArray) . '%';
+								$likeArray[] = $field . " like :" . $key;
+							}
+								
+							$where[] = '(' . implode(' OR ', $likeArray) . ')';
+							break;
+						}
+					case 'pro.size':
+					case 'pro.unitPrice':
+					case 'pro.labelVersionNo':
+						{
+							$key = md5($field);
+							$where[] =  $field . " = :" . $key;
+							$params[$key] = $value;
+							break;
+						}
+				}
+			}
 			$stats = array();
-			$class::getQuery()->eagerLoad('Product.infos', 'inner join', 'pro_info', '(pro_info.productId = pro.id and pro_info.active = 1 and pro_info.typeId = ? and pro_info.entityName = ? and (pro_info.entityId = ? or pro_info.entityId = 0))');
-			$objects = $class::getAllByCriteria('pro.active = 1', array(ProductInfoType::ID_STORE, ProductInfoType::ENTITY_NAME_STORE, Core::getStore()->getId()), true, $pageNo, $pageSize, array(), $stats);
-
+			
+			$keys['pro_info.typeId'] = md5('pro_info.typeId');
+			$params[$keys['pro_info.typeId']] = ProductInfoType::ID_STORE;
+			
+			$keys['pro_info.entityName'] = md5('pro_info.entityName');
+			$params[$keys['pro_info.entityName']] = ProductInfoType::ENTITY_NAME_STORE;
+			
+			$keys['pro_info.entityId'] = md5('pro_info.entityId');
+			$params[$keys['pro_info.entityId']] = Core::getStore()->getId();
+			
+			$query->eagerLoad('Product.infos', 'inner join', 'pro_info', '(pro_info.productId = pro.id and pro_info.active = 1 and pro_info.typeId = :' . $keys['pro_info.typeId'] . ' and pro_info.entityName = :' . $keys['pro_info.entityName'] . ' and (pro_info.entityId = :' . $keys['pro_info.entityId'] . ' or pro_info.entityId = 0))');
+			
+			$objects = $class::getAllByCriteria(implode(' AND ', $where), $params, false, $pageNo, $pageSize, array('id' => 'desc'), $stats);
 			$results['pageStats'] = $stats;
 			$results['items'] = array();
 			foreach($objects as $obj)

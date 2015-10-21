@@ -12,16 +12,46 @@
 			</div>
 			<div class="panel-body search-panel" style="display:none;">
 				<div class="row">
-					<div class="col-sm-3">
+					<div class="col-md-3">
 						<div class="form-group form-group-sm input-group">
-                           <label for="nut.name" class="input-group-addon">Name:</label>
-                           <input type="text" class="form-control input-sm" search_field="nut.name" placeholder="The Name of the <%= $this->getFocusEntity() %>">
+                           <label for="pro.name" class="input-group-addon">Name:</label>
+                           <input type="text" class="form-control input-sm" search_field="pro.name" placeholder="The Name of the <%= $this->getFocusEntity() %>">
                        </div>
 					</div>
-					<div class="col-sm-3">
+					<div class="col-md-3">
 						<div class="form-group form-group-sm input-group">
-                           <label for="nut.description" class="input-group-addon">Description:</label>
-                           <input type="text" class="form-control input-sm" search_field="nut.description" placeholder="The Description of the <%= $this->getFocusEntity() %>">
+                           <label for="pro.description" class="input-group-addon">Description:</label>
+                           <input type="text" class="form-control input-sm" search_field="pro.description" placeholder="The Description of the <%= $this->getFocusEntity() %>">
+                       </div>
+					</div>
+					<div class="col-md-3">
+						<div class="form-group form-group-sm input-group">
+                           <label for="pro.barcode" class="input-group-addon">Barcode:</label>
+                           <input type="text" class="form-control input-sm" search_field="pro.barcode" placeholder="The Barcode of the <%= $this->getFocusEntity() %>">
+                       </div>
+					</div>
+					<div class="col-md-3">
+						<div class="form-group form-group-sm input-group">
+                           <label for="pro.size" class="input-group-addon">Size:</label>
+                           <input type="text" class="form-control input-sm" search_field="pro.size" placeholder="The Size of the <%= $this->getFocusEntity() %>">
+                       </div>
+					</div>
+					<div class="col-md-3">
+						<div class="form-group form-group-sm input-group">
+                           <label for="pro.usedByVariance" class="input-group-addon">Used By Variance:</label>
+                           <input type="text" class="form-control input-sm" search_field="pro.usedByVariance" placeholder="The Used By Variance of the <%= $this->getFocusEntity() %>">
+                       </div>
+					</div>
+					<div class="col-md-3">
+						<div class="form-group form-group-sm input-group">
+                           <label for="pro.unitPrice" class="input-group-addon">Unit Price:</label>
+                           <input type="value" class="form-control input-sm" search_field="pro.unitPrice" placeholder="The Unit Price of the <%= $this->getFocusEntity() %>">
+                       </div>
+					</div>
+					<div class="col-md-3">
+						<div class="form-group form-group-sm input-group">
+                           <label for="pro.labelVersionNo" class="input-group-addon">Label Version No:</label>
+                           <input type="value" class="form-control input-sm" search_field="pro.labelVersionNo" placeholder="The Label Version No of the <%= $this->getFocusEntity() %>">
                        </div>
 					</div>
 				</div>
