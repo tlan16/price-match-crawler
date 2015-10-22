@@ -18,7 +18,7 @@
                            <input type="text" class="form-control input-sm" search_field="pro.name" placeholder="The Name of the <%= $this->getFocusEntity() %>">
                        </div>
 					</div>
-					<div class="col-md-5">
+					<div class="col-md-7">
 						<div class="form-group form-group-sm input-group">
                            <label for="pro.categories" class="control-label input-group-addon">Categories:</label>
                            <input class="form-control input-sm select2" search_field="pro.categories" data-width="100%" data-multiple="true">
