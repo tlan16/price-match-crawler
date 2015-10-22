@@ -29,7 +29,7 @@ PageJs.prototype = Object.extend(new CRUDPageJs(), {
 			jQuery(this).select2(tmp.options);
 		});
 
-		tmp.selectBox = jQuery('[search_field="ingr.allergents"]').select2({
+		tmp.selectBox = jQuery('[search_field="pro.categories"]').select2({
 			minimumInputLength: 1,
 			allowClear: true,
 			multiple: true,
@@ -39,7 +39,7 @@ PageJs.prototype = Object.extend(new CRUDPageJs(), {
 				,url: '/ajax/getAll'
 				,type: 'GET'
 				,data: function (params) {
-					return {"searchTxt": 'name like ?', 'searchParams': ['%' + params + '%'], 'entityName': 'Allergent', 'pageNo': 1};
+					return {"searchTxt": 'name like ?', 'searchParams': ['%' + params + '%'], 'entityName': 'Category', 'pageNo': 1};
 				}
 				,results: function(data, page, query) {
 					tmp.result = [];

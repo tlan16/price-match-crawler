@@ -84,6 +84,25 @@ class ListController extends CRUDPageAbstract
 							$params[$key] = $value;
 							break;
 						}
+					case 'pro.categories':
+						{
+							$ingredients = explode(',', trim($value));
+							if(count($value) > 0)
+							{
+								$ps = array();
+								$keys = array();
+								foreach($ingredients as $index => $value){
+									$key = md5($field . '_' . $index);
+									$keys[] = ':' . $key;
+									$ps[$key] = trim($value);
+								}
+								$key = md5($field . '_' . 'entityName');
+								$ps[$key] = 'Category';
+								$query->eagerLoad('Product.infos', 'inner join', 'pro_info_cat', 'pro.id = pro_info_cat.productId and pro_info_cat.entityName = :' . $key . ' and pro_info_cat.entityId in (' . implode(',', $keys) . ')');
+								$params = array_merge($params, $ps);
+							}
+							break;
+						}
 				}
 			}
 			$stats = array();
