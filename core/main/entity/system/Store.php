@@ -2,15 +2,16 @@
 
 class Store extends InfoEntityAbstract
 {
+    const ID_HEADQUQRTER = 1;
 	/**
 	 * Address of the store
-	 * 
+	 *
 	 * @var Address
 	 */
 	protected $address;
 	/**
 	 * Getter for the address
-	 * 
+	 *
 	 * @return Address
 	 */
 	public function getAddress()
@@ -20,9 +21,9 @@ class Store extends InfoEntityAbstract
 	}
 	/**
 	 * Setter for the Address
-	 * 
+	 *
 	 * @param Address $address
-	 * 
+	 *
 	 * @return Store
 	 */
 	public function setAddress(Address $address)
@@ -31,7 +32,7 @@ class Store extends InfoEntityAbstract
 		return $this;
 	}
 	/**
-	 * 
+	 *
 	 * @return array
 	 */
 	public function getAllStoreInfos()
@@ -40,9 +41,9 @@ class Store extends InfoEntityAbstract
 	}
 	/**
 	 * adding a user
-	 * 
+	 *
 	 * @param UserAccount $user
-	 * 
+	 *
 	 * @return Store
 	 */
 	public function giveAccess(UserAccount $user)
@@ -50,14 +51,14 @@ class Store extends InfoEntityAbstract
 		if(StoreInfo::countByCriteria('storeId = ? and typeId = ? and entityId = ? and entityName = ?', array(trim($this->getId()), trim(StoreInfoType::ID_USERACCOUNTID), trim($user->getId()), get_class($user))) > 0) {
 			return $this;
 		}
-		
+
 		return $this->addInfo(StoreInfoType::get(StoreInfoType::ID_USERACCOUNTID), $user);
 	}
 	/**
 	 * removed a user
-	 * 
+	 *
 	 * @param UserAccount $user
-	 * 
+	 *
 	 * @return Store
 	 */
 	public function clearAccess(UserAccount $user)
@@ -74,15 +75,15 @@ class Store extends InfoEntityAbstract
 		$array = $extra;
 		$array['info'] = array();
 		$array['address'] = $this->getAddress()->getJson();
-		
+
 		$storeInfoArray = $this->getAllStoreInfos();
 		foreach($storeInfoArray as $storeInfo)
 		{
 			$storeInfoType = $storeInfo->getType();
-			
+
 			if(!isset($array['info'][$storeInfoType->getId()]))
 				$array['info'][$storeInfoType->getId()] = array();
-			
+
 			$array['info'][$storeInfoType->getId()][$storeInfo->getId()] = array();
 			$array['info'][$storeInfoType->getId()][$storeInfo->getId()]['value'] = $storeInfo->getValue();
 			$array['info'][$storeInfoType->getId()][$storeInfo->getId()]['entityId'] = $storeInfo->getEntityId();
@@ -108,7 +109,7 @@ class Store extends InfoEntityAbstract
 	{
 		DaoMap::begin($this, 'store');
 		DaoMap::setManyToOne('address', 'Address', 'addr');
-		
+
 		parent::__loadDaoMap();
 		DaoMap::commit();
 	}
@@ -126,11 +127,11 @@ class Store extends InfoEntityAbstract
 		return self::getCache($id);
 	}
 	/**
-	 * 
+	 *
 	 * @param unknown $name
 	 * @param unknown $description
 	 * @param Address $addr
-	 * 
+	 *
 	 * @return Store
 	 */
 	public static function createWithParams($name, $description, Address $addr, array $userAccounts = array())
