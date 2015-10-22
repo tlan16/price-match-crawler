@@ -144,12 +144,15 @@ CRUDPageJs.prototype = Object.extend(new BPCPageJs(), {
 		tmp.reset = (reset || false);
 		tmp.resultDiv = $(tmp.me.resultDivId);
 
+		if(jQuery('#' + pageJs.searchDivId + ' #searchBtn').attr('disabled') === 'disabled' || jQuery('#' + pageJs.searchDivId + ' #searchBtn').attr('disabled') === true || jQuery('#' + pageJs.searchDivId + ' #searchBtn').attr('disabled') === 'true')
+			return tmp.me;
+		
 		if(tmp.reset === true)
 			tmp.me._pagination.pageNo = 1;
 		tmp.me._pagination.pageSize = (pageSize || tmp.me._pagination.pageSize);
 		tmp.me.postAjax(tmp.me.getCallbackId('getItems'), {'pagination': tmp.me._pagination, 'searchCriteria': tmp.me._searchCriteria}, {
 			'onCreate': function () {
-				jQuery('#' + tmp.me.searchDivId + ' #searchBtn').button('loading');
+				jQuery('#' + tmp.me.searchDivId + ' #searchBtn').attr('disabled',true).button('loading');
 				//reset div
 				if(tmp.reset === true) {
 					tmp.resultDiv.update('').addClassName('list-group')
@@ -196,7 +199,7 @@ CRUDPageJs.prototype = Object.extend(new BPCPageJs(), {
 				}
 			}
 			,'onComplete': function() {
-				jQuery('#' + tmp.me.searchDivId + ' #searchBtn').button('reset');
+				jQuery('#' + tmp.me.searchDivId + ' #searchBtn').attr('disabled',false).button('reset');
 				tmp.resultDiv.getElementsBySelector('.loading-img').each(function(item){
 					item.remove();
 				});
