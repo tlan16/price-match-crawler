@@ -25,9 +25,11 @@ echo import sql files
 %MYSQLPATH% -h%DBHOST% -u%DBUSERNAME% -p%DBPASSWORD% %DBNAME% < %BASEDIR%/../systemsettings.sql
 %MYSQLPATH% -h%DBHOST% -u%DBUSERNAME% -p%DBPASSWORD% %DBNAME% < %BASEDIR%/../ingredientinfotype.sql
 %MYSQLPATH% -h%DBHOST% -u%DBUSERNAME% -p%DBPASSWORD% %DBNAME% < %BASEDIR%/../materialinfotype.sql
+%MYSQLPATH% -h%DBHOST% -u%DBUSERNAME% -p%DBPASSWORD% %DBNAME% < %BASEDIR%/../productinfotype.sql
 %MYSQLPATH% -h%DBHOST% -u%DBUSERNAME% -p%DBPASSWORD% %DBNAME% < %BASEDIR%/../allergent.sql
 %MYSQLPATH% -h%DBHOST% -u%DBUSERNAME% -p%DBPASSWORD% %DBNAME% < %BASEDIR%/../servemeasurement.sql
 %MYSQLPATH% -h%DBHOST% -u%DBUSERNAME% -p%DBPASSWORD% %DBNAME% < %BASEDIR%/../category.sql
 %MYSQLPATH% -h%DBHOST% -u%DBUSERNAME% -p%DBPASSWORD% %DBNAME% < %BASEDIR%/../nutrition.sql
+%MYSQLPATH% -h%DBHOST% -u%DBUSERNAME% -p%DBPASSWORD% %DBNAME% < %BASEDIR%/../products.sql
 
 echo done
