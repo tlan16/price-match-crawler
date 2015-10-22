@@ -141,17 +141,22 @@ PageJs.prototype = Object.extend(new CRUDPageJs(), {
  		});
 		return tmp.me;
 	}
-	,_openLabel: function(data) {
+	,_openLabel: function(btn) {
 		var tmp = {};
 		tmp.me = this;
-		tmp.newWindow = window.open('', 'width=300,height=800');
-		tmp.newWindow.document.write('<img src="' + data + '"/>');
+		tmp.data = $(btn).retrieve('labelData');
+		tmp.newWindow = window.open('', '', 'width=300,height=800,scrollbar=false');
+		tmp.newWindow.document.write('<img src="' + tmp.data + '"/>');
 		tmp.newWindow.document.close();
+		tmp.newWindow.focus();
+		tmp.newWindow.print();
+		tmp.newWindow.close();
 		return tmp.newWindow;
 	}
 	,_printItem: function(btn, item) {
 		var tmp = {};
 		tmp.me = this;
+		tmp.me._signRandID(btn);
 		tmp.me.postAjax(tmp.me.getCallbackId('printLabel'), {'id': item.id}, {
 			'onLoading': function () {
 				jQuery(btn).button('loading');
@@ -161,15 +166,12 @@ PageJs.prototype = Object.extend(new CRUDPageJs(), {
 					tmp.result = tmp.me.getResp(param, false, true);
 					if(!tmp.result || !tmp.result.item)
 						return;
-					$imgData = 'data:image/png;base64,' + tmp.result.item;
-					tmp.newWind = tmp.me._openLabel($imgData);
+					tmp.imgData = 'data:image/png;base64,' + tmp.result.item;
+					btn.store('labelData', tmp.imgData);
+					tmp.newWind = tmp.me._openLabel(btn);
 					if(!tmp.newWind) {
-						tmp.me.showModalBox('<b>Window Popup Blocked</b>', 'Your browser has blocked the popup from this site, please <a href="' + $imgData + '" target="__BLANK" class="btn btn-xs btn-info"> click here </a> to view the label for now. <div>Please change your browser setting to allow popup from this site in the future.</b>');
-					} else {
-						tmp.newWind.focus();
-						tmp.newWind.print();
+						tmp.me.showModalBox('<b>Window Popup Blocked</b>', 'Your browser has blocked the popup from this site, Please change your browser settings to allow popup from this site and try again <span class="btn btn-xs btn-info" onclick="$(' + "'" + btn.id + "'" + ').click();"> here </span>. <div></b>');
 					}
-
 				} catch (e) {
 					tmp.me.showModalBox('<span class="text-danger">ERROR:</span>', e, true);
 					$(btn).show();
