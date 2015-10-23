@@ -146,7 +146,7 @@ PageJs.prototype = Object.extend(new CRUDPageJs(), {
 		tmp.me = this;
 		tmp.data = $(btn).retrieve('labelData');
 		tmp.newWindow = window.open('', '', 'width=300,height=800,scrollbar=false');
-		tmp.newWindow.document.write('<img src="' + tmp.data + '"/>');
+		tmp.newWindow.document.write(tmp.data);
 		tmp.newWindow.document.close();
 		tmp.newWindow.focus();
 		tmp.newWindow.print();
@@ -166,7 +166,7 @@ PageJs.prototype = Object.extend(new CRUDPageJs(), {
 					tmp.result = tmp.me.getResp(param, false, true);
 					if(!tmp.result || !tmp.result.item)
 						return;
-					tmp.imgData = 'data:image/png;base64,' + tmp.result.item;
+					tmp.imgData = tmp.result.item;
 					btn.store('labelData', tmp.imgData);
 					tmp.newWind = tmp.me._openLabel(btn);
 					if(!tmp.newWind) {

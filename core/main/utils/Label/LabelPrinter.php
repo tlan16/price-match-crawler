@@ -33,7 +33,7 @@ abstract class LabelPrinter
             $html .= "<div style='text-align: left; font-size: 16px; font-weight: bold;'>Allergent Warning: </div>";
             $html .= "<div style='text-align: center; font-size: 10px;'>";
                 $alleNames = self::_getAllergentNames($label->getProduct());
-//                 $alleText = "Contains: " . implode(', ', $alleNames);
+                $alleText = "Contains: " . implode(', ', $alleNames);
                 $html .= count($alleNames) > 0  ? $alleText : '&nbsp;';
             $html .= "</div>";
             if(ceil(strlen($alleText) / ($width * (88/300))) > 1) //(88/300) is the right ratio tested with width is at 300;
