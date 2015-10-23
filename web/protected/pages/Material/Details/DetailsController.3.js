@@ -29,7 +29,7 @@ PageJs.prototype = Object.extend(new DetailsPageJs(), {
 		tmp.container = (container || null);
 		if(!tmp.container || !tmp.container.id)
 			return tmp.me;
-		tmp.newBtn = new Element('button', {'class': 'newNutritionBtn btn btn-success btn-sm'})
+		tmp.newBtn = new Element('button', {'class': 'newNutritionBtn btn btn-primary btn-sm'})
 			.update('New Nutrition')
 			.observe('click', function(e){
 				tmp.newBtn.writeAttribute('disabled', true);
