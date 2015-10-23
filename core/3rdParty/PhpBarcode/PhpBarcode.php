@@ -6,7 +6,7 @@ require_once dirname(__FILE__) . '/barcodegen/class/BCGean13.barcode.php';
 
 class PhpBarcode
 {
-    public static function getBarcodeImg($text, $debug = false)
+    public static function getBarcodeImg($text, $outputFile = false)
     {
         try
         {
@@ -27,11 +27,15 @@ class PhpBarcode
             $drawing = new BCGDrawing('', $color_white);
             $drawing->setBarcode($code);
             $drawing->draw();
-            $tmpFile = '/tmp/barcode_' . md5($text . trim(UDate::now()));
+            $tmpFile = '/tmp/barcode_' . md5($text . trim(UDate::now()) . (Core::getUser() instanceof UserAccount ? Core::getUser()->getId() : rand(0, 1000)));
             $drawing->setFilename($tmpFile);
             $drawing->finish(BCGDrawing::IMG_FORMAT_PNG);
+            if($outputFile === true)
+                return $tmpFile;
 
-			return imagecreatefrompng($tmpFile);
+			$img = imagecreatefrompng($tmpFile);
+			unlink($tmpFile);
+			return $img;
         }
         catch(Exception $ex)
         {

@@ -1,6 +1,83 @@
 <?php
 abstract class LabelPrinter
 {
+    public static function generateHTML(Label $label, $width, $height)
+    {
+        $bottomBoxHeight = 270;
+        $topBoxHeight = 320;
+        $html = "";
+        $html .= "<div style='margin-left: auto; margin-right: auto; margin-top: 12px;width: " . $width . "px; height: " . $height . "px'>";
+            $html .= "<div style='text-align: right; font-size: 9px;'>";
+            $html .= $label->getVersionNo();
+            $html .= "</div>";
+            $html .= "<div style='text-align: center; font-size: 16px; font-weight: bold;'>";
+                $html .= $label->getProduct()->getName();
+            $html .= "</div>";
+
+            $html .= "<div style='text-align: center; font-size: 12px; margin: 5px 0;'>Price</div>";
+            $html .= "<div style='text-align: center; font-size: 16px; font-weight: bold;'>";
+                $html .= StringUtilsAbstract::getCurrency($label->getPrintedPrice());
+            $html .= "</div>";
+
+            $html .= "<div style='text-align: center;'>";
+                $qrImgFile = self::_qrCodeImage('http://www.sushiandco.com.au/');
+                $html .= '<img src="data:image/png;base64,' . base64_encode(file_get_contents($qrImgFile)) . '" />';
+                unlink($qrImgFile);
+            $html .= "</div>";
+
+            $html .= "<div style='text-align: left; font-size: 16px; font-weight: bold;'>";
+                $html .= 'Use By: &nbsp;&nbsp;' . $label->getUseByDate()->format('d / m / Y');
+            $html .= "</div>";
+            $html .= "<div style='text-align: center; font-size: 12px;'>Keep Refrigerated</div>";
+
+            $html .= "<div style='text-align: left; font-size: 16px; font-weight: bold;'>Allergent Warning: </div>";
+            $html .= "<div style='text-align: center; font-size: 10px;'>";
+                $alleNames = self::_getAllergentNames($label->getProduct());
+//                 $alleText = "Contains: " . implode(', ', $alleNames);
+                $html .= count($alleNames) > 0  ? $alleText : '&nbsp;';
+            $html .= "</div>";
+            if(ceil(strlen($alleText) / ($width * (88/300))) > 1) //(88/300) is the right ratio tested with width is at 300;
+                $topBoxHeight = $topBoxHeight + 16;
+
+            $html .= "<div style='text-align: left; font-size: 16px; font-weight: bold;'>Ingredients: </div>";
+            $html .= "<div style='text-align: center; font-size: 10px; max-height: " . ($mheight = $height -  $topBoxHeight - $bottomBoxHeight) . "px; min-height: " . $mheight . "px;'>";
+                $ingredientsTxtArr = self::_getIngredientNames($label->getProduct());
+                $html .= count($ingredientsTxtArr) > 0  ? (implode(', ', $ingredientsTxtArr)) : '&nbsp;';
+            $html .= "</div>";
+
+            $html .= "<div style='background: transparent;height: " . $bottomBoxHeight . "px; vertical-align: bottom; display: table-cell; width: " . $width . "px'>";
+                $html .= "<div style='background: transparent; text-align: center; font-size: 16px; font-weight: bold; vertical-align: bottom;'>Nutrition Panel: </div>";
+                $html .= "<div style='background: transparent; text-align: left; margin-bottom: 15px;'>";
+                    $mNutritions = self::_getMaterialNutrions($label->getProduct());
+                    foreach($mNutritions as $mNutrition) {
+                        $html .= "<span style='text-align: left; width: 80%; display: inline-block;'>";
+                            $html .= $mNutrition->getNutrition()->getName() . ' (' . $mNutrition->getServeMeasurement()->getName() . ')';
+                        $html .= "</span>";
+                        $html .= "<span style='text-align: left; width: 15%; display: inline-block;'>";
+                            $html .= $mNutrition->getQty();
+                        $html .= "</span>";
+                    }
+                $html .= "</div>";
+
+                $html .= "<div style='background: transparent;text-align: center; vertical-align: bottom;'>";
+                    $barcodeImgFile = PhpBarcode::getBarcodeImg($label->getProduct()->getBarcode(), true);
+                    $html .= '<img src="data:image/png;base64,' . base64_encode(file_get_contents($barcodeImgFile)) . '" />';
+                    unlink($barcodeImgFile);
+                $html .= "</div>";
+            $html .= "</div>";
+
+            $html .= "<hr />";
+        $html .= "</div>";
+        return $html;
+    }
+    /**
+     * Generate the img
+     *
+     * @param Label   $label
+     * @param int     $width
+     * @param int     $height
+     * @return string
+     */
     public static function generateImg(Label $label, $width, $height)
     {
         $img = imagecreatetruecolor($width, $height);
@@ -17,7 +94,7 @@ abstract class LabelPrinter
         $dimensions = imagettfbbox(7, 0, $fontFile, $versionNo);
         imagettftext($img, 7, 0, $width - abs($dimensions[4] - $dimensions[0]) - $startX, 18, $black, $fontFile, $versionNo);
         $startY = abs($dimensions[7] - $dimensions[1]) - 10;
-        
+
         self::_imagecenteredstring($img, $baseFont + 5, $width, $startY + $lineHeight * ($lineNo++), $label->getProduct()->getName(), $black, $fontFile);
         self::_imagecenteredstring($img, $baseFont, $width, $startY + $lineHeight * ($lineNo++), 'Price', $black, $fontFile);
         self::_imagecenteredstring($img, $baseFont + 5, $width, $startY + $lineHeight * ($lineNo), StringUtilsAbstract::getCurrency($label->getPrintedPrice()), $black, $fontFile);
@@ -36,7 +113,7 @@ abstract class LabelPrinter
         foreach(explode("\n", $alleTexts) as $index => $textLine) {
 	        self::_imagecenteredstring($img, $baseFont, $width, $startY + $lineHeight * ($lineNo++) - ($index === 0 ? 5: 15), $textLine, $black, $fontFile);
         }
-        
+
         imagettftext($img, $baseFont + 5, 0, $startX, $startY + $lineHeight * ($lineNo++), $black, $fontFile, 'Ingredients:');
         $ingredientsTxtArr = self::_getIngredientNames($label->getProduct());
         $ingreText = wordwrap(implode(', ', $ingredientsTxtArr), 35, "\n");
@@ -63,7 +140,7 @@ abstract class LabelPrinter
         }
 
         // Output the image
-        $file = '/tmp/label_' . md5('Label' . '|' . trim(UDate::now()));
+        $file = '/tmp/label_' . md5('Label' . '|' . trim(UDate::now()) . (Core::getUser() instanceof UserAccount ? Core::getUser()->getId() : rand(0, 1000)));
         imagejpeg($img, $file, 100);
 
         // Free up memory
@@ -72,7 +149,7 @@ abstract class LabelPrinter
         return $file;
     }
     private static function _qrCodeImage($text) {
-        $file = '/tmp/label_qr_' . md5($text . trim(UDate::now()));
+        $file = '/tmp/label_qr_' . md5($text . trim(UDate::now()) . (Core::getUser() instanceof UserAccount ? Core::getUser()->getId() : rand(0, 1000)));
         QRcode::png($text, $file);
         return $file;
     }

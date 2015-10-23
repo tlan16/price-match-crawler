@@ -19,53 +19,54 @@
 
 			<!-- FrontEnd:: login page -->
 			<url ServiceParameter="Login.LoginController" pattern="login.html" />
-			
+
 			<!-- FrontEnd:: Address list page -->
 			<url ServiceParameter="Product.List.ListController" pattern="products.html" />
 			<!-- FrontEnd:: Address Detail page -->
 			<url ServiceParameter="Product.Details.DetailsController" pattern="product/{id}.html" parameters.id="new|\d+"/>
-			
-			
+
+
 			<!-- FrontEnd:: Address list page -->
 			<url ServiceParameter="Address.List.ListController" pattern="addresses.html" />
 			<!-- FrontEnd:: Address Detail page -->
 			<url ServiceParameter="Address.Details.DetailsController" pattern="address/{id}.html" parameters.id="new|\d+"/>
-			
+
 			<!-- FrontEnd:: Material list page -->
 			<url ServiceParameter="Material.List.ListController" pattern="materials.html" />
 			<!-- FrontEnd:: Material Detail page -->
 			<url ServiceParameter="Material.Details.DetailsController" pattern="material/{id}.html" parameters.id="new|\d+"/>
-			
+
 			<!-- FrontEnd:: Label list page -->
 			<url ServiceParameter="Label.List.ListController" pattern="labels.html" />
 			<!-- FrontEnd:: Label Detail page -->
 			<url ServiceParameter="Label.Details.DetailsController" pattern="label/{id}.html" parameters.id="new|\d+"/>
-			
+			<url ServiceParameter="Label.Print.Controller" pattern="print/label/{id}.html" parameters.id="\d+"/>
+
 			<!-- FrontEnd:: ServeMeasurement list page -->
 			<url ServiceParameter="ServeMeasurement.List.ListController" pattern="servemeasurements.html" />
 			<!-- FrontEnd:: ServeMeasurement Detail page -->
 			<url ServiceParameter="ServeMeasurement.Details.DetailsController" pattern="servemeasurement/{id}.html" parameters.id="new|\d+"/>
-			
+
 			<!-- FrontEnd:: Nutrition list page -->
 			<url ServiceParameter="Nutrition.List.ListController" pattern="nutritions.html" />
 			<!-- FrontEnd:: Nutrition Detail page -->
 			<url ServiceParameter="Nutrition.Details.DetailsController" pattern="nutrition/{id}.html" parameters.id="new|\d+"/>
-			
+
 			<!-- FrontEnd:: Ingredient list page -->
 			<url ServiceParameter="Ingredient.List.ListController" pattern="ingredients.html" />
 			<!-- FrontEnd:: Ingredient Detail page -->
 			<url ServiceParameter="Ingredient.Details.DetailsController" pattern="ingredient/{id}.html" parameters.id="new|\d+"/>
-			
+
 			<!-- FrontEnd:: Category list page -->
 			<url ServiceParameter="Category.List.ListController" pattern="categories.html" />
 			<!-- FrontEnd:: Category Detail page -->
 			<url ServiceParameter="Category.Details.DetailsController" pattern="category/{id}.html" parameters.id="new|\d+"/>
-			
+
 			<!-- FrontEnd:: Allergent list page -->
 			<url ServiceParameter="Allergent.List.ListController" pattern="allergents.html" />
 			<!-- FrontEnd:: Allergent Detail page -->
 			<url ServiceParameter="Allergent.Details.DetailsController" pattern="allergent/{id}.html" parameters.id="new|\d+"/>
-			
+
 			<!-- FrontEnd:: user page -->
 			<url ServiceParameter="User.List.UsersController" pattern="users.html" />
 			<!-- FrontEnd:: user edit page -->
