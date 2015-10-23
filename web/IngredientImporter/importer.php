@@ -67,9 +67,9 @@ abstract class Importer
     }
 }
 
-Importer::run();
+// Importer::run();
 
-// $string = 'SUSHI RICE (Sugar, Vinegar, Salt, Brown Sugar), AVOCADO (11%), CUCUMBER (11%), TASMANIAN SALMON (21%), SEAWEED, SESAME';
-// $matches=  null;
-// preg_match_all('#\((.*?)\)#', $string, $matches);
-// var_dump($matches);
+$string = 'SUSHI RICE (Sugar, Vinegar, Salt, Brown Sugar), AVOCADO (11%), CUCUMBER (11%), TASMANIAN SALMON (21%), SEAWEED, SESAME';
+$matches=  null;
+preg_match_all('/([A-Z]+)((\s*)([A-Z]+))*($|,|\(|\[)?/', $string, $matches);
+var_dump($matches);
