@@ -10,9 +10,14 @@ DetailsPageJs.prototype = Object.extend(new BPCPageJs(), {
 	 * Getting a form group for forms
 	 */
 	,_getFormGroup: function (label, input, noFormControl) {
-		return new Element('div', {'class': 'form-group form-group-sm'})
-			.insert({'bottom': new Element('label').update(label) })
-			.insert({'bottom': input.addClassName(noFormControl === true ? '' : 'form-control') });
+		var tmp = {};
+		tmp.element = new Element('div', {'class': 'form-group form-group-sm'});
+		if(label) {
+			if((typeof(label) !== 'string') || (typeof(label) === 'string' && !label.blank()))
+				tmp.element.insert({'bottom': new Element('label').update(label) });
+		}
+		tmp.element.insert({'bottom': input.addClassName(noFormControl === true ? '' : 'form-control') });
+		return tmp.element;
 	}
 	,refreshParentWindow: function() {
 		var tmp = {};
@@ -62,7 +67,7 @@ DetailsPageJs.prototype = Object.extend(new BPCPageJs(), {
 				tmp.me.closeFancyBox();
 			});
 
-		tmp.container.update('').addClassName('row')
+		tmp.container.update('').addClassName('col-xs-12')
 			.insert({'bottom': tmp.me._getFormGroup(tmp.title, tmp.save).addClassName('col-xs-6') })
 			.insert({'bottom': tmp.me._getFormGroup(tmp.title, tmp.cancel).addClassName('pull-right col-xs-6') })
 		;
@@ -129,13 +134,14 @@ DetailsPageJs.prototype = Object.extend(new BPCPageJs(), {
 
 		return tmp.me;
 	}
-	,_getInputDiv:function(saveItem, value, container, title, required, className, isCurrency) {
+	,_getInputDiv:function(saveItem, value, container, title, required, className, isCurrency, placeholder) {
 		var tmp = {};
 		tmp.me = this;
 		tmp.title = (title || tmp.me.ucfirst(saveItem));
 		tmp.required = (required === true);
 		tmp.className = (className || 'col-xs-12');
 		tmp.isCurrency = (isCurrency === true);
+		tmp.placeholder = (placeholder || '');
 
 		if(!container.id)
 			tmp.me._signRandID(container);
@@ -146,6 +152,7 @@ DetailsPageJs.prototype = Object.extend(new BPCPageJs(), {
 			.writeAttribute({
 				'required': tmp.required
 				,'save-item': saveItem
+				,'placeholder': tmp.placeholder
 				,'dirty': false
 			})
 			.setValue(value || '')
@@ -190,6 +197,7 @@ DetailsPageJs.prototype = Object.extend(new BPCPageJs(), {
 			return;
 		tmp.select2 = new Element('input')
 			.writeAttribute('required', tmp.required)
+			.writeAttribute('placeholder', 'Please select a ' + searchEntityName)
 			.writeAttribute('save-item', saveItem);
 
 		tmp.container.update(tmp.me._getFormGroup(tmp.title, tmp.select2).addClassName(tmp.className) );

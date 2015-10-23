@@ -7,7 +7,7 @@ PageJs.prototype = Object.extend(new DetailsPageJs(), {
 		var tmp = {};
 		tmp.me = this;
 		tmp.me._init();
-		
+
 		$(tmp.me.getHTMLID('itemDiv')).addClassName('row');
 		tmp.me
 			._getInputDiv('name', (tmp.me._item.name || ''), $(tmp.me._containerIds.name), null ,true)
@@ -15,9 +15,9 @@ PageJs.prototype = Object.extend(new DetailsPageJs(), {
 			._getSelect2Div('Ingredient', 'ingredients', tmp.me._item.id ? tmp.me._item.infos.ingredients : [], $(tmp.me._containerIds.ingredients), null)
 			._getSaveBtn()
 		;
-		
+
 		tmp.me._addNewNutritionBtn($(tmp.me._containerIds.new_material_nutrition));
-		
+
 		tmp.me._item.infos.material_nutrition.each(function(item){
 			tmp.me._addNutritionRow(item, $(tmp.me._containerIds.material_nutrition));
 		});
@@ -39,7 +39,7 @@ PageJs.prototype = Object.extend(new DetailsPageJs(), {
 				tmp.newBtn.writeAttribute('disabled', false);
 			})
 			;
-		
+
 		tmp.container.update(tmp.me._getFormGroup('', tmp.newBtn).addClassName('col-xs-12'));
 		return tmp.me;
 	}
@@ -49,21 +49,18 @@ PageJs.prototype = Object.extend(new DetailsPageJs(), {
 		tmp.material_nutrition = (material_nutrition || null);
 		tmp.active = (material_nutrition ? material_nutrition.active === true : true);
 		tmp.className = (className || '');
-		
+
 		tmp.deleteBtn = new Element('button', {'class': (tmp.active === true ? 'btn btn-sm btn-danger' : 'btn btn-sm btn-success') })
 			.addClassName(tmp.className)
 			.insert({'bottom': new Element('i', {'class': (tmp.active === true ? 'glyphicon glyphicon-trash' : 'glyphicon glyphicon-repeat')}) })
 			.observe('click', function(e){
 				if(confirm('This nutrition will be ' + (tmp.active === true ? (tmp.material_nutrition ? 'DE-ACTIVATED' : 'REMOVED') : 'RE_ACTIVATED') + ', continue?')) {
-					tmp.panel = tmp.deleteBtn.up('.panel.material_nutrition');
-					if(!tmp.material_nutrition)
-						tmp.panel.remove();
-					else {
-						tmp.active = !tmp.active;
-						tmp.material_nutrition.active = tmp.active;
-						tmp.panel.writeAttribute('active', tmp.active);
-						tmp.deleteBtn.replace(tmp.me._getNutritionRowDeleteBtn(tmp.material_nutrition, tmp.className));
+					tmp.panel = tmp.deleteBtn.up('.material_nutrition');
+					if(tmp.material_nutrition && tmp.material_nutrition.id) {
+						tmp.panel.up().insert({'bottom': new Element('input', {'type': 'hidden', 'save-item': 'ignore_' + tmp.material_nutrition.id, 'dirty': true}) });
 					}
+					tmp.panel.remove();
+					tmp.me._refreshDirty()._getSaveBtn();
 				}
 			})
 			;
@@ -76,19 +73,16 @@ PageJs.prototype = Object.extend(new DetailsPageJs(), {
 		tmp.container = (container || null);
 		if(!tmp.container || !tmp.container.id)
 			return tmp.me;
-		tmp.container.addClassName('col-xs-12')
-			.insert({'bottom': new Element('div', {'class': 'material_nutrition panel panel-default', 'material_nutrition_id': (tmp.material_nutrition ? tmp.material_nutrition.id : 'new'), 'active': (tmp.material_nutrition ? tmp.material_nutrition.active : true) })
-				.insert({'bottom': new Element('div', {'class': 'panel-heading'})
-					.update(tmp.material_nutrition ? 'Editing Nutrition' : 'New Nutrition')
-				})
-				.insert({'bottom': new Element('div', {'class': 'panel-body'})
-					.insert({'bottom': tmp.nutrition = new Element('div', {'class': 'nutrition'}) })
-					.insert({'bottom': tmp.qty = new Element('div', {'class': 'qty'}) })
-					.insert({'bottom': tmp.servemeasurement = new Element('div', {'class': 'servemeasurement'}) })
-					.insert({'bottom': tmp.me._getNutritionRowDeleteBtn(tmp.material_nutrition, 'col-xs-12 pull-right text-right') })
+		tmp.container
+			.insert({'bottom': new Element('div', {'class': 'material_nutrition col-xs-12', 'material_nutrition_id': (tmp.material_nutrition ? tmp.material_nutrition.id : 'new'), 'active': (tmp.material_nutrition ? tmp.material_nutrition.active : true) })
+				.insert({'bottom': new Element('div', {'class': 'row '})
+					.insert({'bottom': tmp.nutrition = new Element('div', {'class': 'nutrition col-md-7 col-sm-4 col-xs-12'}) })
+					.insert({'bottom': tmp.qty = new Element('div', {'class': 'qty col-md-2 col-sm-3 col-xs-12'}) })
+					.insert({'bottom': tmp.servemeasurement = new Element('div', {'class': 'servemeasurement col-md-2 col-sm-3  col-xs-12'}) })
+					.insert({'bottom': new Element('div', {'class': 'pull-right text-right col-md-1 col-sm-1 col-xs-12'}).update(tmp.me._getNutritionRowDeleteBtn(tmp.material_nutrition, 'col-xs-12')) })
 				})
 			});
-		
+
 		tmp.nutritionSelect2Options = {
 			minimumInputLength: 1,
 			multiple: false,
@@ -113,7 +107,7 @@ PageJs.prototype = Object.extend(new DetailsPageJs(), {
 			,cache: true
 			,escapeMarkup: function (markup) { return markup; } // let our custom formatter work
 			};
-		
+
 		tmp.serveMeasurementSelect2Options = {
 			minimumInputLength: 1,
 			multiple: false,
@@ -138,11 +132,11 @@ PageJs.prototype = Object.extend(new DetailsPageJs(), {
 			,cache: true
 			,escapeMarkup: function (markup) { return markup; } // let our custom formatter work
 			};
-		
+
 		tmp.me
-			._getSelect2Div('Nutrition', 'nutrition', (tmp.material_nutrition ? {'id': tmp.material_nutrition.nutrition.id, 'text': tmp.material_nutrition.nutrition.name, 'data': tmp.material_nutrition.nutrition} : null), tmp.nutrition, null, true, tmp.nutritionSelect2Options)
-			._getInputDiv('qty', (tmp.material_nutrition ? tmp.material_nutrition.qty : ''), tmp.qty, null ,true)
-			._getSelect2Div('ServeMeasurement', 'serveMeasurement', (tmp.material_nutrition ? {'id': tmp.material_nutrition.serveMeasurement.id, 'text': tmp.material_nutrition.serveMeasurement.name, 'data': tmp.material_nutrition.serveMeasurement} : null), tmp.servemeasurement, null, true, tmp.serveMeasurementSelect2Options)
+			._getSelect2Div('Nutrition', 'nutrition', (tmp.material_nutrition ? {'id': tmp.material_nutrition.nutrition.id, 'text': tmp.material_nutrition.nutrition.name, 'data': tmp.material_nutrition.nutrition} : null), tmp.nutrition, ' ', true, tmp.nutritionSelect2Options)
+			._getInputDiv('qty', (tmp.material_nutrition ? tmp.material_nutrition.qty : ''), tmp.qty, ' ' , true, '', false, 'Qty')
+			._getSelect2Div('ServeMeasurement', 'serveMeasurement', (tmp.material_nutrition ? {'id': tmp.material_nutrition.serveMeasurement.id, 'text': tmp.material_nutrition.serveMeasurement.name, 'data': tmp.material_nutrition.serveMeasurement} : null), tmp.servemeasurement, ' ', true, tmp.serveMeasurementSelect2Options)
 		;
 		return tmp.me;
 	}
@@ -158,7 +152,7 @@ PageJs.prototype = Object.extend(new DetailsPageJs(), {
 			if(tmp.material_nutrition)
 				tmp.data['material_nutrition'].push(tmp.material_nutrition);
 		});
-		
+
 		return tmp.data;
 	}
 });
