@@ -145,13 +145,17 @@ PageJs.prototype = Object.extend(new CRUDPageJs(), {
 		var tmp = {};
 		tmp.me = this;
 		tmp.data = $(btn).retrieve('labelData');
-		tmp.newWindow = window.open('', '', 'width=300,height=800,scrollbar=false');
+		tmp.newWindow = window.open('', '', 'width=300,height=800,directories=no,titlebar=no,toolbar=no,location=no,status=no,menubar=no,scrollbars=no');
+		if(!tmp.newWindow) {
+			tmp.me.showModalBox('<b>Window Popup Blocked</b>', 'Your browser has blocked the popup from this site, Please change your browser settings to allow popup from this site and try again <span class="btn btn-xs btn-info" onclick="$(' + "'" + btn.id + "'" + ').click();"> here </span>. <div></b>');
+			return tmp.me;
+		}
 		tmp.newWindow.document.write(tmp.data);
 		tmp.newWindow.document.close();
 		tmp.newWindow.focus();
 		tmp.newWindow.print();
 		tmp.newWindow.close();
-		return tmp.newWindow;
+		return tmp.me;
 	}
 	,_printItem: function(btn, item) {
 		var tmp = {};
@@ -168,10 +172,7 @@ PageJs.prototype = Object.extend(new CRUDPageJs(), {
 						return;
 					tmp.imgData = tmp.result.item;
 					btn.store('labelData', tmp.imgData);
-					tmp.newWind = tmp.me._openLabel(btn);
-					if(!tmp.newWind) {
-						tmp.me.showModalBox('<b>Window Popup Blocked</b>', 'Your browser has blocked the popup from this site, Please change your browser settings to allow popup from this site and try again <span class="btn btn-xs btn-info" onclick="$(' + "'" + btn.id + "'" + ').click();"> here </span>. <div></b>');
-					}
+					tmp.me._openLabel(btn);
 				} catch (e) {
 					tmp.me.showModalBox('<span class="text-danger">ERROR:</span>', e, true);
 					$(btn).show();
