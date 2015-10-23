@@ -117,7 +117,12 @@ BPCPageJs.prototype = {
 	,getValueFromCurrency: function(currency) {
 		if(!currency)
 			return '';
-		return (currency + '').replace(/\s*/g, '').replace(/\$/g, '').replace(/,/g, '');
+		var tmp = {};
+		tmp.reg = /^-?\d*[\.]?\d+$/;
+//		tmp.result =  (currency + '').replace(/\s*/g, '').replace(/\$/g, '').replace(/,/g, '');
+//		tmp.result = tmp.reg.exec(tmp.result);
+		tmp.result = accounting.formatMoney(currency, "", 4);
+		return tmp.result;
 	}
 	//do key enter
 	,keydown: function (event, enterFunc, nFunc, keyValue) {
@@ -177,7 +182,7 @@ BPCPageJs.prototype = {
 				,'content': errMsg
 			})
 			.tooltip('show');
-			$(input).observe('change', function(){
+			jQuery('#' + input.id).on('keyup change dp.change', function(){
 				tmp.func = $(input).retrieve('clearErrFunc');
 				if(typeof(tmp.func) === 'function')
 					tmp.func();
@@ -288,6 +293,9 @@ BPCPageJs.prototype = {
 	,getLoadingImg: function() {
 		return Element('span', {'class': 'loading-img fa fa-refresh fa-5x fa-spin'});
 	}
+	,removeLoadingImg: function() {
+		jQuery('.loading-img').remove();
+	}
 	/**
 	 * Load the mysql utc time into Date object
 	 */
@@ -344,7 +352,7 @@ BPCPageJs.prototype = {
 		tmp.me = this;
 		tmp.win = window.open(url, '_blank');
 		tmp.win.focus();
-		
+
 		return this;
 	}
 	/**
@@ -359,5 +367,47 @@ BPCPageJs.prototype = {
 				break;
 			}
 		}
+	}
+	,ucfirst: function(string) {
+		if(string.length === 0)
+			return string;
+		return string.charAt(0).toUpperCase() + string.slice(1);
+	}
+	,_elTojQuery: function (el) {
+		var tmp = {};
+		tmp.me = this;
+		tmp.el = (el || null);
+		if(tmp.el === null)
+			return null;
+		tmp.me._signRandID(tmp.el);
+		tmp.el = jQuery('#'+tmp.el.id);
+		return tmp.el;
+	}
+	,_getNamesString: function(objs, name, glue) {
+		var tmp = {};
+		tmp.me = this;
+		tmp.name = (name || 'name');
+		tmp.glue = (glue || ', ');
+		tmp.result = "";
+		if(!Array.isArray(objs))
+			return tmp.result;
+		tmp.names = [];
+		objs.each(function(obj){
+			if(typeof obj[tmp.name] !== 'undefined')
+				tmp.names.push(obj[tmp.name]);
+		});
+		tmp.result = tmp.names.join(tmp.glue);
+		return tmp.result;
+	}
+	,_disableAll: function(container, selector) {
+		var tmp = {};
+		tmp.me = this;
+		tmp.selector = (selector || 'button,.btn,input,[save-item],[search_field],select,.select2');
+		tmp.container = (container || null);
+		if(tmp.container)
+			tmp.container = tmp.me._elTojQuery(tmp.container);
+		else tmp.container = jQuery(document);
+		if(typeof tmp.selector === 'string' && tmp.selector.trim() !== '')
+			tmp.container.find(tmp.selector).prop('disabled', true).attr('disabled', true);
 	}
 };

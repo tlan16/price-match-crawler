@@ -352,7 +352,7 @@ BPCPageJs.prototype = {
 		tmp.me = this;
 		tmp.win = window.open(url, '_blank');
 		tmp.win.focus();
-		
+
 		return this;
 	}
 	/**
@@ -373,7 +373,7 @@ BPCPageJs.prototype = {
 			return string;
 		return string.charAt(0).toUpperCase() + string.slice(1);
 	}
-	,_elTojQuery(el) {
+	,_elTojQuery: function (el) {
 		var tmp = {};
 		tmp.me = this;
 		tmp.el = (el || null);
@@ -404,7 +404,7 @@ BPCPageJs.prototype = {
 		tmp.me = this;
 		tmp.selector = (selector || 'button,.btn,input,[save-item],[search_field],select,.select2');
 		tmp.container = (container || null);
-		if(tmp.container) 
+		if(tmp.container)
 			tmp.container = tmp.me._elTojQuery(tmp.container);
 		else tmp.container = jQuery(document);
 		if(typeof tmp.selector === 'string' && tmp.selector.trim() !== '')

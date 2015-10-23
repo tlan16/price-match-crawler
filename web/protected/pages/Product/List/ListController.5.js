@@ -55,7 +55,7 @@ PageJs.prototype = Object.extend(new CRUDPageJs(), {
 			,escapeMarkup: function (markup) { return markup; } // let our custom formatter work
 		});
 	}
-	,_getOjbNames(objects) {
+	,_getOjbNames: function (objects) {
 		var tmp = {};
 		tmp.names = [];
 		objects.each(function(obj){
