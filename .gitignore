@@ -4,3 +4,5 @@
 .DS_Store
 .project
 .buildpath
+/clearCache.sh.lnk
+/db_import.sh.lnk

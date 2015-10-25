@@ -84,6 +84,7 @@ DetailsPageJs.prototype = Object.extend(new BPCPageJs(), {
 	,closeFancyBox:function () {
 		if(parent.jQuery && parent.jQuery.fancybox)
 			parent.jQuery.fancybox.close();
+		else location.reload();
 		return this;
 	}
 	,_getDatePickerDiv:function(saveItem, value, container, title, required, format, className) {
