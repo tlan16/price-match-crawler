@@ -177,10 +177,27 @@ class UserAccount extends BaseEntityAbstract
     		$array['roles'] = array();
     		foreach($this->getRoles() as $role)
     			$array['roles'][] = $role->getJson();
+    		$array['stores'] = array();
+    		foreach($this->getAccessableStores() as $store)
+    			$array['stores'][] = $store->getJson();
     	}
     	$array = parent::getJson($array, $reset);
     	unset($array['password']);
     	return $array;
+    }
+    public function getAccessableStores()
+    {
+    	$result = array();
+    	$infos = StoreInfo::getAllByCriteria('typeId = ? and entityId = ? and entityName = ?', array(trim(StoreInfoType::ID_USERACCOUNTID), trim($this->getId()), get_class($this)));
+    	if(!is_array($infos))
+    		return $result;
+    	foreach ($infos as $ino)
+    	{
+    		$info = new StoreInfo();
+    		if(($store = $info->getStore()) instanceof Store)
+    			$result[] = $store; 
+    	}
+    	return $result;
     }
     /**
      * Gaining access to a store
@@ -224,7 +241,7 @@ class UserAccount extends BaseEntityAbstract
     {
         DaoMap::begin($this, 'ua');
         DaoMap::setStringType('username', 'varchar', 100);
-        DaoMap::setStringType('password', 'varchar', 40);
+        DaoMap::setStringType('password', 'varchar', 255);
         DaoMap::setManyToOne("person", "Person", "p");
         parent::__loadDaoMap();
 
@@ -248,7 +265,7 @@ class UserAccount extends BaseEntityAbstract
     		throw new Exception('invalid username passed in');
     	if(($password = trim($password)) === '')
     		throw new Exception('invalid password passed in');
-    	$password = sha1($password);
+    	$password = password_hash($password, PASSWORD_DEFAULT);
     	$where = '';
     	$param = array();
     	$where .= " username = :uname";
@@ -275,13 +292,19 @@ class UserAccount extends BaseEntityAbstract
      */
     public static function getUserByUsernameAndPassword($username, $password, $noHashPass = false)
     {
-    	$userAccounts = self::getAllByCriteria("`UserName` = :username AND `Password` = :password", array('username' => $username, 'password' => ($noHashPass === true ? $password : sha1($password))), true, 1, 2);
-    	if(count($userAccounts) === 1)
-    		return $userAccounts[0];
-    	else if(count($userAccounts) > 1)
+    	$userAccounts = self::getAllByCriteria("`UserName` = :username", array('username' => $username), true, 1, 2);
+    	if(count($userAccounts) > 1)
     		throw new AuthenticationException("Multiple Users Found!Contact you administrator!");
-    	else
-    		throw new AuthenticationException("No User Found!");
+    	if(count($userAccounts) === 1)
+    	{
+    		$userAccount = $userAccounts[0];
+    		if($noHashPass === false && password_verify($password, $userAccount->getPassword()) !== true)
+		    	throw new AuthenticationException("Invalid Username or Password!");
+    		if($noHashPass === true && strcmp($password, $userAccount->getPassword()) !== 0)
+		    	throw new AuthenticationException("Invalid Username or Password!");
+    		return $userAccount;
+    	}
+    	throw new AuthenticationException("Invalid Username or Password!");
     }
     /**
      * Getting UserAccount by username
