@@ -28,7 +28,7 @@ class UserAccountInfoType extends InfoTypeAbstract
      * @throws Exception
      * @return UserAccountInfoType
      */
-    public static function create($name, $description = '')
+    public static function create($name, $description = '', $active = true)
     {
     	if(($name = trim($name)) === '')
     		throw new Exception('Name cannot be empty to create a new ' . __CLASS__);
@@ -36,6 +36,7 @@ class UserAccountInfoType extends InfoTypeAbstract
     	$obj = self::getByName($name);
     	$obj = $obj instanceof self ? $obj : new self();
     	$obj->setName($name)
+    		->setActive($active)
 	    	->save();
     	return $obj;
     }

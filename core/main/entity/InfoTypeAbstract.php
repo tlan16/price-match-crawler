@@ -109,6 +109,7 @@ class InfoTypeAbstract extends BaseEntityAbstract
 		$obj = count($objs) > 0 ? $objs[0] : new $class();
 		$obj->setName($name)
 			->setDescription($description)
+			->setActive($active)
 			->save();
 		return $obj;
 	}
