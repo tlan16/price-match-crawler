@@ -141,11 +141,13 @@ DetailsPageJs.prototype = Object.extend(new BPCPageJs(), {
 		tmp.isCurrency = (isCurrency === true);
 		tmp.placeholder = (placeholder || '');
 
+		if(!container)
+			return tmp.me;
 		if(!container.id)
 			tmp.me._signRandID(container);
 		tmp.container = $(container.id);
 		if(!tmp.container)
-			return;
+			return tmp.me;
 		tmp.input = new Element('input')
 			.writeAttribute({
 				'required': tmp.required
