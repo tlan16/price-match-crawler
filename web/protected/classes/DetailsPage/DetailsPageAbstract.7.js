@@ -54,7 +54,6 @@ DetailsPageJs.prototype = Object.extend(new BPCPageJs(), {
 				tmp.data = tmp.me.collectData();
 				if(tmp.btn.readAttribute('disabled') === true || tmp.btn.readAttribute('disabled') === 'disabled' || tmp.data === null)
 					return tmp.me;
-				tmp.me._disableAll($(tmp.me.getHTMLID('itemDiv')));
 				if(tmp.data === null)
 					return tmp.me;
 				if(tmp.me._item && tmp.me._item.id)
@@ -78,7 +77,7 @@ DetailsPageJs.prototype = Object.extend(new BPCPageJs(), {
 		return tmp.me;
 	}
 	,collectData: function() {
-		return this._collectFormData($(tmp.me.getHTMLID('itemDiv')), 'save-item');
+		return this._collectFormData($(this.getHTMLID('itemDiv')), 'save-item');
 	}
 	,closeFancyBox:function () {
 		if(parent.jQuery && parent.jQuery.fancybox)
@@ -257,6 +256,7 @@ DetailsPageJs.prototype = Object.extend(new BPCPageJs(), {
 			tmp.me._signRandID(btn);
 			jQuery('#' + btn.id).prop('disabled',true);
 		}
+		tmp.me._disableAll($(tmp.me.getHTMLID('itemDiv')));
 		tmp.me.postAjax(tmp.me.getCallbackId('saveItem'), data, {
 			'onSuccess': function (sender, param) {
 				try {
