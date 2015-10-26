@@ -191,9 +191,8 @@ class UserAccount extends BaseEntityAbstract
     	$infos = StoreInfo::getAllByCriteria('typeId = ? and entityId = ? and entityName = ?', array(trim(StoreInfoType::ID_USERACCOUNTID), trim($this->getId()), get_class($this)));
     	if(!is_array($infos))
     		return $result;
-    	foreach ($infos as $ino)
+    	foreach ($infos as $info)
     	{
-    		$info = new StoreInfo();
     		if(($store = $info->getStore()) instanceof Store)
     			$result[] = $store; 
     	}
