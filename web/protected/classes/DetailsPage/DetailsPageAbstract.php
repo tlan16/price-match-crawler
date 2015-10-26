@@ -105,7 +105,6 @@ abstract class DetailsPageAbstract extends BPCPageAbstract
 			$description = '';
 			if (isset ( $params->CallbackParameter->description ) )
 				$description = trim($params->CallbackParameter->description);
-			else $description = trim($params->CallbackParameter->description);
 			if (isset ( $params->CallbackParameter->id ) && !($entity = $focusEntity::get(intval($params->CallbackParameter->id))) instanceof $focusEntity )
 				throw new Exception ( 'System Error: invalid id passed in.' );
 			
