@@ -94,7 +94,8 @@ abstract class CRUDPageAbstract extends BPCPageAbstract
 		$js .= "if(pageJs.init) {pageJs.init();}";
 		$js .= "pageJs.getSearchCriteria();";
 		$js .= "pageJs._focusEntity = '" . $this->getFocusEntity() . "';";
-		//$js .= ".getResults(true, " . $this->pageSize . ")";
+		$js .= "pageJs.loadSelect2();";
+		$js .= "pageJs._bindSearchKey();";
 		return $js;
 	}
 	/**
