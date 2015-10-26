@@ -154,15 +154,29 @@ class InfoAbstract extends BaseEntityAbstract
 	 * 
 	 * @return InfoAbstract
 	 */
-	public static function create(InfoEntityAbstract $baseEntity, InfoTypeAbstract $type, $value = "", $entity = null, InfoAbstract &$exitsObj = null)
+	public static function create($baseEntity, InfoTypeAbstract $type, $value = "", $entity = null, InfoAbstract &$exitsObj = null)
 	{
 		$className = get_called_class();
+		$entityClass = str_replace('Info', '', $className);
+		
+		if(!$baseEntity instanceof InfoEntityAbstract && !$baseEntity instanceof UserAccount)
+			throw new Exception('invalid baseEntity given');
 		if(!$entity instanceof BaseEntityAbstract && trim($value) === '')
 			throw new Exception('must give entity or value');
 		$value = trim($value);
 		$entityName = $entity instanceof BaseEntityAbstract ? get_class($entity) : "";
 		$entityId = $entity instanceof BaseEntityAbstract ? $entity->getId() : 0;
-		$info = ($exitsObj instanceof InfoAbstract ? $exitsObj : new $className());
+		
+		if($exitsObj instanceof InfoAbstract)
+			$info = $exitsObj;
+		else {
+			$where = $entityClass . 'Id = :pId and entityName = :eName and entityId = :eId and value = :val and typeId = :tId';
+			$params = array('pId' => $baseEntity->getId(), 'eName' => $entityName, 'eId' => $entityId, 'val' => $value , 'tId' => $type->getId());
+			$exitsObjs = self::getAllByCriteria($where, $params, true, 1, 1);
+			if(count($exitsObjs) > 0)
+				$info = $exitsObjs[0];
+			else $info = new $className();
+		}
 		
 		$info->setEntity($baseEntity)
 			->setType($type)
