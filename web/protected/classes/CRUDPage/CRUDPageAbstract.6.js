@@ -39,7 +39,7 @@ CRUDPageJs.prototype = Object.extend(new BPCPageJs(), {
 				});
 			})
 		});
-		return this;
+		return tmp.me;
 	}
 	
 	,getSearchCriteria: function() {
@@ -55,7 +55,7 @@ CRUDPageJs.prototype = Object.extend(new BPCPageJs(), {
 		});
 		if(tmp.nothingTosearch === true)
 			tmp.me._searchCriteria = null;
-		return this;
+		return tmp.me;
 	}
 	,_getResultRow: function(row, isTitle) {
 		var tmp = {};
@@ -114,7 +114,6 @@ CRUDPageJs.prototype = Object.extend(new BPCPageJs(), {
 				tmp.options['minimumResultsForSearch'] = 'Infinity';
 			jQuery(this).select2(tmp.options);
 		});
-		
 		return tmp.me;
 	}
 	,_openDetailsPage: function(row) {
@@ -206,6 +205,7 @@ CRUDPageJs.prototype = Object.extend(new BPCPageJs(), {
 				return tmp.me;
 			}
 		});
+		return tmp.me;
 	}
 
 	,_getNextPageBtn: function() {
