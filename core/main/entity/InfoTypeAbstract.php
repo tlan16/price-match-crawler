@@ -98,7 +98,7 @@ class InfoTypeAbstract extends BaseEntityAbstract
 	 * @return InfoTypeAbstract
 	 * @throws Exception
 	 */
-	public static function create($name, $description = '')
+	public static function create($name, $description = '', $active = true)
 	{
 		$class = get_called_class();
 		if(($name = trim($name)) === '')
