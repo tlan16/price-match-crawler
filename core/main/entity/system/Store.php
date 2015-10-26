@@ -39,33 +39,6 @@ class Store extends InfoEntityAbstract
 	{
 		return StoreInfo::getAllByCriteria('storeId = ?', array($this->getId()), true);
 	}
-	/**
-	 * adding a user
-	 *
-	 * @param UserAccount $user
-	 *
-	 * @return Store
-	 */
-	public function giveAccess(UserAccount $user)
-	{
-		if(StoreInfo::countByCriteria('storeId = ? and typeId = ? and entityId = ? and entityName = ?', array(trim($this->getId()), trim(StoreInfoType::ID_USERACCOUNTID), trim($user->getId()), get_class($user))) > 0) {
-			return $this;
-		}
-
-		return $this->addInfo(StoreInfoType::get(StoreInfoType::ID_USERACCOUNTID), $user);
-	}
-	/**
-	 * removed a user
-	 *
-	 * @param UserAccount $user
-	 *
-	 * @return Store
-	 */
-	public function clearAccess(UserAccount $user)
-	{
-		StoreInfo::deleteByCriteria('storeId = ? and typeId = ? and entityId = ? and entityName = ?', array(trim($this->getId()), trim(StoreInfoType::ID_USERACCOUNTID), trim($user->getId()), get_class($user)));
-		return $this;
-	}
 	/***
 	 * (non-PHPdoc)
 	 * @see BaseEntityAbstract::getJson()
@@ -134,18 +107,13 @@ class Store extends InfoEntityAbstract
 	 *
 	 * @return Store
 	 */
-	public static function createWithParams($name, $description, Address $addr, array $userAccounts = array())
+	public static function createWithParams($name, $description, Address $addr)
 	{
 		$store = new Store();
 		$store = $store->setName($name)
 			->setDescription($description)
 			->setAddress($addr)
 			->save();
-		foreach($userAccounts as $userAccount) {
-			if(!$userAccount instanceof UserAccount)
-				continue;
-			$store->giveAccess($userAccount);
-		}
 		return $store;
 	}
 }
