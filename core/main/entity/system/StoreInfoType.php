@@ -2,7 +2,6 @@
 
 class StoreInfoType extends InfoTypeAbstract
 {
-	const ID_USERACCOUNTID = 1;
 	/**
 	 * (non-PHPdoc)
 	 * @see BaseEntity::__loadDaoMap()
