@@ -152,7 +152,7 @@ DetailsPageJs.prototype = Object.extend(new BPCPageJs(), {
 			.writeAttribute({
 				'required': tmp.required
 				,'save-item': saveItem
-				,'placeholder': tmp.placeholder
+				,'placeholder': (tmp.placeholder !== '' ? tmp.placeholder : tmp.title)
 				,'dirty': false
 			})
 			.setValue(value || '')
