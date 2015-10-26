@@ -31,5 +31,6 @@ echo import sql files
 %MYSQLPATH% -h%DBHOST% -u%DBUSERNAME% -p%DBPASSWORD% %DBNAME% < %BASEDIR%/../category.sql
 %MYSQLPATH% -h%DBHOST% -u%DBUSERNAME% -p%DBPASSWORD% %DBNAME% < %BASEDIR%/../nutrition.sql
 %MYSQLPATH% -h%DBHOST% -u%DBUSERNAME% -p%DBPASSWORD% %DBNAME% < %BASEDIR%/../products.sql
+%MYSQLPATH% -h%DBHOST% -u%DBUSERNAME% -p%DBPASSWORD% %DBNAME% < %BASEDIR%/../storeinfotype.sql
 
 echo done

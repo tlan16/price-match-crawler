@@ -142,10 +142,10 @@ CREATE TABLE `material` (
 DROP TABLE IF EXISTS `materialinfo`;
 CREATE TABLE `materialinfo` (
 	`id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+	`materialId` int(10) unsigned NOT NULL DEFAULT 0,
 	`entityName` varchar(50) NOT NULL DEFAULT '',
 	`entityId` int(10) unsigned NOT NULL DEFAULT 0,
 	`value` varchar(255) NOT NULL DEFAULT '',
-	`materialId` int(10) unsigned NOT NULL DEFAULT 0,
 	`typeId` int(10) unsigned NOT NULL DEFAULT 0,
 	`active` bool NOT NULL DEFAULT 1,
 	`created` datetime NOT NULL DEFAULT '0001-01-01 00:00:00',
@@ -153,6 +153,7 @@ CREATE TABLE `materialinfo` (
 	`updated` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 	`updatedById` int(10) unsigned NOT NULL DEFAULT 0,
 	PRIMARY KEY (`id`)
+	,INDEX (`materialId`)
 	,INDEX (`materialId`)
 	,INDEX (`typeId`)
 	,INDEX (`createdById`)
@@ -234,10 +235,10 @@ CREATE TABLE `product` (
 DROP TABLE IF EXISTS `productinfo`;
 CREATE TABLE `productinfo` (
 	`id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+	`productId` int(10) unsigned NOT NULL DEFAULT 0,
 	`entityName` varchar(50) NOT NULL DEFAULT '',
 	`entityId` int(10) unsigned NOT NULL DEFAULT 0,
 	`value` varchar(255) NOT NULL DEFAULT '',
-	`productId` int(10) unsigned NOT NULL DEFAULT 0,
 	`typeId` int(10) unsigned NOT NULL DEFAULT 0,
 	`active` bool NOT NULL DEFAULT 1,
 	`created` datetime NOT NULL DEFAULT '0001-01-01 00:00:00',
@@ -245,6 +246,7 @@ CREATE TABLE `productinfo` (
 	`updated` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 	`updatedById` int(10) unsigned NOT NULL DEFAULT 0,
 	PRIMARY KEY (`id`)
+	,INDEX (`productId`)
 	,INDEX (`productId`)
 	,INDEX (`typeId`)
 	,INDEX (`createdById`)
@@ -375,10 +377,10 @@ CREATE TABLE `store` (
 DROP TABLE IF EXISTS `storeinfo`;
 CREATE TABLE `storeinfo` (
 	`id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+	`storeId` int(10) unsigned NOT NULL DEFAULT 0,
 	`entityName` varchar(50) NOT NULL DEFAULT '',
 	`entityId` int(10) unsigned NOT NULL DEFAULT 0,
 	`value` varchar(255) NOT NULL DEFAULT '',
-	`storeId` int(10) unsigned NOT NULL DEFAULT 0,
 	`typeId` int(10) unsigned NOT NULL DEFAULT 0,
 	`active` bool NOT NULL DEFAULT 1,
 	`created` datetime NOT NULL DEFAULT '0001-01-01 00:00:00',
@@ -386,6 +388,7 @@ CREATE TABLE `storeinfo` (
 	`updated` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 	`updatedById` int(10) unsigned NOT NULL DEFAULT 0,
 	PRIMARY KEY (`id`)
+	,INDEX (`storeId`)
 	,INDEX (`storeId`)
 	,INDEX (`typeId`)
 	,INDEX (`createdById`)
@@ -429,10 +432,8 @@ DROP TABLE IF EXISTS `useraccount`;
 CREATE TABLE `useraccount` (
 	`id` int(10) unsigned NOT NULL AUTO_INCREMENT,
 	`username` varchar(100) NOT NULL DEFAULT '',
-	`password` varchar(40) NOT NULL DEFAULT '',
+	`password` varchar(255) NOT NULL DEFAULT '',
 	`personId` int(10) unsigned NOT NULL DEFAULT 0,
-	`source` varchar(10) NULL ,
-	`refId` varchar(50) NULL ,
 	`active` bool NOT NULL DEFAULT 1,
 	`created` datetime NOT NULL DEFAULT '0001-01-01 00:00:00',
 	`createdById` int(10) unsigned NOT NULL DEFAULT 0,
@@ -443,18 +444,16 @@ CREATE TABLE `useraccount` (
 	,INDEX (`createdById`)
 	,INDEX (`updatedById`)
 	,INDEX (`password`)
-	,INDEX (`source`)
-	,INDEX (`refId`)
 	,UNIQUE INDEX (`username`)
 ) ENGINE=innodb DEFAULT CHARSET=utf8;
 DROP TABLE IF EXISTS `useraccountinfo`;
 CREATE TABLE `useraccountinfo` (
 	`id` int(10) unsigned NOT NULL AUTO_INCREMENT,
 	`userAccountId` int(10) unsigned NOT NULL DEFAULT 0,
-	`typeId` int(10) unsigned NOT NULL DEFAULT 0,
+	`entityName` varchar(50) NOT NULL DEFAULT '',
 	`entityId` int(10) unsigned NOT NULL DEFAULT 0,
-	`entityName` varchar(100) NOT NULL DEFAULT '',
 	`value` varchar(255) NOT NULL DEFAULT '',
+	`typeId` int(10) unsigned NOT NULL DEFAULT 0,
 	`active` bool NOT NULL DEFAULT 1,
 	`created` datetime NOT NULL DEFAULT '0001-01-01 00:00:00',
 	`createdById` int(10) unsigned NOT NULL DEFAULT 0,
@@ -462,17 +461,19 @@ CREATE TABLE `useraccountinfo` (
 	`updatedById` int(10) unsigned NOT NULL DEFAULT 0,
 	PRIMARY KEY (`id`)
 	,INDEX (`userAccountId`)
+	,INDEX (`userAccountId`)
 	,INDEX (`typeId`)
 	,INDEX (`createdById`)
 	,INDEX (`updatedById`)
-	,INDEX (`entityId`)
 	,INDEX (`value`)
+	,INDEX (`entityId`)
 	,INDEX (`entityName`)
 ) ENGINE=innodb DEFAULT CHARSET=utf8;
 DROP TABLE IF EXISTS `useraccountinfotype`;
 CREATE TABLE `useraccountinfotype` (
 	`id` int(10) unsigned NOT NULL AUTO_INCREMENT,
 	`name` varchar(100) NOT NULL DEFAULT '',
+	`description` varchar(255) NOT NULL DEFAULT '',
 	`active` bool NOT NULL DEFAULT 1,
 	`created` datetime NOT NULL DEFAULT '0001-01-01 00:00:00',
 	`createdById` int(10) unsigned NOT NULL DEFAULT 0,
