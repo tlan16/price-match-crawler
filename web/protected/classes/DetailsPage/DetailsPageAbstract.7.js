@@ -35,6 +35,7 @@ DetailsPageJs.prototype = Object.extend(new BPCPageJs(), {
 			if(tmp.totalEl = $(tmp.parentWindow.document.body).down('#' + tmp.parentWindow.pageJs.totalNoOfItemsId))
 				tmp.totalEl.update(parseInt(tmp.totalEl.innerHTML) + 1);
 		}
+		return tmp.me;
 	}
 	,_getSaveBtn:function() {
 		var tmp = {};
@@ -77,9 +78,7 @@ DetailsPageJs.prototype = Object.extend(new BPCPageJs(), {
 		return tmp.me;
 	}
 	,collectData: function() {
-		var tmp = {};
-		tmp.me = this;
-		return tmp.me._collectFormData($(tmp.me.getHTMLID('itemDiv')), 'save-item');
+		return this._collectFormData($(tmp.me.getHTMLID('itemDiv')), 'save-item');
 	}
 	,closeFancyBox:function () {
 		if(parent.jQuery && parent.jQuery.fancybox)
@@ -132,7 +131,6 @@ DetailsPageJs.prototype = Object.extend(new BPCPageJs(), {
 			tmp.input.writeAttribute('dirty', value !== tmp.newValue);
 			tmp.me._refreshDirty()._getSaveBtn();
 		});
-
 		return tmp.me;
 	}
 	,_getInputDiv:function(saveItem, value, container, title, required, className, isCurrency, placeholder) {
@@ -284,9 +282,7 @@ DetailsPageJs.prototype = Object.extend(new BPCPageJs(), {
 	}
 
 	,_init: function(){
-		var tmp = {};
-		tmp.me = this;
-		return tmp.me;
+		return this;
 	}
 	,setPreData: function(data) {
 		if(data)
@@ -294,9 +290,7 @@ DetailsPageJs.prototype = Object.extend(new BPCPageJs(), {
 		return this;
 	}
 	,bindAllEventNObjects: function() {
-		var tmp = {};
-		tmp.me = this;
-		return tmp.me;
+		return this;
 	}
 	,load: function () {
 		var tmp = {};
