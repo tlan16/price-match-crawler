@@ -36,6 +36,10 @@ class Menu extends TTemplateControl
 // 				,'addresses' => array('url' => '/addresses.html', 'name' => 'Addresses', 'icon' => '')
 				,'categorie' => array('url' => '/categories.html', 'name' => 'Category', 'icon' => '')
 			)
+			,'System' => array(
+				'icon' => '<span class="glyphicon glyphicon-cog"></span>'
+				,'useraccounts' => array('url' => '/useraccounts.html', 'name' => 'User Accounts', 'icon' => '')
+			)
 		);
 		$html = "<ul class='nav navbar-nav'>";
 			foreach($array as $key => $item)

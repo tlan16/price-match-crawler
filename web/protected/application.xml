@@ -20,11 +20,15 @@
 			<!-- FrontEnd:: login page -->
 			<url ServiceParameter="Login.LoginController" pattern="login.html" />
 
-			<!-- FrontEnd:: Address list page -->
-			<url ServiceParameter="Product.List.ListController" pattern="products.html" />
-			<!-- FrontEnd:: Address Detail page -->
-			<url ServiceParameter="Product.Details.DetailsController" pattern="product/{id}.html" parameters.id="new|\d+"/>
+			<!-- FrontEnd:: UserAccount list page -->
+			<url ServiceParameter="UserAccount.List.ListController" pattern="useraccounts.html" />
+			<!-- FrontEnd:: UserAccount Detail page -->
+			<url ServiceParameter="UserAccount.Details.DetailsController" pattern="useraccount/{id}.html" parameters.id="new|\d+"/>
 
+			<!-- FrontEnd:: Product list page -->
+			<url ServiceParameter="Product.List.ListController" pattern="products.html" />
+			<!-- FrontEnd:: Product Detail page -->
+			<url ServiceParameter="Product.Details.DetailsController" pattern="product/{id}.html" parameters.id="new|\d+"/>
 
 			<!-- FrontEnd:: Address list page -->
 			<url ServiceParameter="Address.List.ListController" pattern="addresses.html" />
