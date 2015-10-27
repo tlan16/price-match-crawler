@@ -63,7 +63,7 @@ class Store extends InfoEntityAbstract
 			$array['info'][$storeInfoType->getId()][$storeInfo->getId()]['entityName'] = $storeInfo->getEntityName();
 		}
 
-		return parent::getJson($extra, $reset);
+		return parent::getJson($array, $reset);
 	}
 	/**
 	 * (non-PHPdoc)
