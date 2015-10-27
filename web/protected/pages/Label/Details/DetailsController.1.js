@@ -34,7 +34,6 @@ PageJs.prototype = Object.extend(new DetailsPageJs(), {
 		
 		$(tmp.me.getHTMLID('itemDiv')).addClassName('row');
 		tmp.printedByOptions = {
-				minimumInputLength: 1,
 				allowClear: true,
 				width: "100%",
 				ajax: {
@@ -58,7 +57,6 @@ PageJs.prototype = Object.extend(new DetailsPageJs(), {
 				,escapeMarkup: function (markup) { return markup; } // let our custom formatter work
 			};
 		tmp.productOptions = {
-				minimumInputLength: 1,
 				allowClear: true,
 				width: "100%",
 				ajax: {

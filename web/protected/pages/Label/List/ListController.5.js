@@ -30,7 +30,6 @@ PageJs.prototype = Object.extend(new CRUDPageJs(), {
 		});
 		
 		tmp.selectBox = jQuery('[search_field="ingr.allergents"]').select2({
-			minimumInputLength: 1,
 			allowClear: true,
 			multiple: true,
 			width: "100%",

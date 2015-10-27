@@ -17,10 +17,14 @@ try {
 	$transStarted = false;
 	try {Dao::beginTransaction();} catch(Exception $e) {$transStarted = true;}
 
-	$obj = Material::create('testMaterial1', 'des1');
-	$obj->addIngredient(Ingredient::get(1));
-	$obj->addNutrition(Nutrition::get(1), 10, ServeMeasurement::get(1));
-
+	$user = UserAccount::get(24);
+	$user->clearRoles();
+	$user->addRole(Role::get(Role::ID_SYSTEM_ADMIN), Store::get(1));
+	$user->addRole(Role::get(Role::ID_SYSTEM_DEVELOPER), Store::get(1));
+	$user->addRole(Role::get(Role::ID_SYSTEM_DEVELOPER), Store::get(2));
+	
+	echo print_r($user->getJson(), true);
+	
 	if($transStarted === false)
 		Dao::commitTransaction();
 } catch (Exception $ex) {

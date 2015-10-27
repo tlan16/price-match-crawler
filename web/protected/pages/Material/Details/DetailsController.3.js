@@ -84,7 +84,6 @@ PageJs.prototype = Object.extend(new DetailsPageJs(), {
 			});
 
 		tmp.nutritionSelect2Options = {
-			minimumInputLength: 1,
 			multiple: false,
 			width: "100%",
 			ajax: {
@@ -109,7 +108,6 @@ PageJs.prototype = Object.extend(new DetailsPageJs(), {
 			};
 
 		tmp.serveMeasurementSelect2Options = {
-			minimumInputLength: 1,
 			multiple: false,
 			width: "100%",
 			ajax: {

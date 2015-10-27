@@ -11,16 +11,10 @@
 			</div>
 			<div class="panel-body search-panel" style="/**display: none;**/">
 				<div class="row">
-					<div class="col-md-5">
+					<div class="col-md-10">
 						<div class="form-group form-group-sm input-group">
-                           <label for="ua.name" class="input-group-addon">Name:</label>
-                           <input type="text" class="form-control input-sm" search_field="ua.name" placeholder="The Name of the <%= $this->getFocusEntity() %>">
-                       </div>
-					</div>
-					<div class="col-md-5">
-						<div class="form-group form-group-sm input-group">
-                           <label for="ua.description" class="input-group-addon">Description:</label>
-                           <input type="text" class="form-control input-sm" search_field="ua.description" placeholder="The Description of the <%= $this->getFocusEntity() %>">
+                           <label for="ua.username" class="input-group-addon">Username:</label>
+                           <input type="text" class="form-control input-sm" search_field="ua.username" placeholder="The Username of the <%= $this->getFocusEntity() %>">
                        </div>
 					</div>
 					<div class="col-md-2">

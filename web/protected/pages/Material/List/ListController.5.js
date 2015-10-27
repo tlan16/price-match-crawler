@@ -15,7 +15,6 @@ PageJs.prototype = Object.extend(new CRUDPageJs(), {
 		});
 		
 		tmp.selectBox = jQuery('[search_field="mat.ingredients"]').select2({
-			minimumInputLength: 1,
 			allowClear: true,
 			multiple: true,
 			width: "100%",
@@ -41,7 +40,6 @@ PageJs.prototype = Object.extend(new CRUDPageJs(), {
 		});
 		
 		tmp.selectBox = jQuery('[search_field="mat.nutritions"]').select2({
-			minimumInputLength: 1,
 			allowClear: true,
 			multiple: true,
 			width: "100%",

@@ -44,6 +44,7 @@ class UserAccount extends BaseEntityAbstract
      * @var string
      */
     private $refId = null;
+    
     /**
      * getter UserName
      *
@@ -175,28 +176,21 @@ class UserAccount extends BaseEntityAbstract
     	{
     		$array['person'] = $this->getPerson()->getJson();
     		$array['roles'] = array();
-    		foreach($this->getRoles() as $role)
-    			$array['roles'][] = $role->getJson();
-    		$array['stores'] = array();
-    		foreach($this->getAccessableStores() as $store)
-    			$array['stores'][] = $store->getJson();
+    		// get roles
+    		$infos = UserAccountInfo::getAllByCriteria('userAccountId = :uId and typeId = :tId', array('uId' => $this->getId(), 'tId' => UserAccountInfoType::ID_ROLE ));
+    		foreach ($infos as $info)
+    		{
+    			if($info->getEntityName() !== 'Role' || !($role = Role::get($info->getEntityId())) instanceof Role || !($store = Store::get($info->getValue())) instanceof Store)
+    				continue;
+    			$store = $store->getJson();
+    			$role = $role->getJson();
+    			$role['store'] = $store;
+    			$array['roles'][] = $role;
+    		}
     	}
     	$array = parent::getJson($array, $reset);
     	unset($array['password']);
     	return $array;
-    }
-    public function getAccessableStores()
-    {
-    	$result = array();
-    	$infos = StoreInfo::getAllByCriteria('typeId = ? and entityId = ? and entityName = ?', array(trim(StoreInfoType::ID_USERACCOUNTID), trim($this->getId()), get_class($this)));
-    	if(!is_array($infos))
-    		return $result;
-    	foreach ($infos as $info)
-    	{
-    		if(($store = $info->getStore()) instanceof Store)
-    			$result[] = $store; 
-    	}
-    	return $result;
     }
     /**
      * Gaining access to a store
@@ -258,12 +252,13 @@ class UserAccount extends BaseEntityAbstract
      * @return UserAccount
      * @throws Exception
      */
-    public static function create($username, $password, Person $person, Role $role)
+    public static function create($username, $password, Person $person)
     {
     	if(($username = trim($username)) === '')
     		throw new Exception('invalid username passed in');
     	if(($password = trim($password)) === '')
     		throw new Exception('invalid password passed in');
+    	
     	$password = password_hash($password, PASSWORD_DEFAULT);
     	$where = '';
     	$param = array();
@@ -275,8 +270,8 @@ class UserAccount extends BaseEntityAbstract
     	$obj->setUserName($username)
     		->setPassword($password)
     		->setPerson($person)
-    		->save();
-    	$obj->addRole($role);
+    		->setActive(true);
+    	$obj->save();
     	return $obj;
     }
     /**

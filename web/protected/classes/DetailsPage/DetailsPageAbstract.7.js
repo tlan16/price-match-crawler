@@ -214,7 +214,6 @@ DetailsPageJs.prototype = Object.extend(new BPCPageJs(), {
 		}
 
 		tmp.selectBox = jQuery('#'+tmp.select2.id).select2(tmp.select2Options ? tmp.select2Options : {
-			minimumInputLength: 1,
 			multiple: true,
 			allowClear: true,
 			width: "100%",

@@ -4,9 +4,12 @@
 	<com:Application.controls.CommentsDiv.CommentsDiv />
 	<com:TCallback ID="getCategoriesBtn" OnCallback="getCategories" />
 	<div class="pagewrapper productdetailswraper" id='item-div'>
-		<div id='name_div'></div>
-		<div id='description_div'></div>
-		<div id='allergents_div'></div>
+		<div id='username_div'></div>
+		<div id='firstname_div'></div>
+		<div id='lastname_div'></div>
+		<div id='password_div'></div>
+		<div id='new_store_roles_div'></div>
+		<div id='store_roles_div'></div>
 		<div id='comments_div'></div>
 		<div id='save_btn'></div>
 	</div>
