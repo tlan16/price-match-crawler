@@ -83,12 +83,25 @@ class DetailsController extends DetailsPageAbstract
 			$useByVariance = isset ( $params->CallbackParameter->useByVariance ) ? intval($params->CallbackParameter->useByVariance) : '';
 			$unitPrice = StringUtilsAbstract::getValueFromCurrency(isset ( $params->CallbackParameter->unitPrice ) ? trim(isset ( $params->CallbackParameter->unitPrice)) : 0);
 			$allStores = (isset ( $params->CallbackParameter->allStores ) && intval($params->CallbackParameter->allStores) === 1);
-			$materials = $this->_idsToObjs($params->CallbackParameter, 'materials', 'Material');
 			$categories = $this->_idsToObjs($params->CallbackParameter, 'categories', 'Category');
 			$stores = $this->_idsToObjs($params->CallbackParameter, 'stores', 'Store');
+			
+			$materials = array();
+			if(isset($params->CallbackParameter->materials) && is_array($combos = $params->CallbackParameter->materials))
+			{
+				foreach ($combos as $combo)
+				{
+					if(!isset($combo->material) || !($material = Material::get($combo->material)) instanceof Material)
+						continue;
+					$qty = (!isset($combo->qty) ? 1 : (trim($combo->qty) === '' ? 1 : doubleval($combo->qty)));
+					$materials[] = array('material' => $material, 'qty' => $qty);
+				}
+			}
+			if(count($materials) === 0)
+				throw new Exception('At lease one valid material is required for a product');
 
 			if(!$entity instanceof $focusEntity) {
-				$entity = Product::createWithParams($name, $description, $barcode, $size, $useByVariance, $unitPrice, $labelVersionNo, $materials, $categories);
+				$entity = Product::createWithParams($name, $description, $barcode, $size, $useByVariance, $unitPrice, $labelVersionNo, array(), $categories);
 			} else {
 				$entity->setBarcode($barcode)
 					->setSize($size)
@@ -100,11 +113,13 @@ class DetailsController extends DetailsPageAbstract
 					->setName($name)
 					->setDescription($description)
 					->save();
-				foreach($materials as $material)
-					$entity->addMaterial($material);
+				$entity->clearCategory();
 				foreach($categories as $category)
 					$entity->addCategory($category);
 			}
+			$entity->clearMaterial();
+			foreach($materials as $combo)
+				$entity->addMaterial($combo['material'], $combo['qty']);
 			if($allStores === true)	{
 				$entity->addToAllStore();
 			} else {

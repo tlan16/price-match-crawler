@@ -162,7 +162,9 @@ abstract class LabelPrinter
      */
     private static function _getIngredientNames(Product $product) {
         $ingredientsTxtArr = array();
-        foreach($product->getMaterials() as $material) {
+        foreach($product->getMaterials() as $item) {
+        	if(!isset($item['material']) || !($material = $item['material']) instanceof Material)
+        		continue;
             foreach($material->getIngredients() as $ingredient)
                 $ingredientsTxtArr[] = $ingredient->getName();
         }
@@ -177,7 +179,9 @@ abstract class LabelPrinter
      */
     private static function _getAllergentNames(Product $product) {
         $names = array();
-        foreach($product->getMaterials() as $material) {
+        foreach($product->getMaterials() as $item) {
+        	if(!isset($item['material']) || !($material = $item['material']) instanceof Material)
+        		continue;
             foreach($material->getIngredients() as $ingredient) {
                 foreach($ingredient->getAllergents() as $allergent) {
                     $names[] = $allergent->getName();
@@ -195,9 +199,9 @@ abstract class LabelPrinter
      */
     private static function _getMaterialNutrions(Product $product) {
         $mNutritions = array();
-        foreach($product->getMaterials() as $material) {
-            if(!$material instanceof Material)
-                continue;
+        foreach($product->getMaterials() as $item) {
+            if(!isset($item['material']) || !($material = $item['material']) instanceof Material)
+        		continue;
             foreach($material->getAllMaterialNutritions() as $mNutrition) {
                 if(!$mNutrition->getNutrition() instanceof Nutrition || !$mNutrition->getServeMeasurement() instanceof ServeMeasurement)
                     continue;

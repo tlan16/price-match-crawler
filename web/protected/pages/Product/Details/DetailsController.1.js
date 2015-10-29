@@ -3,15 +3,7 @@
  */
 var PageJs = new Class.create();
 PageJs.prototype = Object.extend(new DetailsPageJs(), {
-	_readOnlyMode: false
-	,_selectTypeTxt: 'Select One...'
-	/**
-	 * Set some pre defined data before javascript start
-	 */
-	,setPreData: function() {
-		return this;
-	}
-	,load: function () {
+	load: function () {
 		var tmp = {};
 		tmp.me = this;
 		tmp.me._init();
@@ -52,14 +44,122 @@ PageJs.prototype = Object.extend(new DetailsPageJs(), {
 		if(tmp.sellinAllStore === true) {
 			$(tmp.me._containerIds.stores).down('.form-control').hide();
 		}
+		
+		tmp.me._addNewComboBtn($(tmp.me._containerIds.materials), 'material');
+
+		if(tmp.me._item.materials && Array.isArray(tmp.me._item.materials)) {
+			tmp.me._item.materials.each(function(item){
+				tmp.me._addComboRow(item, $(tmp.me._containerIds.materials), 'material');
+			});
+		}
+		
 		return tmp.me;
 	}
-	/**
-	 * Public: binding all the js events
-	 */
-	,bindAllEventNObjects: function() {
+	,_addNewComboBtn: function(container, entityName) {
 		var tmp = {};
 		tmp.me = this;
+		tmp.container = (container || null);
+		tmp.entityName = 'New ' + (entityName ? tmp.me.ucfirst(entityName) : 'Info');
+		if(!tmp.container || !tmp.container.id)
+			return tmp.me;
+		tmp.newBtn = new Element('button', {'class': 'newStoreBtn btn btn-primary btn-sm'})
+			.update(tmp.entityName)
+			.observe('click', function(e){
+				tmp.newBtn.writeAttribute('disabled', true);
+				tmp.container.insert({'bottom': tmp.newDiv = new Element('div')});
+				tmp.me._signRandID(tmp.newDiv);
+				tmp.me._addComboRow(null, tmp.newDiv);
+				tmp.newBtn.writeAttribute('disabled', false);
+			})
+			;
+	
+		tmp.container.update(tmp.me._getFormGroup('', tmp.newBtn).addClassName('col-xs-12'));
 		return tmp.me;
+	}
+	,_getComboRowDeleteBtn: function(combo, className, entityName) {
+		var tmp = {};
+		tmp.me = this;
+		tmp.combo = (combo || null);
+		tmp.active = (combo ? combo.active === true : true);
+		tmp.className = (className || '');
+		tmp.entityName = (entityName || 'Info');
+	
+		tmp.deleteBtn = new Element('button', {'class': (tmp.active === true ? 'btn btn-sm btn-danger' : 'btn btn-sm btn-success') })
+			.addClassName(tmp.className)
+			.setStyle('margin-bottom: 15px;')
+			.insert({'bottom': new Element('i', {'class': (tmp.active === true ? 'glyphicon glyphicon-trash' : 'glyphicon glyphicon-repeat')}) })
+			.observe('click', function(e){
+				if(confirm('This ' + (tmp.combo ? '' : 'newly added ') + tmp.entityName + ' will be REMOVED, continue?')) {
+					tmp.panel = tmp.deleteBtn.up('.combo');
+					if(tmp.combo && tmp.combo.id) {
+						tmp.panel.up().insert({'bottom': new Element('input', {'type': 'hidden', 'save-item': 'ignore_' + tmp.combo.id, 'dirty': true}) });
+					}
+					tmp.panel.remove();
+					tmp.me._refreshDirty()._getSaveBtn();
+				}
+			})
+			;
+		return tmp.deleteBtn;
+	}
+	,_addComboRow: function(combo, container, entityName) {
+		var tmp = {};
+		tmp.me = this;
+		tmp.combo = (combo || null);
+		tmp.container = (container || null);
+		if(!tmp.container || !tmp.container.id)
+			return tmp.me;
+		tmp.container
+			.insert({'bottom': new Element('div', {'class': 'combo col-xs-12', 'combo_id': (tmp.combo ? tmp.combo.id : 'new'), 'active': (tmp.combo ? tmp.combo.active : true) })
+				.insert({'bottom': new Element('div', {'class': 'row '})
+					.insert({'bottom': tmp.material = new Element('div', {'class': 'store col-md-7 col-sm-6 col-xs-12'}) })
+					.insert({'bottom': tmp.qty = new Element('div', {'class': 'role col-md-4 col-sm-5  col-xs-12'}) })
+					.insert({'bottom': new Element('div', {'class': 'pull-right text-right col-md-1 col-sm-1 col-xs-12'}).update(tmp.me._getComboRowDeleteBtn(tmp.combo, 'col-xs-12', entityName)) })
+				})
+			});
+	
+		tmp.materialSelect2Options = {
+			multiple: false,
+			width: "100%",
+			ajax: {
+				delay: 250
+				,url: '/ajax/getAll'
+				,type: 'GET'
+				,data: function (params) {
+					return {"searchTxt": 'name like ?', 'searchParams': ['%' + params + '%'], 'entityName': 'Material', 'pageNo': 1};
+				}
+				,results: function(data, page, query) {
+					tmp.result = [];
+					if(data.resultData && data.resultData.items) {
+						data.resultData.items.each(function(item){
+							tmp.result.push({'id': item.id, 'text': item.name, 'data': item});
+						});
+					}
+					return { 'results' : tmp.result };
+				}
+			}
+			,cache: true
+			,escapeMarkup: function (markup) { return markup; } // let our custom formatter work
+			};
+	
+		tmp.me
+			._getSelect2Div('Material', 'material', ((tmp.combo && tmp.combo.material) ? {'id': tmp.combo.material.id, 'text': tmp.combo.material.name, 'data': tmp.combo.material} : null), tmp.material, ' ', true, tmp.materialSelect2Options)
+			._getInputDiv('qty', ((tmp.combo && tmp.combo.material) ? tmp.combo.qty : 1), tmp.qty, ' ' , false, '', false, 'Qty')
+		;
+		return tmp.me;
+	}
+	,collectData: function() {
+		var tmp = {};
+		tmp.me = this;
+		tmp.data = tmp.me._collectFormData($(tmp.me.getHTMLID('itemDiv')), 'save-item');
+		if(!tmp.data)
+			return null;
+		tmp.data['materials'] = [];
+		$(tmp.me.getHTMLID('itemDiv')).getElementsBySelector('.combo[combo_id]').each(function(item){
+			tmp.combo = tmp.me._collectFormData($(item), 'save-item');
+			if(tmp.combo)
+				tmp.data['materials'].push(tmp.combo);
+		});
+	
+		return tmp.data;
 	}
 });

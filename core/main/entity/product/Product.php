@@ -168,18 +168,21 @@ class Product extends InfoEntityAbstract
 	 *
 	 * @return array
 	 */
-	public function getMaterials()
+	public function getMaterials($returnJson = false)
 	{
-		$materialIdArray = array();
+		$result = array();
 		$piArray = ProductInfo::getAllByCriteria('productId = ? and typeId = ? and entityName = ?', array($this->getId(), ProductInfoType::ID_MATERIAL, ProductInfoType::ENTITY_NAME_MATERIAL));
 		foreach($piArray as $pi)
-			$materialIdArray[] = (trim($pi->getEntityId()) !== '' ? trim($pi->getEntityId()) : trim($pi->getValue()));
-
-		if(count($materialIdArray) === 0)
-			return array();
-
-		$materialIdArray = array_unique($materialIdArray);
-		return Material::getAllByCriteria('id IN ('.implode(", ", array_fill(0, count($materialIdArray), '?')).')', $materialIdArray);
+		{
+			if(($material = Material::get(intval($pi->getEntityId()))) instanceof Material)
+			{
+				if($returnJson === false)
+					$result[] = array('material' => $material, 'qty' => $pi->getValue() );
+				else
+					$result[] = $pi->getJson(array('material' => $material->getJson(), 'qty' => $pi->getValue()));
+			}
+		}
+		return $result;
 	}
 	/**
 	 * Adding material
@@ -188,12 +191,12 @@ class Product extends InfoEntityAbstract
 	 *
 	 * @return Product
 	 */
-	public function addMaterial(Material $material)
+	public function addMaterial(Material $material, $qty)
 	{
-
+		$qty = doubleval($qty);
 		if(ProductInfo::countByCriteria('active = 1 and productId = ? and typeId = ? and entityName = ? AND entityId = ?', array($this->getId(), ProductInfoType::ID_MATERIAL, get_class($material), $material->getId())) > 0)
 			return $this;
-		$this->addInfo(ProductInfoType::get(ProductInfoType::ID_MATERIAL), $material);
+		$this->addInfo(ProductInfoType::get(ProductInfoType::ID_MATERIAL), $material, $qty);
 		return $this;
 	}
 	/**
@@ -324,7 +327,7 @@ class Product extends InfoEntityAbstract
 	public function getJson($extra = array(), $reset = false)
 	{
 		$array = $extra;
-		$array['materials'] = array_map(create_function('$a', 'return $a->getJson();'), $this->getMaterials());
+		$array['materials'] = $this->getMaterials(true);
 		$array['categories'] = array_map(create_function('$a', 'return $a->getJson();'), $this->getCategories());
 		$array['sellInAllStores'] = $this->isSellinAllStores();
 		if($array['sellInAllStores'] !== true) {
