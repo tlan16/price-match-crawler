@@ -51,4 +51,76 @@ PageJs.prototype = Object.extend(new CRUDPageJs(), {
 		;
 		return tmp.row;
 	}
+	,loadSelect2: function() {
+		var tmp = {};
+		tmp.me = this;
+		
+		jQuery('select.select2').each(function(){
+			tmp.options = {};
+			if($(this).readAttribute('data-minimum-results-for-search') === 'Infinity' || $(this).readAttribute('data-minimum-results-for-search') === 'infinity' || $(this).readAttribute('data-minimum-results-for-search') == -1)
+				tmp.options['minimumResultsForSearch'] = 'Infinity';
+			jQuery(this).select2(tmp.options);
+		});
+		
+		tmp.selectBox = jQuery('[search_field="store.addressId"]').select2({
+			allowClear: true,
+			multiple: false,
+			width: "100%",
+			ajax: {
+				delay: 250
+				,url: '/ajax/getAll'
+				,type: 'GET'
+				,data: function (params) {
+					return {
+						"searchTxt": 'street like ? or city like ? or region like ? or country like ? or postCode like ?'
+						, 'searchParams': ['%' + params + '%','%' + params + '%','%' + params + '%','%' + params + '%','%' + params + '%']
+						, 'entityName': 'Address'
+						, 'pageNo': 1
+						};
+				}
+				,results: function(data, page, query) {
+					tmp.result = [];
+					if(data.resultData && data.resultData.items) {
+						data.resultData.items.each(function(item){
+							tmp.result.push({'id': item.id, 'text': item.full, 'data': item});
+						});
+					}
+					return { 'results' : tmp.result };
+				}
+			}
+			,cache: true
+			,escapeMarkup: function (markup) { return markup; } // let our custom formatter work
+		});
+		
+		tmp.selectBox = jQuery('[search_field="store.contact"]').select2({
+			allowClear: true,
+			multiple: false,
+			width: "100%",
+			ajax: {
+				delay: 250
+				,url: '/ajax/getAll'
+				,type: 'GET'
+				,data: function (params) {
+					return {
+						"searchTxt": 'contactName like ? or contactNo like ?'
+						, 'searchParams': ['%' + params + '%','%' + params + '%']
+						, 'entityName': 'Address'
+						, 'pageNo': 1
+						};
+				}
+				,results: function(data, page, query) {
+					tmp.result = [];
+					if(data.resultData && data.resultData.items) {
+						data.resultData.items.each(function(item){
+							console.debug(item);
+							tmp.result.push({'id': item.id, 'text': item.contactName + (item.contactName.trim() === '' ? item.contactNo : (item.contactNo.trim() === '' ? '' : ' ('+item.contactNo+')')), 'data': item});
+						});
+					}
+					return { 'results' : tmp.result };
+				}
+			}
+			,cache: true
+			,escapeMarkup: function (markup) { return markup; } // let our custom formatter work
+		});
+	}
 });

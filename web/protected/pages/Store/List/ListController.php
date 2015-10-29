@@ -95,6 +95,13 @@ class ListController extends CRUDPageAbstract
 							}
 							break;
 						}
+					case 'store.addressId':
+					case 'store.contact':
+						{
+							$where[] =  "store.addressId = :addressId ";
+							$params['addressId'] = intval($value);
+							break;
+						}
 				}
 			}
 			$stats = array();

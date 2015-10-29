@@ -33,6 +33,18 @@
                            </select>
                        </div>
 					</div>
+					<div class="col-md-5 hidden">
+						<div class="form-group form-group-sm input-group">
+                           <label for="store.addressId" class="input-group-addon">Address:</label>
+                           <input type="text" class="form-control input-sm" search_field="store.addressId" placeholder="The Address of the <%= $this->getFocusEntity() %>">
+                       </div>
+					</div>
+					<div class="col-md-5 hidden">
+						<div class="form-group form-group-sm input-group">
+                           <label for="store.contact" class="input-group-addon">Contact:</label>
+                           <input type="text" class="form-control input-sm" search_field="store.contact" placeholder="The Contact of the <%= $this->getFocusEntity() %>">
+                       </div>
+					</div>
 				</div>
 			</div>
 		</div>
