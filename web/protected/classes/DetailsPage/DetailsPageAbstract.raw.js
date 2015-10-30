@@ -35,6 +35,7 @@ DetailsPageJs.prototype = Object.extend(new BPCPageJs(), {
 			if(tmp.totalEl = $(tmp.parentWindow.document.body).down('#' + tmp.parentWindow.pageJs.totalNoOfItemsId))
 				tmp.totalEl.update(parseInt(tmp.totalEl.innerHTML) + 1);
 		}
+		return tmp.me;
 	}
 	,_getSaveBtn:function() {
 		var tmp = {};
@@ -53,7 +54,6 @@ DetailsPageJs.prototype = Object.extend(new BPCPageJs(), {
 				tmp.data = tmp.me.collectData();
 				if(tmp.btn.readAttribute('disabled') === true || tmp.btn.readAttribute('disabled') === 'disabled' || tmp.data === null)
 					return tmp.me;
-				tmp.me._disableAll($(tmp.me.getHTMLID('itemDiv')));
 				if(tmp.data === null)
 					return tmp.me;
 				if(tmp.me._item && tmp.me._item.id)
@@ -67,7 +67,7 @@ DetailsPageJs.prototype = Object.extend(new BPCPageJs(), {
 				tmp.me.closeFancyBox();
 			});
 
-		tmp.container.update('').addClassName('row')
+		tmp.container.update('').addClassName('col-xs-12')
 			.insert({'bottom': tmp.me._getFormGroup(tmp.title, tmp.save).addClassName('col-xs-6') })
 			.insert({'bottom': tmp.me._getFormGroup(tmp.title, tmp.cancel).addClassName('pull-right col-xs-6') })
 		;
@@ -77,13 +77,12 @@ DetailsPageJs.prototype = Object.extend(new BPCPageJs(), {
 		return tmp.me;
 	}
 	,collectData: function() {
-		var tmp = {};
-		tmp.me = this;
-		return tmp.me._collectFormData($(tmp.me.getHTMLID('itemDiv')), 'save-item');
+		return this._collectFormData($(this.getHTMLID('itemDiv')), 'save-item');
 	}
 	,closeFancyBox:function () {
 		if(parent.jQuery && parent.jQuery.fancybox)
 			parent.jQuery.fancybox.close();
+		else location.reload();
 		return this;
 	}
 	,_getDatePickerDiv:function(saveItem, value, container, title, required, format, className) {
@@ -131,7 +130,6 @@ DetailsPageJs.prototype = Object.extend(new BPCPageJs(), {
 			tmp.input.writeAttribute('dirty', value !== tmp.newValue);
 			tmp.me._refreshDirty()._getSaveBtn();
 		});
-
 		return tmp.me;
 	}
 	,_getInputDiv:function(saveItem, value, container, title, required, className, isCurrency, placeholder) {
@@ -143,16 +141,18 @@ DetailsPageJs.prototype = Object.extend(new BPCPageJs(), {
 		tmp.isCurrency = (isCurrency === true);
 		tmp.placeholder = (placeholder || '');
 
+		if(!container)
+			return tmp.me;
 		if(!container.id)
 			tmp.me._signRandID(container);
 		tmp.container = $(container.id);
 		if(!tmp.container)
-			return;
+			return tmp.me;
 		tmp.input = new Element('input')
 			.writeAttribute({
 				'required': tmp.required
 				,'save-item': saveItem
-				,'placeholder': tmp.placeholder
+				,'placeholder': (tmp.placeholder !== '' ? tmp.placeholder : tmp.title)
 				,'dirty': false
 			})
 			.setValue(value || '')
@@ -257,6 +257,7 @@ DetailsPageJs.prototype = Object.extend(new BPCPageJs(), {
 			tmp.me._signRandID(btn);
 			jQuery('#' + btn.id).prop('disabled',true);
 		}
+		tmp.me._disableAll($(tmp.me.getHTMLID('itemDiv')));
 		tmp.me.postAjax(tmp.me.getCallbackId('saveItem'), data, {
 			'onSuccess': function (sender, param) {
 				try {
@@ -282,9 +283,7 @@ DetailsPageJs.prototype = Object.extend(new BPCPageJs(), {
 	}
 
 	,_init: function(){
-		var tmp = {};
-		tmp.me = this;
-		return tmp.me;
+		return this;
 	}
 	,setPreData: function(data) {
 		if(data)
@@ -292,9 +291,7 @@ DetailsPageJs.prototype = Object.extend(new BPCPageJs(), {
 		return this;
 	}
 	,bindAllEventNObjects: function() {
-		var tmp = {};
-		tmp.me = this;
-		return tmp.me;
+		return this;
 	}
 	,load: function () {
 		var tmp = {};
@@ -309,7 +306,7 @@ DetailsPageJs.prototype = Object.extend(new BPCPageJs(), {
 		;
 		return tmp.me;
 	}
-	,_getCommentsDiv() {
+	,_getCommentsDiv: function() {
 		var tmp = {};
 		tmp.me = this;
 

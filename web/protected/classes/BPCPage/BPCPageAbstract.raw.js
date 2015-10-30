@@ -27,16 +27,12 @@ BPCPageJs.prototype = {
 
 
 	,setHTMLID: function($key, $value) {
-		var tmp = {};
-		tmp.me = this;
-		tmp.me._htmlIDs[$key]  = $value;
-		return tmp.me;
+		this._htmlIDs[$key]  = $value;
+		return this;
 	}
 
 	,getHTMLID: function($key) {
-		var tmp = {};
-		tmp.me = this;
-		return tmp.me._htmlIDs[$key];
+		return this._htmlIDs[$key];
 	}
 
 	,getFormGroup: function(label, input, _wantInpuClass) {
@@ -70,8 +66,8 @@ BPCPageJs.prototype = {
 	}
 
 	,abortAjax: function() {
-		if(tmp.me._ajaxRequest !== null)
-			tmp.me._ajaxRequest.abort();
+		if(this._ajaxRequest !== null)
+			this._ajaxRequest.abort();
 	}
 
 	//parsing an ajax response
@@ -100,13 +96,18 @@ BPCPageJs.prototype = {
 		return tmp.result.resultData;
 	}
 	//format the currency
-	,getCurrency: function(number, dollar, decimal, decimalPoint, thousandPoint) {
+	,getCurrency: function(number, dollar, decimal, decimalPoint, thousandPoint, format) {
 		var tmp = {};
 		tmp.decimal = (isNaN(decimal = Math.abs(decimal)) ? 2 : decimal);
 		tmp.dollar = (dollar == undefined ? "$" : dollar);
 		tmp.decimalPoint = (decimalPoint == undefined ? "." : decimalPoint);
 		tmp.thousandPoint = (thousandPoint == undefined ? "," : thousandPoint);
 		tmp.sign = (number < 0 ? "-" : "");
+		tmp.format = (format || "%s%v");
+		
+		if(typeof accounting === 'object' && typeof accounting.formatMoney === 'function')
+			return accounting.formatMoney(number,tmp.dollar,tmp.decimal,tmp.thousandPoint,tmp.decimalPoint,tmp.format);
+		
 		tmp.Int = parseInt(number = Math.abs(+number || 0).toFixed(tmp.decimal)) + "";
 		tmp.j = (tmp.j = tmp.Int.length) > 3 ? tmp.j % 3 : 0;
 		return tmp.dollar + tmp.sign + (tmp.j ? tmp.Int.substr(0, tmp.j) + tmp.thousandPoint : "") + tmp.Int.substr(tmp.j).replace(/(\d{3})(?=\d)/g, "$1" + tmp.thousandPoint) + (tmp.decimal ? tmp.decimalPoint + Math.abs(number - tmp.Int).toFixed(tmp.decimal).slice(2) : "");
@@ -114,14 +115,20 @@ BPCPageJs.prototype = {
 	/**
 	 * Getting the absolute value from currency
 	 */
-	,getValueFromCurrency: function(currency) {
-		if(!currency)
-			return '';
+	,getValueFromCurrency: function(currency, decimalSeparator) {
 		var tmp = {};
+		tmp.currency = (currency || '');
+		tmp.decimalSeparator = (decimalSeparator || '.');
+		
+		if(tmp.currency === '')
+			return tmp.currency;
+		
+		if(typeof accounting === 'object' && typeof accounting.unformat === 'function')
+			return accounting.unformat(tmp.currency, tmp.decimalSeparator);
+		
 		tmp.reg = /^-?\d*[\.]?\d+$/;
-//		tmp.result =  (currency + '').replace(/\s*/g, '').replace(/\$/g, '').replace(/,/g, '');
-//		tmp.result = tmp.reg.exec(tmp.result);
-		tmp.result = accounting.formatMoney(currency, "", 4);
+		tmp.result =  (tmp.currency + '').replace(/\s*/g, '').replace(/\$/g, '').replace(/,/g, '');
+		tmp.result = tmp.reg.exec(tmp.result);
 		return tmp.result;
 	}
 	//do key enter
@@ -155,6 +162,8 @@ BPCPageJs.prototype = {
 	 * give the input box a random id
 	 */
 	,_signRandID: function(input) {
+		if(!input)
+			return this;
 		if(!input.id)
 			input.id = 'input_' + String.fromCharCode(65 + Math.floor(Math.random() * 26)) + Date.now();
 		return this;
@@ -282,16 +291,13 @@ BPCPageJs.prototype = {
 		return tmp.me;
 	}
 	,hideModalBox: function() {
-		var tmp = {};
-		tmp.me = this;
-		jQuery('#' + tmp.me.modalId).modal('hide');
-		return tmp.me;
+		jQuery('#' + this.modalId).modal('hide');
 	}
 	/**
 	 * returning a loading image
 	 */
 	,getLoadingImg: function() {
-		return Element('span', {'class': 'loading-img fa fa-refresh fa-5x fa-spin'});
+		return new Element('span', {'class': 'loading-img fa fa-refresh fa-5x fa-spin'});
 	}
 	,removeLoadingImg: function() {
 		jQuery('.loading-img').remove();
@@ -334,7 +340,7 @@ BPCPageJs.prototype = {
 		return tmp.me;
 	}
 	/**
-	 * geting
+	 * geting params from url
 	 */
 	,getUrlParam: function (name) {
 		var tmp = {};
@@ -348,31 +354,32 @@ BPCPageJs.prototype = {
 	 * open url in new tab
 	 */
 	,openInNewTab: function(url) {
-		var tmp = {};
-		tmp.me = this;
-		tmp.win = window.open(url, '_blank');
-		tmp.win.focus();
-
+		window.open(url, '_blank').focus();
 		return this;
 	}
 	/**
 	 * pause javascript for given time
 	 */
-	,sleep: function(milliseconds) {
+	,sleep: function(sleepDuration, func) {
 		var tmp = {};
-		tmp.me = this;
-		tmp.start = new Date().getTime();
-		for (var i = 0; i < 1e7; i++) {
-			if ((new Date().getTime() - tmp.start) > milliseconds) {
-				break;
-			}
+		tmp.now = new Date().getTime();
+		while (new Date().getTime() < tmp.now + sleepDuration){ 
+			if(typeof func === 'function')
+				func(new Date().getTime());
 		}
+		return this;
 	}
+	/**
+	 * upper case first character
+	 */
 	,ucfirst: function(string) {
 		if(string.length === 0)
 			return string;
 		return string.charAt(0).toUpperCase() + string.slice(1);
 	}
+	/**
+	 * convert prototype element to jQuery element
+	 */
 	,_elTojQuery: function (el) {
 		var tmp = {};
 		tmp.me = this;
@@ -383,6 +390,9 @@ BPCPageJs.prototype = {
 		tmp.el = jQuery('#'+tmp.el.id);
 		return tmp.el;
 	}
+	/**
+	 * join custom attribute in array elements with custom glue
+	 */
 	,_getNamesString: function(objs, name, glue) {
 		var tmp = {};
 		tmp.me = this;
@@ -399,6 +409,9 @@ BPCPageJs.prototype = {
 		tmp.result = tmp.names.join(tmp.glue);
 		return tmp.result;
 	}
+	/**
+	 * disable all buttons, input fields etc.. 
+	 */
 	,_disableAll: function(container, selector) {
 		var tmp = {};
 		tmp.me = this;

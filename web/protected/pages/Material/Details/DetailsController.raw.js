@@ -54,7 +54,7 @@ PageJs.prototype = Object.extend(new DetailsPageJs(), {
 			.addClassName(tmp.className)
 			.insert({'bottom': new Element('i', {'class': (tmp.active === true ? 'glyphicon glyphicon-trash' : 'glyphicon glyphicon-repeat')}) })
 			.observe('click', function(e){
-				if(confirm('This nutrition will be ' + (tmp.active === true ? (tmp.material_nutrition ? 'DE-ACTIVATED' : 'REMOVED') : 'RE_ACTIVATED') + ', continue?')) {
+				if(confirm('This ' + (tmp.material_nutrition ? '' : 'newly added ') + 'nutrition will be REMOVED, continue?')) {
 					tmp.panel = tmp.deleteBtn.up('.material_nutrition');
 					if(tmp.material_nutrition && tmp.material_nutrition.id) {
 						tmp.panel.up().insert({'bottom': new Element('input', {'type': 'hidden', 'save-item': 'ignore_' + tmp.material_nutrition.id, 'dirty': true}) });
