@@ -23,6 +23,7 @@ PageJs.prototype = Object.extend(new BPCPageJs(), {
 		tmp.container.insert({'bottom': tmp.listGroup = new Element('div').addClassName('list-group') });
 		
 		tmp.stores.each(function(item){
+			console.debug(item);
 			tmp.listGroup.insert({'bottom': new Element('a', {'href': 'javascript:void(0)', 'class': 'list-group-item', 'store_id': item.id})
 				.addClassName((item.selected && item.selected === true) ? 'active' : '')
 				.update(item.name)
@@ -45,7 +46,7 @@ PageJs.prototype = Object.extend(new BPCPageJs(), {
 		tmp.me._disableAll();
 		tmp.me.postAjax(tmp.me.getCallbackId('switchStore'), {'store': storeId}, {
 			'onComplete': function() {
-//				location.reload(true); // force ignore browser cache
+				location.reload(true); // force ignore browser cache
 			}
 		});
 		return tmp.me;
