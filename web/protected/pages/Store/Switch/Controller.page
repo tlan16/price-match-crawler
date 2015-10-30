@@ -1,0 +1,10 @@
+<com:TContent ID="MainContent">
+<com:TCallback ID="switchStoreBtn" onCallBack="Page.switchStore" />
+	<div class="panel panel-default">
+		<div class="panel-heading">
+			<h1><strong>Switch Store</strong></h1>
+		</div>
+		<div class="panel-body" id="resultDiv">
+		</div>
+	</div>
+</com:TContent>
