@@ -98,11 +98,13 @@ class AjaxController extends TService
   		$searchParams = isset($params['searchParams']) ? $params['searchParams'] : array();
   		$pageNo = isset($params['pageNo']) ? trim($params['pageNo']) : null;
   		$pageSize = isset($params['pageSize']) ? trim($params['pageSize']) : DaoQuery::DEFAUTL_PAGE_SIZE;
-  		$active = isset($params['active']) ? intval($params['active']) : 1;
+  		$active = isset($params['active']) ? (intval($params['active']) === 1) : true;
   		$orderBy = isset($params['orderBy']) ? trim($params['orderBy']) : array();
 
   		$stats = array();
+//   		Dao::$debug = true;
   		$items = $entityName::getAllByCriteria($searchTxt, $searchParams, $active, $pageNo, $pageSize, $orderBy, $stats);
+//   		Dao::$debug = false;
   		return array('items' => array_map(create_function('$a', 'return $a->getJson();'), $items), 'pagination' => $stats);
   	}
 }
