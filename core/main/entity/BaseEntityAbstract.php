@@ -478,7 +478,7 @@ abstract class BaseEntityAbstract
      */
     public static function getAllByCriteria($criteria, $params = array(), $activeOnly = true, $pageNo = null, $pageSize = DaoQuery::DEFAUTL_PAGE_SIZE, $orderBy = array(), &$stats = array())
     {
-    	$result = FactoryAbastract::dao(get_called_class())->findByCriteria($criteria, $params, $activeOnly, $pageNo, $pageSize, $orderBy);
+    	$result = FactoryAbastract::dao(get_called_class())->findByCriteria($criteria, $params, (intval($activeOnly) === 1), $pageNo, $pageSize, $orderBy);
     	$stats = FactoryAbastract::dao(get_called_class())->getPageStats();
     	return $result;
     }
