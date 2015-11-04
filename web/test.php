@@ -17,13 +17,7 @@ try {
 	$transStarted = false;
 	try {Dao::beginTransaction();} catch(Exception $e) {$transStarted = true;}
 
-	$user = UserAccount::get(24);
-	$user->clearRoles();
-	$user->addRole(Role::get(Role::ID_SYSTEM_ADMIN), Store::get(1));
-	$user->addRole(Role::get(Role::ID_SYSTEM_DEVELOPER), Store::get(1));
-	$user->addRole(Role::get(Role::ID_SYSTEM_DEVELOPER), Store::get(2));
-	
-	echo print_r($user->getJson(), true);
+	createEntity('Ingredient', 100);
 	
 	if($transStarted === false)
 		Dao::commitTransaction();
