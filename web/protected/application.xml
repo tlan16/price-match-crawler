@@ -20,6 +20,9 @@
 			<!-- FrontEnd:: login page -->
 			<url ServiceParameter="Login.LoginController" pattern="login.html" />
 
+			<!-- FrontEnd:: Help page -->
+			<url ServiceParameter="Help.ListController" pattern="help.html" />
+
 			<!-- FrontEnd:: Store list page -->
 			<url ServiceParameter="Store.List.ListController" pattern="stores.html" />
 			<!-- FrontEnd:: Store Detail page -->
