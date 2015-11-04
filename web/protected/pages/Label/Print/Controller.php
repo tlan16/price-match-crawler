@@ -31,7 +31,7 @@ class Controller extends BPCPageAbstract
 	        return '<h3>No label for ID: ' . $labelId;
 	    $width = (isset($_REQUEST['width']) ? intval($_REQUEST['width']) : 270);
 	    $height = (isset($_REQUEST['height']) ? intval($_REQUEST['height']) : 800);
-	    return LabelPrinter::generateHTML($label, $width, $height);
+	    return LabelPrinter::generateImg($label, $width, $height);
 	}
 }
 ?>
