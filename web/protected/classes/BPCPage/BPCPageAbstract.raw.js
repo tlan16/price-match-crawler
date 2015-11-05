@@ -174,6 +174,7 @@ BPCPageJs.prototype = {
 	,_markFormGroupError: function(input, errMsg) {
 		var tmp = {};
 		tmp.me = this;
+		tmp.visible = input.visible();
 		if(input.up('.form-group')) {
 			input.store('clearErrFunc', function(btn) {
 				input.up('.form-group').removeClassName('has-error');
@@ -196,6 +197,9 @@ BPCPageJs.prototype = {
 				if(typeof(tmp.func) === 'function')
 					tmp.func();
 			});
+			if(!tmp.visible) {
+				input.hide();
+			}
 		}
 		return tmp.me;
 	}
