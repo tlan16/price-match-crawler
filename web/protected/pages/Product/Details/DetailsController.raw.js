@@ -47,10 +47,12 @@ PageJs.prototype = Object.extend(new DetailsPageJs(), {
 		
 		tmp.me._addNewComboBtn($(tmp.me._containerIds.materials), 'material');
 
-		if(tmp.me._item.materials && Array.isArray(tmp.me._item.materials)) {
+		if(tmp.me._item.materials && Array.isArray(tmp.me._item.materials) && tmp.me._item.materials.length > 0) {
 			tmp.me._item.materials.each(function(item){
 				tmp.me._addComboRow(item, $(tmp.me._containerIds.materials), 'material');
 			});
+			if($$('.newStoreBtn') && $$('.newStoreBtn').length > 0)
+				$$('.newStoreBtn').first().replace(new Element('label').update('Material'));
 		}
 		
 		return tmp.me;
@@ -68,12 +70,16 @@ PageJs.prototype = Object.extend(new DetailsPageJs(), {
 				tmp.newBtn.writeAttribute('disabled', true);
 				tmp.container.insert({'bottom': tmp.newDiv = new Element('div')});
 				tmp.me._signRandID(tmp.newDiv);
-				tmp.me._addComboRow(null, tmp.newDiv);
+				tmp.me._addComboRow(null, tmp.newDiv, null, (!tmp.me._item || !tmp.me._item.id));
 				tmp.newBtn.writeAttribute('disabled', false);
+				if(!tmp.me._item || !tmp.me._item.id)
+					tmp.newBtn.replace(new Element('label').update('Material'));
 			})
 			;
 	
 		tmp.container.update(tmp.me._getFormGroup('', tmp.newBtn).addClassName('col-xs-12'));
+		if(!tmp.me._item || !tmp.me._item.id)
+			tmp.newBtn.click();
 		return tmp.me;
 	}
 	,_getComboRowDeleteBtn: function(combo, className, entityName) {
@@ -101,19 +107,20 @@ PageJs.prototype = Object.extend(new DetailsPageJs(), {
 			;
 		return tmp.deleteBtn;
 	}
-	,_addComboRow: function(combo, container, entityName) {
+	,_addComboRow: function(combo, container, entityName, noDeleteBtn) {
 		var tmp = {};
 		tmp.me = this;
 		tmp.combo = (combo || null);
 		tmp.container = (container || null);
+		tmp.noDeleteBtn = (noDeleteBtn || false);
 		if(!tmp.container || !tmp.container.id)
 			return tmp.me;
 		tmp.container
 			.insert({'bottom': new Element('div', {'class': 'combo col-xs-12', 'combo_id': (tmp.combo ? tmp.combo.id : 'new'), 'active': (tmp.combo ? tmp.combo.active : true) })
-				.insert({'bottom': new Element('div', {'class': 'row '})
+				.insert({'bottom': new Element('div', {'class': 'row '}).addClassName((tmp.combo && (!tmp.combo.active || !tmp.combo.material.active)) ? 'row-danger' : '')
 					.insert({'bottom': tmp.material = new Element('div', {'class': 'store col-md-7 col-sm-6 col-xs-12'}) })
 					.insert({'bottom': tmp.qty = new Element('div', {'class': 'role col-md-4 col-sm-5  col-xs-12'}) })
-					.insert({'bottom': new Element('div', {'class': 'pull-right text-right col-md-1 col-sm-1 col-xs-12'}).update(tmp.me._getComboRowDeleteBtn(tmp.combo, 'col-xs-12', entityName)) })
+					.insert({'bottom': new Element('div', {'class': 'pull-right text-right col-md-1 col-sm-1 col-xs-12'}).update(tmp.noDeleteBtn === true ? '' : tmp.me._getComboRowDeleteBtn(tmp.combo, 'col-xs-12', entityName)) })
 				})
 			});
 	
@@ -153,12 +160,26 @@ PageJs.prototype = Object.extend(new DetailsPageJs(), {
 		tmp.data = tmp.me._collectFormData($(tmp.me.getHTMLID('itemDiv')), 'save-item');
 		if(!tmp.data)
 			return null;
+		if(!tmp.data.barcode || typeof(tmp.data.barcode) !== 'string' || (parseInt(tmp.data.barcode).toString().length !== 12 && parseInt(tmp.data.barcode).toString().length !== 13)) {
+			tmp.me.showModalBox('ERROR:', 'Error: The barcode needs to be 12 or 13 <b>digits</b> long.');
+			return null;
+		}
+		if(tmp.data.allStores === false && (!tmp.data.stores || tmp.data.stores.split(',').length === 0) ) {
+			tmp.me.showModalBox('ERROR:', 'Error: You need at least one store for this product!.');
+			return null;
+		}
+		
 		tmp.data['materials'] = [];
 		$(tmp.me.getHTMLID('itemDiv')).getElementsBySelector('.combo[combo_id]').each(function(item){
 			tmp.combo = tmp.me._collectFormData($(item), 'save-item');
 			if(tmp.combo)
 				tmp.data['materials'].push(tmp.combo);
 		});
+		
+		if(tmp.data.materials.length == 0) {
+			tmp.me.showModalBox('ERROR:', 'Error: At lease one valid material is required for a product.');
+			return null;
+		}
 	
 		return tmp.data;
 	}

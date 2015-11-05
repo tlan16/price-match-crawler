@@ -1,13 +1,325 @@
-var DetailsPageJs=new Class.create;
-DetailsPageJs.prototype=Object.extend(new BPCPageJs,{_item:null,_readOnlyMode:!1,_dirty:!1,_getFormGroup:function(a,c,d){var b;b=new Element("div",{"class":"form-group form-group-sm"});a&&("string"!==typeof a||"string"===typeof a&&!a.blank())&&b.insert({bottom:(new Element("label")).update(a)});b.insert({bottom:c.addClassName(!0===d?"":"form-control")});return b},refreshParentWindow:function(){var a,c,d;if(parent.window)return a=parent.window,(c=$(a.document.body).down("#"+a.pageJs.resultDivId+" .item_row[item_id="+
-this._item.id+"]"))?(c.replace(a.pageJs._getResultRow(this._item)),c.hasClassName("success")||c.addClassName("success")):$(a.document.body).down("#"+a.pageJs.resultDivId+" #item-list-body")&&($(a.document.body).down("#"+a.pageJs.resultDivId+" #item-list-body").insert({top:a.pageJs._getResultRow(this._item)}),(d=$(a.document.body).down("#"+a.pageJs.totalNoOfItemsId))&&d.update(parseInt(d.innerHTML)+1)),this},_getSaveBtn:function(){var a={me:this};a.me._refreshDirty();if(!a.me._containerIds||!a.me._containerIds.saveBtn)return a.me;
-a.container=$(a.me._containerIds.saveBtn);if(!a.container)return a.me;a.save=(new Element("i")).addClassName("btn btn-success btn-md").update("Save").observe("click",function(c){a.btn=$(this);a.data=a.me.collectData();if(!0===a.btn.readAttribute("disabled")||"disabled"===a.btn.readAttribute("disabled")||null===a.data||null===a.data)return a.me;a.me._item&&a.me._item.id&&(a.data.id=a.me._item.id);a.me.saveItem(a.input,a.data)});a.cancel=(new Element("i")).addClassName("btn btn-default btn-md").update("Cancel").observe("click",
-function(c){a.me.closeFancyBox()});a.container.update("").addClassName("col-xs-12").insert({bottom:a.me._getFormGroup(a.title,a.save).addClassName("col-xs-6")}).insert({bottom:a.me._getFormGroup(a.title,a.cancel).addClassName("pull-right col-xs-6")});!1===a.me._dirty&&a.save.hide();return a.me},collectData:function(){return this._collectFormData($(this.getHTMLID("itemDiv")),"save-item")},closeFancyBox:function(){parent.jQuery&&parent.jQuery.fancybox?parent.jQuery.fancybox.close():location.reload();
-return this},_getDatePickerDiv:function(a,c,d,b,g,m,l){var h,e,k,f,n;h=this;b=b||h.ucfirst(a);e=!0===g;l=l||"col-xs-12";m=m||"DD/MM/YYYY";d.id||h._signRandID(d);if(d=$(d.id)){k=(new Element("input")).writeAttribute({required:e,"save-item":a,dirty:!1}).setValue(c||"");d.update(h._getFormGroup(b,k).addClassName(l));if("function"!==typeof jQuery(document).datetimepicker)return h;h._signRandID(k);f=jQuery("#"+k.id).datetimepicker({format:m,showClear:!g});f.on("dp.change keyup",function(b){f.data("DateTimePicker")&&
-f.data("DateTimePicker").date()?(n=f.data("DateTimePicker").date().local().format("YYYY-MM-DDThh:mm:ss"),a.endsWith("from")&&n.format("YYYY-MM-DDT00:00:00"),a.endsWith("to")&&n.format("YYYY-MM-DDT23:59:59")):n="";k.writeAttribute("dirty",c!==n);h._refreshDirty()._getSaveBtn()});return h}},_getInputDiv:function(a,c,d,b,g,m,l,h){var e,k,f;e=this;b=b||e.ucfirst(a);g=!0===g;m=m||"col-xs-12";k=!0===l;l=h||"";if(!d)return e;d.id||e._signRandID(d);d=$(d.id);if(!d)return e;f=(new Element("input")).writeAttribute({required:g,
-"save-item":a,placeholder:""!==l?l:b,dirty:!1}).setValue(c||"").observe("change",function(a){!0===k&&f.setValue(e.getValueFromCurrency($F(f)))}).observe("keyup",function(a){f.writeAttribute("dirty",c!==(!0===k?e.getValueFromCurrency($F(f)):$F(f)));e._refreshDirty()._getSaveBtn()});d.update(e._getFormGroup(b,f).addClassName(m));return e},_refreshDirty:function(){var a;a=!1;$(this.getHTMLID("itemDiv")).getElementsBySelector("[save-item]").each(function(c){!1!==a||!0!==c.readAttribute("dirty")&&"true"!==
-c.readAttribute("dirty")&&"dirty"!==c.readAttribute("dirty")||(a=!0)});this._dirty=a;return this},_getSelect2Div:function(a,c,d,b,g,m,l,h){var e,k,f,n;e=this;g=g||e.ucfirst(c);m=!0===m;l=l||null;h=h||"col-xs-12";b.id||e._signRandID(b);if(b=$(b.id))return c=(new Element("input")).writeAttribute("required",m).writeAttribute("placeholder","Please select a "+a).writeAttribute("save-item",c),b.update(e._getFormGroup(g,c).addClassName(h)),e._signRandID(c),k=[],e._item&&e._item.id&&(Array.isArray(d)?d.each(function(a){k.push({id:a.id,
-text:a.name,data:a})}):k=d),f=jQuery("#"+c.id).select2(l?l:{multiple:!0,allowClear:!0,width:"100%",ajax:{delay:250,url:"/ajax/getAll",type:"GET",data:function(b){return{searchTxt:"name like ?",searchParams:["%"+b+"%"],entityName:a,pageNo:1}},results:function(a,b,c){n=[];a.resultData&&a.resultData.items&&a.resultData.items.each(function(a){n.push({id:a.id,text:a.name,data:a})});return{results:n}}},cache:!0,escapeMarkup:function(a){return a}}),f.on("change",function(){f.attr("dirty",f.val()!==e._getNamesString(d,
-"id",","));e._refreshDirty()._getSaveBtn()}),k&&f.select2("data",k),e},setItem:function(a){this._item=a;return this},saveItem:function(a,c,d){var b,g;b=this;a&&(b._signRandID(a),jQuery("#"+a.id).prop("disabled",!0));b._disableAll($(b.getHTMLID("itemDiv")));b.postAjax(b.getCallbackId("saveItem"),c,{onSuccess:function(a,c){try{(g=b.getResp(c,!1,!0))&&g.item&&g.item.id&&(b._item=g.item,"function"===typeof d&&d(g),b.closeFancyBox())}catch(h){b.showModalBox('<strong class="text-danger">ERROR:</strong>',
-h),b._refreshDirty()._getSaveBtn()}},onComplete:function(){a&&jQuery("#"+a.id).prop("disabled",!1);b.refreshParentWindow()}});return b},_init:function(){return this},setPreData:function(a){a&&(this._preSetData=a);return this},bindAllEventNObjects:function(){return this},load:function(){this._init();$(this.getHTMLID("itemDiv")).addClassName("row");this._getInputDiv("name",this._item.name||"",$(this._containerIds.name),null,!0)._getInputDiv("description",this._item.description||"",$(this._containerIds.description))._getSaveBtn();
-return this},_getCommentsDiv:function(){var a,c;a=$(this._containerIds.comments);c=new Element("div");a.insert({bottom:this._getFormGroup("Comments",c,!0).addClassName("col-md-12")});this._signRandID(c);(new CommentsDivJs(this,this._focusEntity,this._item.id))._setDisplayDivId(c.id).render();return this}});
+/**
+ * The DetailsPageJs file
+ */
+var DetailsPageJs = new Class.create();
+DetailsPageJs.prototype = Object.extend(new BPCPageJs(), {
+	_item: null //the item we are dealing with
+	,_readOnlyMode: false
+	,_dirty: false
+	/**
+	 * Getting a form group for forms
+	 */
+	,_getFormGroup: function (label, input, noFormControl) {
+		var tmp = {};
+		tmp.element = new Element('div', {'class': 'form-group form-group-sm'});
+		if(label) {
+			if((typeof(label) !== 'string') || (typeof(label) === 'string' && !label.blank()))
+				tmp.element.insert({'bottom': new Element('label').update(label) });
+		}
+		tmp.element.insert({'bottom': input.addClassName(noFormControl === true ? '' : 'form-control') });
+		return tmp.element;
+	}
+	,refreshParentWindow: function() {
+		var tmp = {};
+		tmp.me = this;
+		if(!parent.window)
+			return;
+		tmp.parentWindow = parent.window;
+		tmp.row = $(tmp.parentWindow.document.body).down('#' + tmp.parentWindow.pageJs.resultDivId + ' .item_row[item_id=' + tmp.me._item.id + ']');
+		if(tmp.row) {
+			tmp.row.replace(tmp.parentWindow.pageJs._getResultRow(tmp.me._item));
+			if(!tmp.row.hasClassName('success'))
+				tmp.row.addClassName('success');
+		} else if($(tmp.parentWindow.document.body).down('#' + tmp.parentWindow.pageJs.resultDivId + ' #item-list-body')) {
+			$(tmp.parentWindow.document.body).down('#' + tmp.parentWindow.pageJs.resultDivId + ' #item-list-body').insert({'top': tmp.parentWindow.pageJs._getResultRow(tmp.me._item) });
+			if(tmp.totalEl = $(tmp.parentWindow.document.body).down('#' + tmp.parentWindow.pageJs.totalNoOfItemsId))
+				tmp.totalEl.update(parseInt(tmp.totalEl.innerHTML) + 1);
+		}
+		return tmp.me;
+	}
+	,_getSaveBtn:function() {
+		var tmp = {};
+		tmp.me = this;
+		tmp.me._refreshDirty();
+		if(!tmp.me._containerIds || !tmp.me._containerIds.saveBtn)
+			return tmp.me;
+		tmp.container = $(tmp.me._containerIds.saveBtn);
+		if(!tmp.container)
+			return tmp.me;
+		tmp.save = new Element('i')
+			.addClassName('btn btn-success btn-md')
+			.update('Save')
+			.observe('click',function(e){
+				tmp.btn = $(this);
+				tmp.data = tmp.me.collectData();
+				if(tmp.btn.readAttribute('disabled') === true || tmp.btn.readAttribute('disabled') === 'disabled' || tmp.data === null)
+					return tmp.me;
+				if(tmp.data === null)
+					return tmp.me;
+				if(tmp.me._item && tmp.me._item.id)
+					tmp.data.id = tmp.me._item.id;
+				tmp.me.saveItem(tmp.input, tmp.data);
+			});
+		tmp.cancel = new Element('i')
+			.addClassName('btn btn-default btn-md')
+			.update('Cancel')
+			.observe('click',function(e){
+				tmp.me.closeFancyBox();
+			});
+
+		tmp.container.update('').addClassName('col-xs-12')
+			.insert({'bottom': tmp.me._getFormGroup(tmp.title, tmp.save).addClassName('col-xs-6') })
+			.insert({'bottom': tmp.me._getFormGroup(tmp.title, tmp.cancel).addClassName('pull-right col-xs-6') })
+		;
+
+		if(tmp.me._dirty === false)
+			tmp.save.hide();
+		return tmp.me;
+	}
+	,collectData: function() {
+		return this._collectFormData($(this.getHTMLID('itemDiv')), 'save-item');
+	}
+	,closeFancyBox:function () {
+		if(parent.jQuery && parent.jQuery.fancybox)
+			parent.jQuery.fancybox.close();
+		else location.reload();
+		return this;
+	}
+	,_getDatePickerDiv:function(saveItem, value, container, title, required, format, className) {
+		var tmp = {};
+		tmp.me = this;
+		tmp.title = (title || tmp.me.ucfirst(saveItem));
+		tmp.required = (required === true);
+		tmp.className = (className || 'col-xs-12');
+		tmp.format = (format || 'DD/MM/YYYY');
+
+		if(!container.id)
+			tmp.me._signRandID(container);
+		tmp.container = $(container.id);
+		if(!tmp.container)
+			return;
+		tmp.input = new Element('input')
+			.writeAttribute({
+				'required': tmp.required
+				,'save-item': saveItem
+				,'dirty': false
+			})
+			.setValue(value || '')
+			;
+
+		tmp.container.update(tmp.me._getFormGroup(tmp.title, tmp.input).addClassName(tmp.className) );
+
+		if(typeof jQuery(document).datetimepicker !== 'function')
+			return tmp.me;
+
+		tmp.me._signRandID(tmp.input);
+		tmp.datepicker = jQuery('#'+tmp.input.id).datetimepicker({
+			format: tmp.format
+			,showClear: !required
+		});
+		tmp.datepicker.on('dp.change keyup',function(e){
+			if(tmp.datepicker.data('DateTimePicker') && tmp.datepicker.data('DateTimePicker').date()) {
+				tmp.newValue =tmp.datepicker.data('DateTimePicker').date().local().format('YYYY-MM-DDThh:mm:ss');
+				if(saveItem.endsWith('from'))
+					tmp.newValue.format('YYYY-MM-DDT00:00:00');
+				if(saveItem.endsWith('to'))
+					tmp.newValue.format('YYYY-MM-DDT23:59:59');
+			}
+			else tmp.newValue = '';
+
+			tmp.input.writeAttribute('dirty', value !== tmp.newValue);
+			tmp.me._refreshDirty()._getSaveBtn();
+		});
+		return tmp.me;
+	}
+	,_getInputDiv:function(saveItem, value, container, title, required, className, isCurrency, placeholder) {
+		var tmp = {};
+		tmp.me = this;
+		tmp.title = (title || tmp.me.ucfirst(saveItem));
+		tmp.required = (required === true);
+		tmp.className = (className || 'col-xs-12');
+		tmp.isCurrency = (isCurrency === true);
+		tmp.placeholder = (placeholder || '');
+
+		if(!container)
+			return tmp.me;
+		if(!container.id)
+			tmp.me._signRandID(container);
+		tmp.container = $(container.id);
+		if(!tmp.container)
+			return tmp.me;
+		tmp.input = new Element('input')
+			.writeAttribute({
+				'required': tmp.required
+				,'save-item': saveItem
+				,'placeholder': (tmp.placeholder !== '' ? tmp.placeholder : tmp.title)
+				,'dirty': false
+			})
+			.setValue(value || '')
+			.observe('change',function(e){
+				if(tmp.isCurrency === true)
+					tmp.input.setValue(tmp.me.getValueFromCurrency($F(tmp.input)));
+			})
+			.observe('keyup',function(e){
+				tmp.input.writeAttribute('dirty', value !== (tmp.isCurrency === true ? tmp.me.getValueFromCurrency($F(tmp.input)) : $F(tmp.input) ) );
+				tmp.me._refreshDirty()._getSaveBtn();
+			});
+
+		tmp.container.update(tmp.me._getFormGroup(tmp.title, tmp.input).addClassName(tmp.className) );
+
+		return tmp.me;
+	}
+	,_refreshDirty: function() {
+		var tmp = {};
+		tmp.me = this;
+
+		tmp.dirty = false;
+		$(tmp.me.getHTMLID('itemDiv')).getElementsBySelector('[save-item]').each(function(el){
+			if(tmp.dirty === false && (el.readAttribute('dirty') === true || el.readAttribute('dirty') === 'true' || el.readAttribute('dirty') === 'dirty') )
+				tmp.dirty = true;
+		});
+
+		tmp.me._dirty = tmp.dirty;
+		return tmp.me;
+	}
+	,_getSelect2Div:function(searchEntityName, saveItem, value, container, title, required, select2Options, className) {
+		var tmp = {};
+		tmp.me = this;
+		tmp.title = (title || tmp.me.ucfirst(saveItem));
+		tmp.required = (required === true);
+		tmp.select2Options = (select2Options || null);
+		tmp.className = (className || 'col-xs-12');
+
+		if(!container.id)
+			tmp.me._signRandID(container);
+		tmp.container = $(container.id);
+		if(!tmp.container)
+			return;
+		tmp.select2 = new Element('input')
+			.writeAttribute('required', tmp.required)
+			.writeAttribute('placeholder', 'Please select a ' + searchEntityName)
+			.writeAttribute('save-item', saveItem);
+
+		tmp.container.update(tmp.me._getFormGroup(tmp.title, tmp.select2).addClassName(tmp.className) );
+
+		tmp.me._signRandID(tmp.select2);
+
+		tmp.data = [];
+		if(tmp.me._item && tmp.me._item.id) {
+			if(Array.isArray(value)) {
+				value.each(function(item){
+					tmp.data.push({'id': item.id, 'text': item.name, 'data': item});
+				});
+			} else tmp.data = value;
+		}
+
+		tmp.selectBox = jQuery('#'+tmp.select2.id).select2(tmp.select2Options ? tmp.select2Options : {
+			multiple: true,
+			allowClear: true,
+			width: "100%",
+			ajax: {
+				delay: 250
+				,url: '/ajax/getAll'
+				,type: 'GET'
+				,data: function (params) {
+					return {"searchTxt": 'name like ?', 'searchParams': ['%' + params + '%'], 'entityName': searchEntityName, 'pageNo': 1};
+				}
+				,results: function(data, page, query) {
+					tmp.result = [];
+					if(data.resultData && data.resultData.items) {
+						data.resultData.items.each(function(item){
+							tmp.result.push({'id': item.id, 'text': item.name, 'data': item});
+						});
+					}
+					return { 'results' : tmp.result };
+				}
+			}
+			,cache: true
+			,escapeMarkup: function (markup) { return markup; } // let our custom formatter work
+		});
+		tmp.selectBox.on('change', function(){
+			tmp.selectBox.attr('dirty', tmp.selectBox.val() !== tmp.me._getNamesString(value,'id',','));
+			tmp.me._refreshDirty()._getSaveBtn();
+		});
+		if(tmp.data)
+			tmp.selectBox.select2('data', tmp.data);
+		return tmp.me;
+	}
+
+	,setItem: function(item) {
+		this._item = item;
+		return this;
+	}
+	,saveItem: function(btn, data, onSuccFunc) {
+		var tmp = {};
+		tmp.me = this;
+		if(btn) {
+			tmp.me._signRandID(btn);
+			jQuery('#' + btn.id).prop('disabled',true);
+		}
+		tmp.me._disableAll($(tmp.me.getHTMLID('itemDiv')));
+		tmp.me.postAjax(tmp.me.getCallbackId('saveItem'), data, {
+			'onSuccess': function (sender, param) {
+				try {
+					tmp.result = tmp.me.getResp(param, false, true);
+					if(!tmp.result || !tmp.result.item || !tmp.result.item.id)
+						return;
+					tmp.me._item = tmp.result.item;
+					if(typeof(onSuccFunc) === 'function')
+						onSuccFunc(tmp.result);
+					tmp.me.closeFancyBox();
+				} catch (e) {
+					tmp.me.showModalBox('<strong class="text-danger">ERROR:</strong>', e);
+					tmp.me._refreshDirty()._getSaveBtn();
+				}
+			}
+			, 'onComplete': function() {
+				if(btn)
+					jQuery('#' + btn.id).prop('disabled',false);
+				tmp.me.refreshParentWindow();
+			}
+		});
+		return tmp.me;
+	}
+
+	,_init: function(){
+		return this;
+	}
+	,setPreData: function(data) {
+		if(data)
+			this._preSetData = data;
+		return this;
+	}
+	,bindAllEventNObjects: function() {
+		return this;
+	}
+	,load: function () {
+		var tmp = {};
+		tmp.me = this;
+		tmp.me._init();
+
+		$(tmp.me.getHTMLID('itemDiv')).addClassName('row');
+		tmp.me
+			._getInputDiv('name', (tmp.me._item.name || ''), $(tmp.me._containerIds.name), null ,true)
+			._getInputDiv('description', (tmp.me._item.description || ''), $(tmp.me._containerIds.description))
+			._getSaveBtn()
+		;
+		return tmp.me;
+	}
+	,_getCommentsDiv: function() {
+		var tmp = {};
+		tmp.me = this;
+
+		tmp.container = $(tmp.me._containerIds.comments);
+
+		tmp.comments = new Element('div');
+
+		tmp.container.insert({'bottom': tmp.me._getFormGroup('Comments', tmp.comments, true).addClassName('col-md-12') });
+
+		tmp.me._signRandID(tmp.comments);
+
+		new CommentsDivJs(tmp.me, tmp.me._focusEntity, tmp.me._item.id)._setDisplayDivId(tmp.comments.id).render();
+
+		return tmp.me;
+	}
+});

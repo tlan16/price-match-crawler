@@ -18,5 +18,6 @@
 		<div id='categories_div'></div>
 		<div id='materials_div'></div>
 		<div id='save_btn'></div>
+		<small class="pull-right"><i class="fa fa-asterisk"></i>&nbsp;If you see a pink backgroup cocour for material, if means that material is no longer active, hence may not display correctly in other pages (including label printing).</small>
 	</div>
 </com:TContent>

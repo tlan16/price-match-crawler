@@ -226,3 +226,6 @@ table.table thead td {
 	border: 1px #ccc solid;
 	background: white;
 }
+.row.row-danger {
+  background-color: #f2dede !important;
+}
