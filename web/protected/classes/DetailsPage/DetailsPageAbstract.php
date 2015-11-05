@@ -75,6 +75,8 @@ abstract class DetailsPageAbstract extends BPCPageAbstract
 		$js .= ".setItem(" . (trim($entity->getId()) === '' ? '{}' : json_encode($entity->getJson())) . ")";
 		$js .= ".setCallbackId('saveItem', '" . $this->_saveItemBtn->getUniqueID() . "');";
 		$js .= "pageJs._focusEntity = '" . $this->getFocusEntity() . "';";
+		$js .= "pageJs.setPreData(" . json_encode(array()) . ");";
+		$js .= "pageJs.bindAllEventNObjects();";
 		return $js;
 	}
 	/**
