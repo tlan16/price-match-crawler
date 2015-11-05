@@ -1,6 +1,0 @@
-<%@MasterClass="Application.layout.BlankLayout"%>
-<com:TContent ID="MainContent">
-	<div class="pagewrapper">
-	   <%= $this->getLabelHTML() %>
-	</div>
-</com:TContent>

@@ -1,1 +1,0 @@
-ALTER TABLE `nutrition` ADD `order` TINYINT(1) unsigned NOT NULL DEFAULT 0 AFTER `description`;
