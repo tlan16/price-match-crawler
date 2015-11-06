@@ -17,7 +17,8 @@ try {
 	$transStarted = false;
 	try {Dao::beginTransaction();} catch(Exception $e) {$transStarted = true;}
 
-	createEntity('Ingredient', 100);
+	$prices = staticiceConnector::getPrices('vs247h');
+	var_dump($prices);
 	
 	if($transStarted === false)
 		Dao::commitTransaction();

@@ -40,7 +40,7 @@ class ComScriptCURL
 	 *
 	 * @return mixed
 	 */
-	public static function readUrl($url, $timeout = null, array $data = array(), $customerRequest = '', $extraOpts = array())
+	public static function readUrl($url, $timeout = null, array $data = array(), $customerRequest = '', $extraOpts = array(), $debug = false)
 	{
 		$timeout = trim($timeout);
 		$timeout = (!is_numeric($timeout) ? self::CURL_TIMEOUT : $timeout);
