@@ -17,8 +17,8 @@ try {
 	$transStarted = false;
 	try {Dao::beginTransaction();} catch(Exception $e) {$transStarted = true;}
 
-	$prices = staticiceConnector::getPrices('vs247h');
-	var_dump($prices);
+	$prices = staticiceConnector::getPrices('vs247h', true);
+// 	var_dump($prices);
 	
 	if($transStarted === false)
 		Dao::commitTransaction();
