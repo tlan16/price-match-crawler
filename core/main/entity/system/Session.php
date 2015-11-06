@@ -74,7 +74,7 @@ class Session extends BaseEntityAbstract
 	 * (non-PHPdoc)
 	 * @see BaseEntity::loadDaoMap()
 	 */
-	public function __loadDaoMap()
+	public function __loadDaoMap($getThrough = false)
 	{
 		DaoMap::begin($this, 'sess');
 		DaoMap::setStringType('key', 'varchar', 32);

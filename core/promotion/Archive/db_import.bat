@@ -2,7 +2,7 @@
 
 SET BASEDIR=%~dp0
 SET FPASSWORD=
-SET DBNAME=sushico
+SET DBNAME=price_match_crawler
 SET DBHOST=localhost
 SET DBUSERNAME=root
 SET DBPASSWORD=
@@ -16,21 +16,11 @@ echo create database %DBNAME% if not exists
 
 echo import sql files
 %MYSQLPATH% -h%DBHOST% -u%DBUSERNAME% -p%DBPASSWORD% %DBNAME% < %BASEDIR%/../structure.sql
-%MYSQLPATH% -h%DBHOST% -u%DBUSERNAME% -p%DBPASSWORD% %DBNAME% < %BASEDIR%/../store.sql
 %MYSQLPATH% -h%DBHOST% -u%DBUSERNAME% -p%DBPASSWORD% %DBNAME% < %BASEDIR%/../useraccount.sql
 %MYSQLPATH% -h%DBHOST% -u%DBUSERNAME% -p%DBPASSWORD% %DBNAME% < %BASEDIR%/../person.sql
 %MYSQLPATH% -h%DBHOST% -u%DBUSERNAME% -p%DBPASSWORD% %DBNAME% < %BASEDIR%/../role.sql
 %MYSQLPATH% -h%DBHOST% -u%DBUSERNAME% -p%DBPASSWORD% %DBNAME% < %BASEDIR%/../useraccountinfotype.sql
 %MYSQLPATH% -h%DBHOST% -u%DBUSERNAME% -p%DBPASSWORD% %DBNAME% < %BASEDIR%/../useraccountinfo.sql
 %MYSQLPATH% -h%DBHOST% -u%DBUSERNAME% -p%DBPASSWORD% %DBNAME% < %BASEDIR%/../systemsettings.sql
-%MYSQLPATH% -h%DBHOST% -u%DBUSERNAME% -p%DBPASSWORD% %DBNAME% < %BASEDIR%/../ingredientinfotype.sql
-%MYSQLPATH% -h%DBHOST% -u%DBUSERNAME% -p%DBPASSWORD% %DBNAME% < %BASEDIR%/../materialinfotype.sql
-%MYSQLPATH% -h%DBHOST% -u%DBUSERNAME% -p%DBPASSWORD% %DBNAME% < %BASEDIR%/../productinfotype.sql
-%MYSQLPATH% -h%DBHOST% -u%DBUSERNAME% -p%DBPASSWORD% %DBNAME% < %BASEDIR%/../allergent.sql
-%MYSQLPATH% -h%DBHOST% -u%DBUSERNAME% -p%DBPASSWORD% %DBNAME% < %BASEDIR%/../servemeasurement.sql
-%MYSQLPATH% -h%DBHOST% -u%DBUSERNAME% -p%DBPASSWORD% %DBNAME% < %BASEDIR%/../category.sql
-%MYSQLPATH% -h%DBHOST% -u%DBUSERNAME% -p%DBPASSWORD% %DBNAME% < %BASEDIR%/../nutrition.sql
-%MYSQLPATH% -h%DBHOST% -u%DBUSERNAME% -p%DBPASSWORD% %DBNAME% < %BASEDIR%/../products.sql
-%MYSQLPATH% -h%DBHOST% -u%DBUSERNAME% -p%DBPASSWORD% %DBNAME% < %BASEDIR%/../storeinfotype.sql
 
 echo done

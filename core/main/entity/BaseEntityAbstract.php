@@ -404,12 +404,12 @@ abstract class BaseEntityAbstract
      */
     public function __toString()
     {
-        return get_class($this) . ' (#' . $this->getId() . ')';
+        return get_called_class() . ' [' . $this->getId() . ']';
     }
     /**
      * load the default elments of the base entity
      */
-    protected function __loadDaoMap()
+    protected function __loadDaoMap($getThrough = false)
     {
         DaoMap::setBoolType('active', 'bool', 1);
         DaoMap::setDateType('created');

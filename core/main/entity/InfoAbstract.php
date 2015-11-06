@@ -154,7 +154,7 @@ class InfoAbstract extends BaseEntityAbstract
 	 * 
 	 * @return InfoAbstract
 	 */
-	public static function create($baseEntity, InfoTypeAbstract $type, $value = "", $entity = null, InfoAbstract &$exitsObj = null)
+	public static function createBasic($baseEntity, InfoTypeAbstract $type, $value = "", $entity = null, InfoAbstract &$exitsObj = null)
 	{
 		$className = get_called_class();
 		$entityClass = str_replace('Info', '', $className);
@@ -246,7 +246,7 @@ class InfoAbstract extends BaseEntityAbstract
 	 * (non-PHPdoc)
 	 * @see HydraEntity::__loadDaoMap()
 	 */
-	public function __loadDaoMap()
+	public function __loadDaoMap($getThrough = false)
 	{
 		DaoMap::setStringType('entityName','varchar', 50, false, "");
 		DaoMap::setIntType('entityId', 'int', 10, true, false, 0);

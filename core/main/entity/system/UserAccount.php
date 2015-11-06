@@ -230,7 +230,7 @@ class UserAccount extends BaseEntityAbstract
      * (non-PHPdoc)
      * @see BaseEntity::__loadDaoMap()
      */
-    public function __loadDaoMap()
+    public function __loadDaoMap($getThrough = false)
     {
         DaoMap::begin($this, 'ua');
         DaoMap::setStringType('username', 'varchar', 100);

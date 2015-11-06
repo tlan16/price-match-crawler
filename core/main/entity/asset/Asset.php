@@ -313,7 +313,7 @@ class Asset extends BaseEntityAbstract
 	 * (non-PHPdoc)
 	 * @see HydraEntity::__loadDaoMap()
 	 */
-	public function __loadDaoMap()
+	public function __loadDaoMap($getThrough = false)
 	{
 		DaoMap::begin($this, 'con');
 

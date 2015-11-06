@@ -80,7 +80,7 @@ class InfoTypeAbstract extends BaseEntityAbstract
 	 * (non-PHPdoc)
 	 * @see BaseEntity::__loadDaoMap()
 	 */
-	public function __loadDaoMap()
+	public function __loadDaoMap($getThrough = false)
 	{
 		DaoMap::setStringType('name','varchar', 100);
 		DaoMap::setStringType('description','varchar', 255);
@@ -98,7 +98,7 @@ class InfoTypeAbstract extends BaseEntityAbstract
 	 * @return InfoTypeAbstract
 	 * @throws Exception
 	 */
-	public static function create($name, $description = '', $active = true)
+	public static function createBasic($name, $description = '', $active = true)
 	{
 		$class = get_called_class();
 		if(($name = trim($name)) === '')

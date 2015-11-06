@@ -57,12 +57,19 @@ class ResourceAbstract extends BaseEntityAbstract
         $this->description = $description;
         return $this;
     }
-    
+    /**
+     * (non-PHPdoc)
+     * @see BaseEntity::__toString()
+     */
+    public function __toString()
+    {
+    	return '[' . $this->getId() . ']' . $this->getName();
+    }
     /**
      * (non-PHPdoc)
      * @see BaseEntity::__loadDaoMap()
      */
-    public function __loadDaoMap()
+    public function __loadDaoMap($getThrough = false)
     {
         DaoMap::setStringType('name', 'varchar', 100);
         DaoMap::setStringType('description', 'varchar', 255);

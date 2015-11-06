@@ -13,7 +13,7 @@ class UserAccountInfoType extends InfoTypeAbstract
 	 * (non-PHPdoc)
 	 * @see BaseEntity::__loadDaoMap()
 	 */
-	public function __loadDaoMap()
+	public function __loadDaoMap($getThrough = false)
 	{
 		DaoMap::begin($this, 'user_info_type');
 		parent::__loadDaoMap();

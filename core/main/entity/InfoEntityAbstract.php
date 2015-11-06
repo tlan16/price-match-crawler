@@ -6,13 +6,13 @@ class InfoEntityAbstract extends BaseEntityAbstract
 	 *
 	 * @var string
 	 */
-	private $name;
+	protected $name;
 	/**
 	 * The description
 	 *
 	 * @var string
 	 */
-	private $description;
+	protected $description;
 	/**
 	 * The cache for info
 	 *
@@ -209,6 +209,14 @@ class InfoEntityAbstract extends BaseEntityAbstract
 		}
 		return parent::getJson($array, $reset);
 	}
+	/**
+	 * (non-PHPdoc)
+	 * @see BaseEntityAbstract::__toString()
+	 */
+	public function __toString()
+	{
+		return parent::__toString() . $this->getName() . '(' . $this->getDescription() . ')';
+	}
 	private function _getPersonJson(Person $person)
 	{
 		return array('id'=> $person->getId(),
@@ -220,10 +228,13 @@ class InfoEntityAbstract extends BaseEntityAbstract
 	}
 	/**
 	 * (non-PHPdoc)
-	 * @see BaseEntity::loadDaoMap()
+	 * @see BaseEntityAbstract::loadDaoMap()
 	 */
-	public function __loadDaoMap()
+	public function __loadDaoMap($getThrough = false)
 	{
+		if(intval($getThrough) === 1)
+			return parent::__loadDaoMap();
+		
 		DaoMap::setOneToMany("infos", get_class($this) . "Info", strtolower(get_class($this)) . "_info");
 		DaoMap::setStringType('name', 'varchar', 100);
 		DaoMap::setStringType('description','varchar', 255);
@@ -242,7 +253,7 @@ class InfoEntityAbstract extends BaseEntityAbstract
 	 * @return InfoEntityAbstract
 	 * @throws Exception
 	 */
-	public static function create($name, $description = '')
+	public static function createBasic($name, $description = '')
 	{
 		$class = get_called_class();
 		if(($name = trim($name)) === '')
