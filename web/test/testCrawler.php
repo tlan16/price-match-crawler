@@ -5,20 +5,10 @@ class testCrawler extends testAbstract
 {
 	public static function run($debug = true)
 	{
-		try {
-			$transStarted = false;
-			try {Dao::beginTransaction();} catch(Exception $e) {$transStarted = true;}
+		parent::run();
 		
-			$prices = staticiceConnector::getPrices('vs247h', $debug);
-			print_r($prices);
-			
-			if($transStarted === false)
-				Dao::commitTransaction();
-		} catch (Exception $ex) {
-			if($transStarted === false)
-					Dao::rollbackTransaction();
-			throw $ex;
-		}
+		foreach (Product::getAll() as $product)
+			staticiceConnector::getPrices($product, $debug);
 	}
 }
 

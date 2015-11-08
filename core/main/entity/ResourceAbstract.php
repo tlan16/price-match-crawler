@@ -88,7 +88,7 @@ class ResourceAbstract extends BaseEntityAbstract
      * @throws Exception
      * @return ResourceAbstract
      */
-    public static function create($name, $description = '', $active = true)
+    public static function createBasic($name, $description = '', $active = true)
     {
     	$class = get_called_class();
     	if(($name = trim($name)) === '')
