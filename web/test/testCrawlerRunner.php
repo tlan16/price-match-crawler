@@ -8,19 +8,25 @@ class testCrawlerRunner extends testAbstract
 	{
 		parent::run();
 		
-		if(isset($argv) && isset($argv[1]) && ($productId = intval($argv[1])) !== 0 && ($product = Product::get($productId)) instanceof Product)
+		$productIds = Dao::getResultsNative('SELECT `id` FROM `product`');
+		$productIds = array_map(create_function('$a', 'return intval($a["id"]);'), $productIds);
+		
+		foreach ($productIds as $productId)
 		{
-			unset($product);
-			try {
-				$output = '';
-				$timeout = 60; // in seconds
-				$cmd = 'php ' . dirname(__FILE__). '/testCrawler.php ' . $productId;
-				$output = self::ExecWaitTimeout($cmd, $timeout);
-				
-				echo print_r($output, true) . PHP_EOL;
-			} catch (Exception $ex) {
-				echo '***warning***' . $ex->getMessage() . PHP_EOL . $ex->getTraceAsString() . PHP_EOL;
-				continue;
+			if(($productId = intval($productId)) !== 0 && ($product = Product::get($productId)) instanceof Product)
+			{
+				unset($product);
+				try {
+					$output = '';
+					$timeout = 60; // in seconds
+					$cmd = 'php ' . dirname(__FILE__). '/testCrawler.php ' . $productId;
+					$output = self::ExecWaitTimeout($cmd, $timeout);
+					
+					echo print_r($output, true) . PHP_EOL;
+				} catch (Exception $ex) {
+					echo '***warning***' . $ex->getMessage() . PHP_EOL . $ex->getTraceAsString() . PHP_EOL;
+					continue;
+				}
 			}
 		}
 	}

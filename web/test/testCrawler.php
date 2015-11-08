@@ -8,16 +8,9 @@ class testCrawler extends testAbstract
 	{
 		parent::run();
 		
-		$productIds = Dao::getResultsNative('SELECT `id` FROM `product`');
-		$productIds = array_map(create_function('$a', 'return intval($a["id"]);'), $productIds);
-		echo 'Product: id=' . Product::get($argv[1])->getId() . ', sku="' . Product::get($argv[1])->getSku() . '"' . "\n\n";
-		
-		foreach ($productIds as $productId)
+		if(isset($argv) && isset($argv[1]) && ($productId = intval($argv[1])) !== 0 && ($product = Product::get($productId)) instanceof Product)
 		{
 			try {
-				$product = Product::get($productId);
-				if(!$product instanceof Product)
-					continue;
 				staticiceConnector::getPrices($product, $debug);
 				unset($product);
 			} catch (Exception $ex) {
