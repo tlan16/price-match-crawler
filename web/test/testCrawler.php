@@ -19,6 +19,7 @@ class testCrawler extends testAbstract
 				if(!$product instanceof Product)
 					continue;
 				staticiceConnector::getPrices($product, $rowCount, $debug);
+				unset($product);
 			} catch (Exception $ex) {
 				echo '***warning***' . $ex->getMessage() . PHP_EOL . $ex->getTraceAsString() . PHP_EOL;
 				continue;
