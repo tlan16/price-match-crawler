@@ -39,16 +39,16 @@ class staticiceConnector extends pricematchConnectorAbstract {
 			continue;
 		}
 		
-		try {
-			$array = array (
-					'start' => 1,
-					'links' => PHP_INT_MAX,
-					'showadres' => 1,
-					'q' => $productName 
-			);
-			$data = self::readUrl ( self::getUrlHeader (), self::CURL_TIMEOUT, $array, self::CURL_CUSTOM_REQUEST , array() , $debug);
-			
-			foreach ( $data->find (self::$dom_selectors['row']) as $tr ) {
+		$array = array (
+				'start' => 1,
+				'links' => PHP_INT_MAX,
+				'showadres' => 1,
+				'q' => $productName 
+		);
+		$data = self::readUrl ( self::getUrlHeader (), self::CURL_TIMEOUT, $array, self::CURL_CUSTOM_REQUEST , array() , $debug);
+		
+		foreach ( $data->find (self::$dom_selectors['row']) as $tr ) {
+			try {
 				if (($text = trim ( htmlspecialchars_decode ( $tr->plaintext ) )) === '' || self::isSearchPanel ( $text ) === true)
 					continue;
 				$price = 0;
@@ -123,15 +123,15 @@ class staticiceConnector extends pricematchConnectorAbstract {
 						}
 					}
 				}
-				
+					
 				$rowResult = array(
 						'price' => $price,
 						'product link' => (trim($productLink) === '' ? '' : self::getUrlDestination($productLink)),
 						'description' => $description,
 						'company' => $companyName,
 						'company location' => $companyLocation,
-// 						'company link' => (trim($companyLink) === '' ? '' : self::getUrlDestination($companyLink)),
-// 						'company base url' => (trim($companyBaseUrl) === '' ? '' : self::getUrlDestination($companyBaseUrl)),
+	// 					'company link' => (trim($companyLink) === '' ? '' : self::getUrlDestination($companyLink)),
+	// 					'company base url' => (trim($companyBaseUrl) === '' ? '' : self::getUrlDestination($companyBaseUrl)),
 						'company image' => (trim($img) === '' ? '' : ComScriptCURL::readUrl($img)),
 						'updated' => $updated
 				);
@@ -143,7 +143,7 @@ class staticiceConnector extends pricematchConnectorAbstract {
 					$tmp['updated'] = trim($rowResult['updated']);
 					print_r($tmp);
 				}
-				
+					
 				try {
 					$transStarted = false;
 					try {Dao::beginTransaction();} catch(Exception $e) {$transStarted = true;}
@@ -164,9 +164,10 @@ class staticiceConnector extends pricematchConnectorAbstract {
 				}
 				
 				$rowCount++;
+			} catch (Exception $ex) {
+				echo '***warning***' . $ex->getMessage() . PHP_EOL . $ex->getTraceAsString() . PHP_EOL;
+				continue;
 			}
-		} catch ( Exception $ex ) {
-			throw $ex;
 		}
 	}
 	public static function getUrlDestination($url)

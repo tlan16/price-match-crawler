@@ -10,7 +10,12 @@ class testCrawler extends testAbstract
 		$rowCount = 0;
 		foreach (Product::getAll() as $product)
 		{
-			staticiceConnector::getPrices($product, $rowCount, $debug);
+			try {
+				staticiceConnector::getPrices($product, $rowCount, $debug);
+			} catch (Exception $ex) {
+				echo '***warning***' . $ex->getMessage() . PHP_EOL . $ex->getTraceAsString() . PHP_EOL;
+				continue;
+			}
 		}
 	}
 }
