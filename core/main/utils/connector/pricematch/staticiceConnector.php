@@ -30,7 +30,7 @@ class staticiceConnector extends pricematchConnectorAbstract {
 			'subDescription' => 'font' 
 	);
 	
-	public static function getPrices(Product $product, $debug = false) {
+	public static function getPrices(Product $product, $debug = true) {
 		
 		if (($productName = trim ( $product->getSku() )) === '')
 		{
@@ -38,6 +38,8 @@ class staticiceConnector extends pricematchConnectorAbstract {
 				echo 'Product ' . trim($product) . ' name is empty' . PHP_EOL;
 			continue;
 		}
+		
+		echo 'Product' . trim($product) . PHP_EOL;
 		
 		$array = array (
 				'start' => 1,

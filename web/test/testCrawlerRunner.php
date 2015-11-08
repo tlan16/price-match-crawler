@@ -18,7 +18,7 @@ class testCrawlerRunner extends testAbstract
 				unset($product);
 				try {
 					$output = '';
-					$timeout = 60; // in seconds
+					$timeout = 120; // in seconds
 					$cmd = 'php ' . dirname(__FILE__). '/testCrawler.php ' . $productId;
 					$output = self::ExecWaitTimeout($cmd, $timeout);
 					
