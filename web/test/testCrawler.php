@@ -6,7 +6,7 @@ echo basename(__FILE__) . '::$argv' . print_r($argv, true) . PHP_EOL;
 
 class testCrawler extends testAbstract
 {
-	public static function run($debug = true)
+	public static function runWithParam($argv, $debug = true)
 	{
 		parent::run();
 		
@@ -23,4 +23,4 @@ class testCrawler extends testAbstract
 	}
 }
 
-testCrawler::run();
+testCrawler::runWithParam($argv);
