@@ -29,6 +29,7 @@ abstract class SystemCoreAbstract
 			$base . '/utils/',
 			$base . '/utils/connector/',
 			$base . '/utils/connector/pricematch/',
+			$base . '/utils/connector/magento-b2b/',
 			$base . '/utils/html_parser/',
 			$base . '/utils/PDF/',
 			$base . '/utils/PhpBarcode/',

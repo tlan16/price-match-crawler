@@ -8,9 +8,7 @@
  */
 class SystemSettings extends BaseEntityAbstract
 {
-	CONST TYPE_FORUM_API_REST = "forum_api_rest";
-	CONST TYPE_FORUM_API_REST_USERNAME = "forum_api_rest_username";
-	CONST TYPE_FORUM_API_REST_PASSWORD = "forum_api_rest_password";
+	const TYPE_LAST_PRODUCT_SYNC = 'last_succ_product_sync';
 	/**
 	 * The value of the setting
 	 * 
@@ -163,6 +161,13 @@ class SystemSettings extends BaseEntityAbstract
 		DaoMap::createUniqueIndex('type');
 		DaoMap::commit();
 	}
+	/**
+	 * get by type
+	 * 
+	 * @param string $type
+	 * @param bool $activeOnly
+	 * @return SystemSettings|null
+	 */
 	public static function getByType($type, $activeOnly = true)
 	{
 		$type = trim($type);
