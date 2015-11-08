@@ -2,8 +2,6 @@
 require_once dirname(__FILE__) . '/testAbstract.php';
 ini_set('memory_limit','2048M');
 
-echo basename(__FILE__) . '::$argv' . print_r($argv, true) . PHP_EOL;
-
 class testCrawler extends testAbstract
 {
 	public static function runWithParam($argv, $debug = true)
