@@ -7,8 +7,11 @@ class testCrawler extends testAbstract
 	{
 		parent::run();
 		
+		$rowCount = 0;
 		foreach (Product::getAll() as $product)
-			staticiceConnector::getPrices($product, $debug);
+		{
+			staticiceConnector::getPrices($product, $rowCount, $debug);
+		}
 	}
 }
 

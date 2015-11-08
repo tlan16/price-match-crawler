@@ -30,7 +30,7 @@ class staticiceConnector extends pricematchConnectorAbstract {
 			'subDescription' => 'font' 
 	);
 	
-	public static function getPrices(Product $product, $debug = false) {
+	public static function getPrices(Product $product, &$rowCount, $debug = false) {
 		
 		if (($productName = trim ( $product->getSku() )) === '')
 		{
@@ -48,7 +48,6 @@ class staticiceConnector extends pricematchConnectorAbstract {
 			);
 			$data = self::readUrl ( self::getUrlHeader (), self::CURL_TIMEOUT, $array, self::CURL_CUSTOM_REQUEST , array() , $debug);
 			
-			$rowCount = 0;
 			foreach ( $data->find (self::$dom_selectors['row']) as $tr ) {
 				if (($text = trim ( htmlspecialchars_decode ( $tr->plaintext ) )) === '' || self::isSearchPanel ( $text ) === true)
 					continue;
