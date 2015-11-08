@@ -32,6 +32,12 @@ class Record extends BaseEntityAbstract
 	 * @var string
 	 */
 	private $logo = '';
+	/**
+	 * the crawler updated time (e.g. updated in staticice)
+	 * 
+	 * @var string
+	 */
+	private $crawler_updated = '';
 	
 	/**
 	 * getter for product
@@ -111,6 +117,25 @@ class Record extends BaseEntityAbstract
 	    $this->logo = $logo;
 	    return $this;
 	}
+	/**
+	 * getter for crawler_updated
+	 *
+	 * @return string
+	 */
+	public function getCrawler_updated()
+	{
+	    return $this->crawler_updated;
+	}
+	/**
+	 * Setter for crawler_updated
+	 *
+	 * @return Record
+	 */
+	public function setCrawler_updated($crawler_updated)
+	{
+	    $this->crawler_updated = $crawler_updated;
+	    return $this;
+	}
 	
 	/**
 	 * (non-PHPdoc)
@@ -123,17 +148,21 @@ class Record extends BaseEntityAbstract
 		DaoMap::setManyToOne('vendor', 'Vendor', 'rcrd_vndr');
 		DaoMap::setStringType('url', 'varchar', 255);
 		DaoMap::setStringType('logo', 'TEXT');
+		DaoMap::setDateType('crawler_updated');
 		parent::__loadDaoMap();
 		
 		DaoMap::commit();
 	}
-	public static function create(Product $product, Vendor $vendor, $url = '', $logo = '', $active = true)
+	public static function create(Product $product, Vendor $vendor, $url = '', $logo = '', $crawler_updated = null, $active = true)
 	{
 		$url = trim($url);
 		$logo = trim($logo);
 		
 		$obj = new self();
-		$obj->setProduct($product)->setVendor($vendor)->setUrl($url)->setLogo($logo)->setActive(intval($active) === 1)->save();
+		$obj->setProduct($product)->setVendor($vendor)->setUrl($url)->setLogo($logo)->setActive(intval($active) === 1);
+		if($crawler_updated instanceof UDate)
+			$obj->setCrawler_updated($crawler_updated);
+		$obj->save();
 		return $obj;
 	}
 }

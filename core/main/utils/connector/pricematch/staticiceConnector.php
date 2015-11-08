@@ -133,19 +133,24 @@ class staticiceConnector extends pricematchConnectorAbstract {
 						'company location' => $companyLocation,
 // 						'company link' => (trim($companyLink) === '' ? '' : self::getUrlDestination($companyLink)),
 // 						'company base url' => (trim($companyBaseUrl) === '' ? '' : self::getUrlDestination($companyBaseUrl)),
-						'company image' => (trim($img) === '' ? '' : base64_encode(ComScriptCURL::readUrl($img))),
-						'updated' => trim ( $updated ) 
+						'company image' => (trim($img) === '' ? '' : ComScriptCURL::readUrl($img)),
+						'updated' => $updated
 				);
 				
 				if($debug === true)
-					print_r($rowResult);
+				{
+					$tmp = $rowResult;
+					$tmp['company image'] = StringUtilsAbstract::human_filesize(mb_strlen($rowResult['company image'], '8bit')) . ' of image data';
+					$tmp['updated'] = trim($rowResult['updated']);
+					print_r($tmp);
+				}
 				
 				try {
 					$transStarted = false;
 					try {Dao::beginTransaction();} catch(Exception $e) {$transStarted = true;}
 					
 					$vendor = Vendor::create($rowResult['company']);
-					$record = Record::create($product, $vendor, $rowResult['product link'], base64_encode($rowResult['company image']));
+					$record = Record::create($product, $vendor, $rowResult['product link'], base64_encode($rowResult['company image']), $rowResult['updated']);
 					
 					if($transStarted === false)
 					{

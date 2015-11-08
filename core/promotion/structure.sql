@@ -64,6 +64,7 @@ CREATE TABLE `record` (
 	`vendorId` int(10) unsigned NOT NULL DEFAULT 0,
 	`url` varchar(255) NOT NULL DEFAULT '',
 	`logo` TEXT NOT NULL ,
+	`crawler_updated` datetime NOT NULL DEFAULT '0001-01-01 00:00:00',
 	`active` bool NOT NULL DEFAULT 1,
 	`created` datetime NOT NULL DEFAULT '0001-01-01 00:00:00',
 	`createdById` int(10) unsigned NOT NULL DEFAULT 0,

@@ -221,4 +221,14 @@ abstract class StringUtilsAbstract
 	public static function nullOrString($string) {
 		return (($string === null || trim($string) === '') ? null : trim($string));
 	}
+	public static function filesize($filePath) {
+		if(($filePath = trim($filePath)) === '' || ($size = filesize($filePath)) === false)
+			return 0;
+		return self::human_filesize($size);
+	}
+	public static function human_filesize($bytes, $decimals = 2) {
+		$size = array('B','kB','MB','GB','TB','PB','EB','ZB','YB');
+		$factor = floor((strlen($bytes) - 1) / 3);
+		return sprintf("%.{$decimals}f", $bytes / pow(1024, $factor)) . @$size[$factor];
+	}
 }
