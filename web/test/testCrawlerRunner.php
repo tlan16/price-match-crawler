@@ -28,7 +28,7 @@ class testCrawlerRunner extends testAbstract
 					continue;
 				}
 			}
-			echo 'Total Records = ' . Record::countByCriteria('active = 1') . PHP_EOL;
+			echo  __CLASS__ . '::' . __FUNCTION__ . ': Total Records = ' . Record::countByCriteria('active = 1') . PHP_EOL;
 		}
 	}
 }

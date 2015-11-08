@@ -39,8 +39,6 @@ class staticiceConnector extends pricematchConnectorAbstract {
 			continue;
 		}
 		
-		echo 'Product' . trim($product) . PHP_EOL;
-		
 		$array = array (
 				'start' => 1,
 				'links' => PHP_INT_MAX,
