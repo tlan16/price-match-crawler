@@ -30,7 +30,7 @@ class staticiceConnector extends pricematchConnectorAbstract {
 			'subDescription' => 'font' 
 	);
 	
-	public static function getPrices(Product $product, &$rowCount, $debug = false) {
+	public static function getPrices(Product $product, $debug = false) {
 		
 		if (($productName = trim ( $product->getSku() )) === '')
 		{
@@ -55,7 +55,7 @@ class staticiceConnector extends pricematchConnectorAbstract {
 				$description = $productLink = $companyLink = $img = $companyName = $companyBaseUrl = $companyLocation = $updated = '';
 				
 				if($debug === true)
-					print_r ( PHP_EOL . $rowCount . ': ' . str_repeat ( '=', 100 ) . PHP_EOL . json_decode ( json_encode ( $tr->plaintext ), true ) . PHP_EOL . str_repeat ( '=', 100 ) . PHP_EOL );
+					print_r ( PHP_EOL . str_repeat ( '=', 100 ) . PHP_EOL . json_decode ( json_encode ( $tr->plaintext ), true ) . PHP_EOL . str_repeat ( '=', 100 ) . PHP_EOL );
 				
 				$priceEl = self::find($tr, self::$dom_selectors['price']);
 				$productLink = $priceEl->href;
@@ -163,12 +163,12 @@ class staticiceConnector extends pricematchConnectorAbstract {
 					throw $ex;
 				}
 				
-				$rowCount++;
 			} catch (Exception $ex) {
 				echo '***warning***' . $ex->getMessage() . PHP_EOL . $ex->getTraceAsString() . PHP_EOL;
 				continue;
 			}
 		}
+		unset($data);
 	}
 	public static function getUrlDestination($url)
 	{
