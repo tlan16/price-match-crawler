@@ -35,7 +35,8 @@ class testCrawlerRunner extends testAbstract
 			$timeDiff= intval(UDate::now()->getUnixTimeStamp()) - intval($started['time']);
 			if($timeDiff !== 0)
 				echo '***report***' . __CLASS__ . '::' . __FUNCTION__ . ': '
-						. trim($totalRecord) . ' records in ' . trim($timeDiff)
+						. 'current product id: ' . $productId
+						. ', ' . trim($totalRecord) . ' records in ' . trim($timeDiff) . ' seconds'
 						. ', ' . trim($totalRecord / $timeDiff) . ' records/s'
 						. PHP_EOL;
 		}
