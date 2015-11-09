@@ -31,10 +31,13 @@ class testCrawlerRunner extends testAbstract
 					continue;
 				}
 			}
-			echo  '***report***' . __CLASS__ . '::' . __FUNCTION__ . ': Total Records = ' . ($totalRecord = Record::countByCriteria('active = 1') ) 
-				. ', Product = ' . trim($productId) 
-				. ', ' . trim( (intval($totalRecord) - intval($started['count'])) / (intval(UDate::now()->getUnixTimeStamp() - $started['time']->getUnixTimeStamp()) !== 0 ?: 1) ) . ' records/s'
-				. PHP_EOL;
+			$totalRecord = intval(Record::countByCriteria('active = 1')) - intval($started['count']);
+			$timeDiff= intval(UDate::now()->getUnixTimeStamp()) - intval($started['time']->getUnixTimeStamp());
+			if($timeDiff !== 0)
+				echo '***report***' . __CLASS__ . '::' . __FUNCTION__
+						. trim($totalRecord) . ' records in ' . trim($timeDiff)
+						. ' ' . trim($totalRecord / $timeDiff) . 'records/s'
+						. PHP_EOL;
 		}
 	}
 }
