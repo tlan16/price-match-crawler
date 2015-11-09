@@ -132,7 +132,7 @@ class staticiceConnector extends pricematchConnectorAbstract {
 						'company location' => $companyLocation,
 	// 					'company link' => (trim($companyLink) === '' ? '' : self::getUrlDestination($companyLink)),
 	// 					'company base url' => (trim($companyBaseUrl) === '' ? '' : self::getUrlDestination($companyBaseUrl)),
-						'company image' => (trim($img) === '' ? '' : ComScriptCURL::readUrl($img)),
+						'company image' => (trim($img) === '' ? '' : self::readUrl($img)),
 						'updated' => $updated
 				);
 				
