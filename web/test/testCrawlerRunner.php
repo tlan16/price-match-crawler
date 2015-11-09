@@ -11,7 +11,7 @@ class testCrawlerRunner extends testAbstract
 		$productIds = Dao::getResultsNative('SELECT `id` FROM `product`');
 		$productIds = array_map(create_function('$a', 'return intval($a["id"]);'), $productIds);
 		$started = array();
-		$started['time'] = UDate::now();
+		$started['time'] = UDate::now()->getUnixTimeStamp();
 		$started['count'] = Record::countByCriteria('active = 1');
 		
 		foreach ($productIds as $productId)
@@ -32,11 +32,11 @@ class testCrawlerRunner extends testAbstract
 				}
 			}
 			$totalRecord = intval(Record::countByCriteria('active = 1')) - intval($started['count']);
-			$timeDiff= intval(UDate::now()->getUnixTimeStamp()) - intval($started['time']->getUnixTimeStamp());
+			$timeDiff= intval(UDate::now()->getUnixTimeStamp()) - intval($started['time']);
 			if($timeDiff !== 0)
-				echo '***report***' . __CLASS__ . '::' . __FUNCTION__
+				echo '***report***' . __CLASS__ . '::' . __FUNCTION__ . ': '
 						. trim($totalRecord) . ' records in ' . trim($timeDiff)
-						. ' ' . trim($totalRecord / $timeDiff) . 'records/s'
+						. ', ' . trim($totalRecord / $timeDiff) . ' records/s'
 						. PHP_EOL;
 		}
 	}
