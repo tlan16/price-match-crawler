@@ -33,4 +33,5 @@ class testCrawlerRunner extends testAbstract
 	}
 }
 
-testCrawlerRunner::run();
+while(1)
+{ testCrawlerRunner::run(); }
