@@ -37,7 +37,7 @@ class testCrawlerRunner extends testAbstract
 				echo '***report***' . __CLASS__ . '::' . __FUNCTION__ . ': '
 						. 'current product id: ' . $productId
 						. ', ' . trim($totalRecord) . ' records in ' . trim($timeDiff) . ' seconds'
-						. ', ' . trim($totalRecord / $timeDiff) . ' records/s'
+						. ', ' . trim(round($totalRecord / $timeDiff, 4)) . ' records/s'
 						. ', ' . self::get_memory_usage_string()
 						. PHP_EOL;
 		}
