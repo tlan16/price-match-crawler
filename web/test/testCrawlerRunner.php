@@ -16,21 +16,21 @@ class testCrawlerRunner extends testAbstract
 		
 		foreach ($productIds as $productId)
 		{
-			if(($productId = intval($productId)) !== 0 && ($product = Product::get($productId)) instanceof Product)
-			{
-				unset($product);
-				try {
-					$output = '';
-					$timeout = 120; // in seconds
-					$cmd = 'php ' . dirname(__FILE__). '/testCrawler.php ' . $productId;
-					$output = self::ExecWaitTimeout($cmd, $timeout);
+// 			if(($productId = intval($productId)) !== 0 && ($product = Product::get($productId)) instanceof Product)
+// 			{
+// 				unset($product);
+// 				try {
+// 					$output = '';
+// 					$timeout = 120; // in seconds
+// 					$cmd = 'php ' . dirname(__FILE__). '/testCrawler.php ' . $productId;
+// 					$output = self::ExecWaitTimeout($cmd, $timeout);
 					
-					echo print_r($output, true) . PHP_EOL;
-				} catch (Exception $ex) {
-					echo '***warning***' . $ex->getMessage() . PHP_EOL . $ex->getTraceAsString() . PHP_EOL;
-					continue;
-				}
-			}
+// 					echo print_r($output, true) . PHP_EOL;
+// 				} catch (Exception $ex) {
+// 					echo '***warning***' . $ex->getMessage() . PHP_EOL . $ex->getTraceAsString() . PHP_EOL;
+// 					continue;
+// 				}
+// 			}
 			$totalRecord = intval(Record::countByCriteria('active = 1')) - intval($started['count']);
 			$timeDiff= intval(UDate::now()->getUnixTimeStamp()) - intval($started['time']);
 			if($timeDiff !== 0)
@@ -38,6 +38,7 @@ class testCrawlerRunner extends testAbstract
 						. 'current product id: ' . $productId
 						. ', ' . trim($totalRecord) . ' records in ' . trim($timeDiff) . ' seconds'
 						. ', ' . trim($totalRecord / $timeDiff) . ' records/s'
+						. ', ' . self::get_memory_usage_string()
 						. PHP_EOL;
 		}
 	}

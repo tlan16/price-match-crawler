@@ -63,4 +63,14 @@ abstract class testAbstract
 			return $output;
 		}
 	}
+	public static function get_memory_usage_string() {
+		$mem_usage = memory_get_usage(true);
+		$mem_peak_usage = memory_get_peak_usage(true);
+		return 'memory usage: ' . self::human($mem_usage) . '(peak ' . self::human($mem_peak_usage) . ')';
+	}
+	public static function human($size)
+	{
+		$unit=array('B','KB','MB','GB','TB','PB');
+		return @round($size/pow(1024,($i=floor(log($size,1024)))),2).' '.$unit[$i];
+	}
 }
