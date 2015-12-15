@@ -30,15 +30,13 @@ class staticiceConnector extends pricematchConnectorAbstract {
 			'subDescription' => 'font' 
 	);
 	
-	public static function getPrices(Product $product, $debug = true) {
+	public static function getPrices(Product $product, &$cache = null, $debug = true) 
+	{
+		self::$_cache = $cache;
 		
 		if (($productName = trim ( $product->getSku() )) === '')
-		{
-			if($debug === true)
-				echo 'Product ' . trim($product) . ' name is empty' . PHP_EOL;
-			continue;
-		}
-		
+			return;
+
 		$array = array (
 				'start' => 1,
 				'links' => PHP_INT_MAX,
@@ -46,16 +44,12 @@ class staticiceConnector extends pricematchConnectorAbstract {
 				'q' => $productName 
 		);
 		$data = self::readUrl ( self::getUrlHeader (), self::CURL_TIMEOUT, $array, self::CURL_CUSTOM_REQUEST , array() , $debug);
-		
 		foreach ( $data->find (self::$dom_selectors['row']) as $tr ) {
 			try {
 				if (($text = trim ( htmlspecialchars_decode ( $tr->plaintext ) )) === '' || self::isSearchPanel ( $text ) === true)
 					continue;
 				$price = 0;
 				$description = $productLink = $companyLink = $img = $companyName = $companyBaseUrl = $companyLocation = $updated = '';
-				
-				if($debug === true)
-					print_r ( PHP_EOL . str_repeat ( '=', 100 ) . PHP_EOL . json_decode ( json_encode ( $tr->plaintext ), true ) . PHP_EOL . str_repeat ( '=', 100 ) . PHP_EOL );
 				
 				$priceEl = self::find($tr, self::$dom_selectors['price']);
 				$productLink = $priceEl->href;
@@ -136,26 +130,19 @@ class staticiceConnector extends pricematchConnectorAbstract {
 						'updated' => $updated
 				);
 				
-				if($debug === true)
-				{
-					$tmp = $rowResult;
-					$tmp['company image'] = StringUtilsAbstract::human_filesize(mb_strlen($rowResult['company image'], '8bit')) . ' of image data';
-					$tmp['updated'] = trim($rowResult['updated']);
-					print_r($tmp);
-				}
-					
 				try {
 					$transStarted = false;
 					try {Dao::beginTransaction();} catch(Exception $e) {$transStarted = true;}
 					
 					$vendor = Vendor::create($rowResult['company']);
-					$record = Record::create($product, $vendor, $rowResult['product link'], base64_encode($rowResult['company image']), $rowResult['updated']);
+					$record = Record::create($product, $vendor, $rowResult['product link'], $rowResult['price']);
+					$record->setUpdated($rowResult['updated'])->save();
 					
 					if($transStarted === false)
 					{
 						Dao::commitTransaction();
 						if($debug === true)
-							echo 'Record created with Product ' . trim($product) . ', Vendor ' . trim($vendor) . PHP_EOL;
+							echo trim($record) . ' created, ' . trim($record->getProduct()) . ', ' . trim($record->getVendor()) . ', Price ' . $record->getPrice() . PHP_EOL;
 					}
 				} catch (Exception $ex) {
 					if($transStarted === false)

@@ -10,7 +10,6 @@ class testCrawler extends testAbstract
 		
 		if(isset($argv) && isset($argv[1]) && ($productId = intval($argv[1])) !== 0 && ($product = Product::get($productId)) instanceof Product)
 		{
-			echo __CLASS__ . '::' . __FUNCTION__ . '::Product' . trim($product) . PHP_EOL;
 			try {
 				staticiceConnector::getPrices($product, $debug);
 				unset($product);

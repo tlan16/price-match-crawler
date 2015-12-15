@@ -12,7 +12,7 @@ abstract class pricematchConnectorAbstract
 	protected static $search_panel_indicators = array();
 	protected static $dom_selectors = array();
 	protected $debug = true;
-	private static $_cache;
+	protected static $_cache;
 	
 	protected static function getUrlHeader()
 	{
@@ -23,32 +23,12 @@ abstract class pricematchConnectorAbstract
 		return $result;
 	}
 	
-	public static function readUrl($url, $timeout = self::CURL_TIMEOUT, array $data = array(), $customerRequest = self::CURL_CUSTOM_REQUEST, $extraOpts = array(), $debug = false)
-	{
-		$key = sha1( json_encode(array($url, $timeout, $data, $customerRequest, $extraOpts)) );
-		if(!isset(self::$_cache[$key]))
-		{
-			//try to use apc
-			if(extension_loaded('apc') && ini_get('apc.enabled'))
-			{
-				if(!apc_exists($key))
-					apc_add($key, self::_readUrl($url, $timeout, $data, $customerRequest, $extraOpts), self::APC_TTL, $debug);
-				self::$_cache[$key] = apc_fetch($key);
-			}
-			else
-				self::$_cache[$key] = self::_readUrl($url, $timeout, $data, $customerRequest, $extraOpts, $debug);
-		}
-		return self::$_cache[$key];
-	}
-	
-	private static function _readUrl($url, $timeout = null, array $data = array(), $customerRequest = '', $extraOpts = array(), $debug = false)
+	public static function readUrl($url, $timeout = null, array $data = array(), $customerRequest = '', $extraOpts = array(), $debug = false)
 	{
 		if (! isset ( $extraOpts [CURLOPT_USERAGENT] ))
 			$extraOpts [CURLOPT_USERAGENT] = self::USER_AGENT;
 		
 		$data = ComScriptCURL::readUrl ( $url, $timeout, $data, $customerRequest, $extraOpts , $debug);
-		if($debug === true)
-			print_r(PHP_EOL . str_repeat('=', 100) . PHP_EOL . $data . PHP_EOL . str_repeat('=', 100) . PHP_EOL);
 		$dom = new simple_html_dom ();
 		$dom->load ( $data );
 		return $dom;
@@ -96,6 +76,6 @@ abstract class pricematchConnectorAbstract
 		
 		$url = curl_getinfo($ch, CURLINFO_EFFECTIVE_URL); // This is what you need, it will return you the last effective URL
 		
-		echo $url;
+		return $url;
 	}
 }

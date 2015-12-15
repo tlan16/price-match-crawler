@@ -27,18 +27,11 @@ class Record extends BaseEntityAbstract
 	 */
 	private $url = '';
 	/**
-	 * The logo image base64 of the vendo
+	 * The price
 	 * 
-	 * @var string
+	 * @var double
 	 */
-	private $logo = '';
-	/**
-	 * the crawler updated time (e.g. updated in staticice)
-	 * 
-	 * @var string
-	 */
-	private $crawler_updated = '';
-	
+	private $price;
 	/**
 	 * getter for product
 	 *
@@ -99,41 +92,22 @@ class Record extends BaseEntityAbstract
 	    return $this;
 	}
 	/**
-	 * getter for logo
+	 * getter for price
 	 *
-	 * @return string
+	 * @return double
 	 */
-	public function getLogo()
+	public function getPrice()
 	{
-	    return $this->logo;
+	    return $this->price;
 	}
 	/**
-	 * Setter for logo
+	 * Setter for price
 	 *
 	 * @return Record
 	 */
-	public function setLogo($logo)
+	public function setPrice($price)
 	{
-	    $this->logo = $logo;
-	    return $this;
-	}
-	/**
-	 * getter for crawler_updated
-	 *
-	 * @return string
-	 */
-	public function getCrawler_updated()
-	{
-	    return $this->crawler_updated;
-	}
-	/**
-	 * Setter for crawler_updated
-	 *
-	 * @return Record
-	 */
-	public function setCrawler_updated($crawler_updated)
-	{
-	    $this->crawler_updated = $crawler_updated;
+	    $this->price = $price;
 	    return $this;
 	}
 	
@@ -147,21 +121,17 @@ class Record extends BaseEntityAbstract
 		DaoMap::setManyToOne('product', 'Product', 'rcrd_pro');
 		DaoMap::setManyToOne('vendor', 'Vendor', 'rcrd_vndr');
 		DaoMap::setStringType('url', 'varchar', 255);
-		DaoMap::setStringType('logo', 'TEXT');
-		DaoMap::setDateType('crawler_updated');
+		DaoMap::setIntType('price', 'float');
 		parent::__loadDaoMap();
 		
 		DaoMap::commit();
 	}
-	public static function create(Product $product, Vendor $vendor, $url = '', $logo = '', $crawler_updated = null, $active = true)
+	public static function create(Product $product, Vendor $vendor, $url = '', $price, $active = true)
 	{
 		$url = trim($url);
-		$logo = trim($logo);
-		
+
 		$obj = new self();
-		$obj->setProduct($product)->setVendor($vendor)->setUrl($url)->setLogo($logo)->setActive(intval($active) === 1);
-		if($crawler_updated instanceof UDate)
-			$obj->setCrawler_updated($crawler_updated);
+		$obj->setProduct($product)->setVendor($vendor)->setUrl($url)->setPrice($price)->setActive(intval($active) === 1);
 		$obj->save();
 		return $obj;
 	}

@@ -20,12 +20,14 @@ class testCrawlerRunner extends testAbstract
 			{
 				unset($product);
 				try {
-					$output = '';
+					$output = array();
 					$timeout = 120; // in seconds
 					$cmd = 'php ' . dirname(__FILE__). '/testCrawler.php ' . $productId;
-					$output = self::ExecWaitTimeout($cmd, $timeout);
-					
-					echo print_r($output, true) . PHP_EOL;
+// 					$output = self::ExecWaitTimeout($cmd, $timeout);
+					exec($cmd, $output);
+
+					if(count($output) > 0)
+						echo print_r($output, true) . PHP_EOL;
 				} catch (Exception $ex) {
 					echo '***warning***' . $ex->getMessage() . PHP_EOL . $ex->getTraceAsString() . PHP_EOL;
 					continue;

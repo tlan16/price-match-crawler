@@ -51,7 +51,7 @@ class Product extends InfoEntityAbstract
      */
     public function __toString()
     {
-    	return '[' . $this->getId() . ']' . $this->getSku() . '(' . $this->getDescription() . ')';
+    	return 'Product[' . $this->getId() . '] ' . $this->getSku();
     }
     /**
      * (non-PHPdoc)

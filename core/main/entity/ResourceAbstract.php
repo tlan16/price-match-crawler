@@ -63,7 +63,7 @@ class ResourceAbstract extends BaseEntityAbstract
      */
     public function __toString()
     {
-    	return '[' . $this->getId() . ']' . $this->getName();
+    	return  get_class($this) . '[' . $this->getId() . '] ' . $this->getName();
     }
     /**
      * (non-PHPdoc)
