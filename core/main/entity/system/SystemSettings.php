@@ -9,6 +9,8 @@
 class SystemSettings extends BaseEntityAbstract
 {
 	const TYPE_LAST_PRODUCT_SYNC = 'last_succ_product_sync';
+	const TYPE_MAGENTO_B2B_USERNAME = 'magento_b2b_username';
+	const TYPE_MAGENTO_B2B_PASSWORD = 'magento_b2b_password';
 	/**
 	 * The value of the setting
 	 * 
