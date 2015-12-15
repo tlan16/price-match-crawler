@@ -16,13 +16,14 @@ foreach ($productIds as $productId)
         $output = array();
         $cmd = 'php ' . dirname(__FILE__). '/crawler.php ' . $productId;
         exec($cmd, $output);
+        foreach ($output as $line)
+        	echo "\t" . $line . PHP_EOL;
     }
     //statics
     $totalRecord = intval(Record::countByCriteria('active = 1')) - intval($started['count']);
     $timeDiff= intval(UDate::now()->getUnixTimeStamp()) - intval($started['time']);
     if($timeDiff !== 0)
-        echo '***report***' . __CLASS__ . '::' . __FUNCTION__ . ': '
-            . 'current product id: ' . $productId
+        echo 'current product id: ' . $productId
             . ', ' . trim($totalRecord) . ' records in ' . trim($timeDiff) . ' seconds'
             . ', ' . trim(round($totalRecord / $timeDiff, 4)) . ' records/s'
             . ', ' . get_memory_usage_string()
