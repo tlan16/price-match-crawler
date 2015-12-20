@@ -31,8 +31,6 @@ foreach ($productIds as $productId)
             . PHP_EOL;
 }
 function get_date_diff( $time1, $time2, $precision = 2 ) {
-    var_dump($time1);
-    var_dump($time2);
     // If not numeric then convert timestamps
     if( !is_int( $time1 ) ) {
         $time1 = strtotime( $time1 );
