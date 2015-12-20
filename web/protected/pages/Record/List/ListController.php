@@ -70,7 +70,7 @@ class ListController extends CRUDPageAbstract
 				$query = $class::getQuery();
 				switch ($field)
 				{
-					case 'rcrd.sku':
+					case 'pro.sku':
 						{
 							$searchTokens = array();
 							StringUtilsAbstract::permute(preg_split("/[\s,]+/", $value), $searchTokens);

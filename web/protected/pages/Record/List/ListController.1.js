@@ -17,6 +17,31 @@ PageJs.prototype = Object.extend(new CRUDPageJs(), {
                 tmp.options['minimumResultsForSearch'] = 'Infinity';
             jQuery(this).select2(tmp.options);
         });
+
+        tmp.selectBox = jQuery('[search_field="pro.sku"]').select2({
+            allowClear: true,
+            multiple: true,
+            width: "100%",
+            ajax: {
+                delay: 250
+                ,url: '/ajax/getAll'
+                ,type: 'GET'
+                ,data: function (params) {
+                    return {"searchTxt": 'sku like ?', 'searchParams': ['%' + params + '%'], 'entityName': 'Category', 'pageNo': 1};
+                }
+                ,results: function(data, page, query) {
+                    tmp.result = [];
+                    if(data.resultData && data.resultData.items) {
+                        data.resultData.items.each(function(item){
+                            tmp.result.push({'id': item.id, 'text': item.name, 'data': item});
+                        });
+                    }
+                    return { 'results' : tmp.result };
+                }
+            }
+            ,cache: true
+            ,escapeMarkup: function (markup) { return markup; } // let our custom formatter work
+        });
     }
     ,_getResultRow: function(row, isTitle) {
         var tmp = {};

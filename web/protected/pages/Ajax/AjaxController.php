@@ -35,37 +35,6 @@ class AjaxController extends TService
         $this->getResponse()->appendHeader('Content-Type: application/json');
         $this->getResponse()->write(StringUtilsAbstract::getJson($results, $errors));
   	}
-	/**
-	 * Getting the comments for an entity
-	 *
-	 * @param array $params
-	 *
-	 * @return string The json string
-	 */
-  	private function _getComments(Array $params)
-  	{
-  		if(!isset($params['entityId']) || !isset($params['entity']) || ($entityId = trim($params['entityId'])) === '' || ($entity = trim($params['entity'])) === '')
-  			throw  new Exception('SYSTEM ERROR: INCOMPLETE DATA PROVIDED');
-
-  		$pageSize = (isset($params['pageSize']) && ($pageSize = trim($params['pageSize'])) !== '' ? $pageSize : DaoQuery::DEFAUTL_PAGE_SIZE);
-  		$pageNo = (isset($params['pageNo']) && ($pageNo = trim($params['pageNo'])) !== '' ? $pageNo : 1);
-  		$orderBy = (isset($params['orderBy']) ? $params['orderBy'] : array('created' => 'desc'));
-
-  		$where ='entityName = ? and entityId = ?';
-  		$sqlParams = array($entity, $entityId);
-  		if(isset($params['type']) && ($commentType = trim($params['type'])) !== '')
-  		{
-  			$where .= 'and type = ?';
-  			$sqlParams[] = trim($commentType);
-  		}
-  		$returnArray = json_encode(array());
-  		$stats = array();
-  		$commentsArray = Comments::getAllByCriteria($where, $sqlParams, true, $pageNo, $pageSize, $orderBy, $stats);
-  		$results = array();
-  		$results['items'] = array_map(create_function('$a', 'return $a->getJson();'), $commentsArray);
-  		$results['pageStats'] = $stats;
-  		return $results;
-  	}
   	/**
   	 * Getting an entity
   	 *
@@ -107,5 +76,6 @@ class AjaxController extends TService
 //   		Dao::$debug = false;
   		return array('items' => array_map(create_function('$a', 'return $a->getJson();'), $items), 'pagination' => $stats);
   	}
+
 }
 ?>
