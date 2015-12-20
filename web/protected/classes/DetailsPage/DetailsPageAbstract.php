@@ -102,14 +102,17 @@ abstract class DetailsPageAbstract extends BPCPageAbstract
 		try
 		{
 			$focusEntity = $this->getFocusEntity();
-			if (!isset ( $params->CallbackParameter->name ) || ($name = trim ( $params->CallbackParameter->name )) === '')
-				throw new Exception ( 'System Error: invalid name passed in.' );
-			$description = '';
-			if (isset ( $params->CallbackParameter->description ) )
-				$description = trim($params->CallbackParameter->description);
+
 			if (isset ( $params->CallbackParameter->id ) && !($entity = $focusEntity::get(intval($params->CallbackParameter->id))) instanceof $focusEntity )
 				throw new Exception ( 'System Error: invalid id passed in.' );
-			
+
+			if (!isset ( $params->CallbackParameter->name ) || ($name = trim ( $params->CallbackParameter->name )) === '')
+			throw new Exception ( 'System Error: invalid name passed in.' );
+
+			$description = '';
+			if (isset ( $params->CallbackParameter->description ) )
+			$description = trim($params->CallbackParameter->description);
+
 			Dao::beginTransaction();
 			
 			if(!isset($entity) || !$entity instanceof $focusEntity)

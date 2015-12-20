@@ -53,17 +53,13 @@ class WebUserManager extends TModule implements IUserManager
 			$userAccount = UserAccount::getUserByUsernameAndPassword($username, $password);
 			if(!$userAccount instanceof UserAccount)
 				return false;
-			$role = $store = null;
+			$role = null;
 			if(!Core::getRole() instanceof Role) {
 				if(count($roles = $userAccount->getRoles()) > 0)
 					$role = $roles[0];
 			}
 			
-			if(!Core::getStore() instanceof Store) {
-				if(count($stores = $userAccount->getStores($role)) > 0)
-					$store = $stores[0];
-			}
-			Core::setUser($userAccount, $role, $store);
+			Core::setUser($userAccount, $role);
 		}
 		return true;
 	}

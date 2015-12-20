@@ -17,6 +17,8 @@ CRUDPageJs.prototype = Object.extend(new BPCPageJs(), {
 			, 'createdBy': 'Created By'
 			, 'updated': 'Updated'
 			, 'updatedBy': 'Updated By'
+			, 'type': 'Type'
+			, 'value': 'Value'
 		}
 
 	,setHTMLIds: function(resultDivId, searchDivId, totalNoOfItemsId) {

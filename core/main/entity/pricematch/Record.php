@@ -126,6 +126,15 @@ class Record extends BaseEntityAbstract
 		
 		DaoMap::commit();
 	}
+
+	/**
+	 * @param Product $product
+	 * @param Vendor $vendor
+	 * @param string $url
+	 * @param double $price
+	 * @param bool $active
+	 * @return Record
+	 */
 	public static function create(Product $product, Vendor $vendor, $url = '', $price, $active = true)
 	{
 		$url = trim($url);
@@ -134,5 +143,17 @@ class Record extends BaseEntityAbstract
 		$obj->setProduct($product)->setVendor($vendor)->setUrl($url)->setPrice($price)->setActive(intval($active) === 1);
 		$obj->save();
 		return $obj;
+	}
+
+	/**
+	 * @param array $extra
+	 * @param bool $reset
+	 */
+	public function getJson($extra = array(), $reset = false)
+	{
+		$array = $extra;
+		$array['product'] = $this->getProduct()->getJson();
+		$array['vendor'] = $this->getVendor()->getJson();
+		return parent::getJson($array, $reset);
 	}
 }

@@ -25,16 +25,14 @@ class Menu extends TTemplateControl
 				'url' => '/products.html',
 				'icon' => '<span class="glyphicon glyphicon-tag"></span>'
 			)
+			,'record' => array(
+				'name' => 'Records',
+				'url' => '/records.html',
+				'icon' => '<span class="glyphicon glyphicon-eye-open"></span>'
+			)
 			,'Resources' => array(
 				'icon' => '<span class="glyphicon glyphicon-th-list"></span>'
-				,'ingredients' => array('url' => '/ingredients.html', 'name' => 'Ingredients', 'icon' => '')
-				,'allergents' => array('url' => '/allergents.html', 'name' => 'Allergents', 'icon' => '')
-				,'nutritions' => array('url' => '/nutritions.html', 'name' => 'Nutritions', 'icon' => '')
-				,'servemeasurements' => array('url' => '/servemeasurements.html', 'name' => 'Serve Measurements', 'icon' => '')
-// 				,'labels' => array('url' => '/labels.html', 'name' => 'Labels', 'icon' => '')
-				,'materials' => array('url' => '/materials.html', 'name' => 'Materials', 'icon' => '')
-// 				,'addresses' => array('url' => '/addresses.html', 'name' => 'Addresses', 'icon' => '')
-				,'categorie' => array('url' => '/categories.html', 'name' => 'Category', 'icon' => '')
+//				,'product' => array('url' => '/products.html', 'name' => 'Products', 'icon' => '')
 			)
 			,'System' => array(
 				'icon' => '<span class="glyphicon glyphicon-cog"></span>'

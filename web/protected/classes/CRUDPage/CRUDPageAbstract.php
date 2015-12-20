@@ -13,7 +13,7 @@ abstract class CRUDPageAbstract extends BPCPageAbstract
 	 *
 	 * @var int
 	 */
-	public $pageSize = 20;
+	public $pageSize = 10;
 	/**
 	 * The focusing entity
 	 *

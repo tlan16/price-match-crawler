@@ -403,11 +403,14 @@ BPCPageJs.prototype = {
 		tmp.name = (name || 'name');
 		tmp.glue = (glue || ', ');
 		tmp.result = "";
-		if(!Array.isArray(objs))
-			return tmp.result;
+		if(!Array.isArray(objs)) {
+			if(objs !== null && typeof objs === 'object' && typeof objs[tmp.name] !== 'undefined')
+				return objs[tmp.name];
+			else return tmp.result;
+		}
 		tmp.names = [];
 		objs.each(function(obj){
-			if(typeof obj[tmp.name] !== 'undefined')
+			if(obj !== null && typeof obj[tmp.name] !== 'undefined')
 				tmp.names.push(obj[tmp.name]);
 		});
 		tmp.result = tmp.names.join(tmp.glue);

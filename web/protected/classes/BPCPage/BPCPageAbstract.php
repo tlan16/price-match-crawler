@@ -20,13 +20,8 @@ abstract class BPCPageAbstract extends TPage
 	public function __construct()
 	{
 	    parent::__construct();
-	     if(!Core::getUser() instanceof UserAccount && get_class($this) !== 'LoginController')
-	     {
-	     	if(isset($_REQUEST['user']) && isset($_REQUEST['pass']) && in_array(get_class($this), array('OrderPrintController', 'POPrintController')) && ($userAccount = UserAccount::getUserByUsernameAndPassword(trim($_REQUEST['user']), trim($_REQUEST['pass']), true)) instanceof UserAccount)
-	     		Core::setUser($userAccount);
-	     	else
-	     		$this->getResponse()->Redirect('/login.html');
-	     }
+	    if(!Core::getUser() instanceof UserAccount && get_class($this) !== 'LoginController')
+	        $this->getResponse()->Redirect('/login.html');
 	}
 	/**
 	 * (non-PHPdoc)

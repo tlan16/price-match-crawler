@@ -132,22 +132,31 @@ DetailsPageJs.prototype = Object.extend(new BPCPageJs(), {
 		});
 		return tmp.me;
 	}
+	,__validateContainer: function(container) {
+		var tmp = {};
+		tmp.me = this;
+		tmp.container = (container || null);
+		if(!tmp.container)
+			return null;
+		if(!tmp.container.id)
+			tmp.me._signRandID(tmp.container);
+		if(!tmp.container.id || jQuery('#'+tmp.container.id).length === 0)
+			return null;
+		return tmp.container;
+	}
 	,_getInputDiv:function(saveItem, value, container, title, required, className, isCurrency, placeholder) {
 		var tmp = {};
 		tmp.me = this;
+		tmp.container = tmp.me.__validateContainer(container);
 		tmp.title = (title || tmp.me.ucfirst(saveItem));
 		tmp.required = (required === true);
 		tmp.className = (className || 'col-xs-12');
 		tmp.isCurrency = (isCurrency === true);
 		tmp.placeholder = (placeholder || '');
 
-		if(!container)
-			return tmp.me;
-		if(!container.id)
-			tmp.me._signRandID(container);
-		tmp.container = $(container.id);
 		if(!tmp.container)
 			return tmp.me;
+
 		tmp.input = new Element('input')
 			.writeAttribute({
 				'required': tmp.required
@@ -169,6 +178,40 @@ DetailsPageJs.prototype = Object.extend(new BPCPageJs(), {
 
 		return tmp.me;
 	}
+	,_getSelectDiv:function(saveItem, options, selectedValues, container, title, required, className) {
+		var tmp = {};
+		tmp.me = this;
+		tmp.container = tmp.me.__validateContainer(container);
+		tmp.title = (title || tmp.me.ucfirst(saveItem));
+		tmp.required = (required === true);
+		tmp.className = (className || 'col-xs-12');
+		if(!tmp.container)
+			return tmp.me;
+
+		tmp.input = new Element('select')
+			.writeAttribute({
+				'required': tmp.required
+				,'save-item': saveItem
+				,'dirty': false
+			});
+
+		if(Array.isArray(selectedValues)) {
+			tmp.input.writeAttribute({'multiple': true});
+		}
+
+		options.each(function(option) {
+			tmp.input.insert({'bottom': tmp.option = new Element('option', {'value': option.id}).update(option.name) });
+			if((Array.isArray(selectedValues) && selectedValues.indexOf(option.id) > -1) || (option.id == selectedValues)) {
+				tmp.option.writeAttribute('selected', true);
+			}
+		});
+		tmp.input.observe('keyup',function(e){
+			tmp.input.writeAttribute('dirty', $F(tmp.input) );
+			tmp.me._refreshDirty()._getSaveBtn();
+		});
+		tmp.container.update(tmp.me._getFormGroup(tmp.title, tmp.input).addClassName(tmp.className) );
+		return tmp.me;
+	}
 	,_refreshDirty: function() {
 		var tmp = {};
 		tmp.me = this;
@@ -185,22 +228,22 @@ DetailsPageJs.prototype = Object.extend(new BPCPageJs(), {
 	,_getSelect2Div:function(searchEntityName, saveItem, value, container, title, required, select2Options, className) {
 		var tmp = {};
 		tmp.me = this;
+		tmp.container = tmp.me.__validateContainer(container);
 		tmp.title = (title || tmp.me.ucfirst(saveItem));
 		tmp.required = (required === true);
 		tmp.select2Options = (select2Options || null);
 		tmp.className = (className || 'col-xs-12');
 
-		if(!container.id)
-			tmp.me._signRandID(container);
-		tmp.container = $(container.id);
 		if(!tmp.container)
-			return;
+			return tmp.me;
+
 		tmp.select2 = new Element('input')
 			.writeAttribute('required', tmp.required)
 			.writeAttribute('placeholder', 'Please select a ' + searchEntityName)
 			.writeAttribute('save-item', saveItem);
+		tmp.input = tmp.select2;
 
-		tmp.container.update(tmp.me._getFormGroup(tmp.title, tmp.select2).addClassName(tmp.className) );
+		tmp.container.insert({'bottom': tmp.me._getFormGroup(tmp.title, tmp.select2).addClassName(tmp.className) });
 
 		tmp.me._signRandID(tmp.select2);
 
@@ -241,8 +284,10 @@ DetailsPageJs.prototype = Object.extend(new BPCPageJs(), {
 			tmp.selectBox.attr('dirty', tmp.selectBox.val() !== tmp.me._getNamesString(value,'id',','));
 			tmp.me._refreshDirty()._getSaveBtn();
 		});
+
 		if(tmp.data)
 			tmp.selectBox.select2('data', tmp.data);
+		tmp.input.addClassName('transfered-to-select2');
 		return tmp.me;
 	}
 
