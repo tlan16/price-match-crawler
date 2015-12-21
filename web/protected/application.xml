@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<application id="Sushi-Co-System" mode="Debug">
+<application id="Crawler-System" mode="Debug">
 	<!-- alias definitions and namespace usings <paths> <alias id="myalias"
 		path="./lib" /> <using namespace="Application.common.*" /> </paths> -->
 
@@ -86,7 +86,7 @@
 	</services>
 	<!-- application parameters -->
 	<parameters>
-		<parameter id="AppTitle" value="Sushi &#38; Co. Management System" />
+		<parameter id="AppTitle" value="Crawler System" />
 		<parameter id="AppVersion" value="1.0.0" />
 	</parameters>
 
