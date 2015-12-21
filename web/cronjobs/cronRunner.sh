@@ -15,5 +15,5 @@ echo -n "product import is Already Running....... :: "
 date
 echo -n " "
 else
-/usr/bin/php /var/www/price-match-crawler/web/cronjobs/sync/product.php >> /tmp/crawler.log
+/usr/bin/php /var/www/price-match-crawler/web/cronjobs/sync/product.php >> /tmp/productImport.log
 fi
