@@ -218,17 +218,54 @@ abstract class StringUtilsAbstract
 	         }
 	    }
 	}
+	/**
+	 * 
+	 * @param string $string
+	 * @return NULL|string
+	 */
 	public static function nullOrString($string) {
 		return (($string === null || trim($string) === '') ? null : trim($string));
 	}
+	/**
+	 * 
+	 * @param string $filePath
+	 * @return string
+	 */
 	public static function filesize($filePath) {
 		if(($filePath = trim($filePath)) === '' || ($size = filesize($filePath)) === false)
 			return 0;
 		return self::human_filesize($size);
 	}
+	/**
+	 * 
+	 * @param number $bytes
+	 * @param number $decimals
+	 * 
+	 * @return string
+	 */
 	public static function human_filesize($bytes, $decimals = 2) {
 		$size = array('B','kB','MB','GB','TB','PB','EB','ZB','YB');
 		$factor = floor((strlen($bytes) - 1) / 3);
 		return sprintf("%.{$decimals}f", $bytes / pow(1024, $factor)) . @$size[$factor];
+	}
+	/**
+	 * 
+	 * @param string $haystack
+	 * @param string $needle
+	 * @return bool
+	 */
+	public static function startsWith($haystack, $needle) {
+		// search backwards starting from haystack length characters from the end
+		return $needle === "" || strrpos($haystack, $needle, -strlen($haystack)) !== FALSE;
+	}
+	/**
+	 *
+	 * @param string $haystack
+	 * @param string $needle
+	 * @return bool
+	 */
+	public static function endsWith($haystack, $needle) {
+		// search forward starting from end minus needle length characters
+		return $needle === "" || (($temp = strlen($haystack) - strlen($needle)) >= 0 && strpos($haystack, $needle, $temp) !== FALSE);
 	}
 }

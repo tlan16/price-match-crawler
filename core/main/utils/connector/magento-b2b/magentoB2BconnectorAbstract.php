@@ -154,6 +154,8 @@ abstract class magentoB2BconnectorAbstract
 		$extraOptions[CURLOPT_HTTPHEADER] = array(
 				'MAGE_API:' . $this->token
 		);
+		if($customerRequest === 'GET')
+			$url = ($url . (StringUtilsAbstract::endsWith($url, "?") ? '' : "?") . http_build_query($data));
 		return ComScriptCURL::readUrl($url, $timeout, $data, $customerRequest, $extraOptions);
 	}
 }
