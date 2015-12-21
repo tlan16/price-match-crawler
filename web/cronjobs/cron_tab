@@ -1,1 +1,1 @@
-30 * * * * /bin/sh /var/www/magentob2b/web/cronjobs/cronRunner.sh > /tmp/cronRunner.log
+30 * * * * /bin/sh /var/www/price-match-crawler/web/cronjobs/cronRunner.sh > /tmp/cronRunner.log
