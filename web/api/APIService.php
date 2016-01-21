@@ -54,7 +54,7 @@ class APIService
         if(is_file($logfile))
             $this->_logFile = $logfile;
         else
-            $this->_logFile = 'E:\tmp/' . get_class($this) . '.crawler.log';
+            $this->_logFile = '/tmp/' . get_class($this) . '.crawler.log';
     }
     /**
      * Run
