@@ -1,7 +1,7 @@
 <?php
 class magentoB2BProductConnector extends magentoB2BconnectorAbstract
 {
-	public $prefix = 'product';
+	public $prefix = 'Product/getAllSku';
 	/**
 	 * get product by id
 	 * 
@@ -20,7 +20,7 @@ class magentoB2BProductConnector extends magentoB2BconnectorAbstract
 			$product = Product::create($sku, isset($data['shortDescription']) ? $data['shortDescription'] : '');
 			SystemSettings::getByType('last_succ_product_sync')->setValue($data['updated'])->save();
 			if($this->debug)
-				self::log('DONE Product[' . $product->getId() . '] ' . $product->getSku());
+				self::log('DONE Product[' . $product->getId() . '] ' . $product->getSku() . 'updated : ' . $data['updated']);
 		}
 	}
 	public static function importProducts($baseurl, $username, $password, $debug = false) 

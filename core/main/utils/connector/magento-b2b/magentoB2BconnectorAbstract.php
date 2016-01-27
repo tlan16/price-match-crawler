@@ -7,7 +7,7 @@ abstract class magentoB2BconnectorAbstract
 	 * 
 	 * @var integer
 	 */
-	protected $pageNo = 1;
+	protected $pageNo = null;
 	/**
 	 * The page size
 	 * 
@@ -110,7 +110,7 @@ abstract class magentoB2BconnectorAbstract
 		if(!($lastSync = SystemSettings::getByType('last_succ_product_sync')) instanceof SystemSettings)
 			throw new Exception('system setting "last_succ_product_sync" not found');
 	
-		do {
+		//do {
 			$data = array(
 					'searchTxt' => $criteria,
 					'searchParams' => $params,
@@ -123,7 +123,7 @@ abstract class magentoB2BconnectorAbstract
 			if($this->debug === true)
 				self::log('START retrieving data from ' . $url . ' (pageNo:' . $this->pageNo . ' pageSize:' . $this->pageSize . ')');
 			$response = json_decode($this->readUrl($url, self::$timeout, $data, 'GET'), true);
-			$this->pageNo++;
+			//$this->pageNo++;
 			// validate response from curl
 			if(isset($response['items']) && is_array($response = $response['items']) )
 			{
@@ -137,7 +137,7 @@ abstract class magentoB2BconnectorAbstract
 					self::log('FINISHED retrieving data from ' . $url);
 				unset($response);
 			}
-		} while( isset($response) && count($response) > 0 );
+		//} while( isset($response) && count($response) > 0 );
 	}
 	public static function log($msg, $newline = PHP_EOL)
 	{
@@ -147,7 +147,7 @@ abstract class magentoB2BconnectorAbstract
 	}
 	public function callback($data) { 
 		if($this->debug === true)
-			self::Log(print_r($data), true);
+			self::log(print_r($data), true);
 	}
 	public function readUrl($url, $timeout = null, array $data = array(), $customerRequest = '', $extraOptions = array())
 	{
