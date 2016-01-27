@@ -2,7 +2,7 @@
 ini_set('memory_limit','1024M');
 require_once dirname(__FILE__) . '/../../bootstrap.php';
 Core::setUser(UserAccount::get(UserAccount::ID_SYSTEM_ACCOUNT));
-
+echo "Begin at MELB TIME: " . UDate::now(UDate::TIME_ZONE_MELB) . "\n";
 $productIds = Dao::getResultsNative('SELECT `id` FROM `product`');
 $productIds = array_map(create_function('$a', 'return intval($a["id"]);'), $productIds);
 $started = array();
@@ -30,6 +30,10 @@ foreach ($productIds as $productId)
             . ', ' . get_memory_usage_string()
             . PHP_EOL;
 }
+
+echo "End at MELB TIME: " . UDate::now(UDate::TIME_ZONE_MELB) . "\n";
+
+
 function get_date_diff( $time1, $time2, $precision = 2 ) {
     // If not numeric then convert timestamps
     if( !is_int( $time1 ) ) {
