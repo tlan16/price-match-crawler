@@ -3,15 +3,24 @@ ini_set('memory_limit','1024M');
 require_once dirname(__FILE__) . '/../../bootstrap.php';
 Core::setUser(UserAccount::get(UserAccount::ID_SYSTEM_ACCOUNT));
 echo "Begin at MELB TIME: " . UDate::now(UDate::TIME_ZONE_MELB) . "\n";
-$productIds = Dao::getResultsNative('SELECT `id` FROM `product`');
+$productIds = Dao::getResultsNative('SELECT `id` FROM `product` where active = 1 order by `id` desc');
 $productIds = array_map(create_function('$a', 'return intval($a["id"]);'), $productIds);
-$started = array();
-$started['time'] = UDate::now();
-$started['count'] = Record::countByCriteria('active = 1');
-
+//$started = array();
+//$started['time'] = UDate::now();
+//$started['count'] = Record::countByCriteria('active = 1');
+echo "Got [ " . count($productIds) . " ] products . " . "\n";
+$count = 1;
+$sku = '';
 foreach ($productIds as $productId)
 {
-    if(($productId = intval($productId)) !== 0 && Product::get($productId) instanceof Product)
+	$product = Product::get($productId);
+	$sku = '';
+	if ($product instanceof Product)
+	{
+		$sku = $product->getSku();
+	}
+	echo "+++ No." . $count . " ProudctId [ " . $productId ." ], Sku [ " . $sku . " ] " . "\n";
+    if(($productId = intval($productId)) !== 0 && $product instanceof Product)
     {
         $output = array();
         $cmd = 'php ' . dirname(__FILE__). '/crawler.php ' . $productId;
@@ -19,16 +28,17 @@ foreach ($productIds as $productId)
         foreach ($output as $line)
         	echo "\t" . $line . PHP_EOL;
     }
+    $count++;
     //statics
-    $totalRecord = intval(Record::countByCriteria('active = 1')) - intval($started['count']);
-    $timeDiff= intval(UDate::now()->getUnixTimeStamp()) - intval($started['time']->getUnixTimeStamp());
-    $timeDiffHuman = get_date_diff(trim($started['time']), trim(UDate::now()));
-    if($timeDiff !== 0)
-        echo 'current product id: ' . $productId
-            . ', ' . trim($totalRecord) . ' records in ' . $timeDiffHuman
-            . ', ' . trim(round($totalRecord / $timeDiff, 4)) . ' records/s'
-            . ', ' . get_memory_usage_string()
-            . PHP_EOL;
+    //$totalRecord = intval(Record::countByCriteria('active = 1')) - intval($started['count']);
+//     $timeDiff= intval(UDate::now()->getUnixTimeStamp()) - intval($started['time']->getUnixTimeStamp());
+//     $timeDiffHuman = get_date_diff(trim($started['time']), trim(UDate::now()));
+//     if($timeDiff !== 0)
+//         echo 'current product id: ' . $productId
+//             . ', ' . trim($totalRecord) . ' records in ' . $timeDiffHuman
+//             . ', ' . trim(round($totalRecord / $timeDiff, 4)) . ' records/s'
+//             . ', ' . get_memory_usage_string()
+//             . PHP_EOL;
 }
 
 echo "End at MELB TIME: " . UDate::now(UDate::TIME_ZONE_MELB) . "\n";
