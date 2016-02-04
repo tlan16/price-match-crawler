@@ -36,7 +36,7 @@ class APIPriceMatchService extends APIServiceAbstract
 				) as t, product p, record r, vendor v
 				where p.id = r.productId and r.active=1 and p.active=1 and v.id = r.vendorId
 				and p.sku = ? and t.productId=r.productId and t.vendorId=r.vendorId
-				and r.id = t.id
+				and r.id = t.id and r.updated > (NOW() - INTERVAL 1 DAY)
 				order by vendorId';
    	
 	$this->_runner->log('PriceMatch: ', __CLASS__ . '::' . __FUNCTION__);
