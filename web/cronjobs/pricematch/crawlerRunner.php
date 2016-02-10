@@ -5,6 +5,10 @@ Core::setUser(UserAccount::get(UserAccount::ID_SYSTEM_ACCOUNT));
 echo "Begin at MELB TIME: " . UDate::now(UDate::TIME_ZONE_MELB) . "\n";
 $productIds = Dao::getResultsNative('SELECT `id` FROM `product` where active = 1 order by `id` desc');
 $productIds = array_map(create_function('$a', 'return intval($a["id"]);'), $productIds);
+
+echo "    starting to archive old data : " . UDate::now(UDate::TIME_ZONE_MELB) . "\n";
+$result = Dao::getResultsNative('Call PreparePriceMatch()');
+echo "    Finished archiving old data : " . UDate::now(UDate::TIME_ZONE_MELB) . "\n";
 //$started = array();
 //$started['time'] = UDate::now();
 //$started['count'] = Record::countByCriteria('active = 1');
