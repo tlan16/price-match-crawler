@@ -1,10 +1,24 @@
 <?php
 ini_set('memory_limit','1024M');
 require_once dirname(__FILE__) . '/../../bootstrap.php';
+
+if (! function_exists('pcntl_fork')) die('PCNTL functions not available on this PHP installation');
+$i = 0;
+$maxChild = 100;
+
 Core::setUser(UserAccount::get(UserAccount::ID_SYSTEM_ACCOUNT));
 echo "Begin at MELB TIME: " . UDate::now(UDate::TIME_ZONE_MELB) . "\n";
-$productIds = Dao::getResultsNative('SELECT `id` FROM `product` where active = 1 order by `id` desc');
-$productIds = array_map(create_function('$a', 'return intval($a["id"]);'), $productIds);
+$products = Dao::getResultsNative('SELECT `id`,`sku` FROM `product` where active = 1 order by `id` desc');
+$totalCount=count($products);
+
+
+
+$size = ceil($totalCount / $maxChild);
+echo "Got [ " . $totalCount . " ] products, size of array [ $size ] . " . "\n";
+
+$products = array_chunk($products, $size);
+
+//$productIds = array_map(create_function('$a', 'return intval($a["id"]);'), $productIds);
 
 echo "    starting to archive old data : " . UDate::now(UDate::TIME_ZONE_MELB) . "\n";
 $result = Dao::getResultsNative('Call PreparePriceMatch()');
@@ -12,41 +26,60 @@ echo "    Finished archiving old data : " . UDate::now(UDate::TIME_ZONE_MELB) . 
 //$started = array();
 //$started['time'] = UDate::now();
 //$started['count'] = Record::countByCriteria('active = 1');
-echo "Got [ " . count($productIds) . " ] products . " . "\n";
-$count = 1;
-$sku = '';
-foreach ($productIds as $productId)
+
+
+
+for ($i=1; $i<=$maxChild; $i++)
 {
-	$product = Product::get($productId);
-	$sku = '';
-	if ($product instanceof Product)
+
+	$pid = pcntl_fork();
+	if ($pid == -1)
 	{
-		$sku = $product->getSku();
+		// Fork failed
+		echo ' Fork failed !!!';
+		exit(1);
 	}
-	echo "+++ No." . $count . " ProudctId [ " . $productId ." ], Sku [ " . $sku . " ] " . "\n";
-    if(($productId = intval($productId)) !== 0 && $product instanceof Product)
-    {
-        $output = array();
-        $cmd = 'php ' . dirname(__FILE__). '/crawler.php ' . $productId;
-        exec($cmd, $output);
-        foreach ($output as $line)
-        	echo "\t" . $line . PHP_EOL;
-    }
-    $count++;
-    //statics
-    //$totalRecord = intval(Record::countByCriteria('active = 1')) - intval($started['count']);
-//     $timeDiff= intval(UDate::now()->getUnixTimeStamp()) - intval($started['time']->getUnixTimeStamp());
-//     $timeDiffHuman = get_date_diff(trim($started['time']), trim(UDate::now()));
-//     if($timeDiff !== 0)
-//         echo 'current product id: ' . $productId
-//             . ', ' . trim($totalRecord) . ' records in ' . $timeDiffHuman
-//             . ', ' . trim(round($totalRecord / $timeDiff, 4)) . ' records/s'
-//             . ', ' . get_memory_usage_string()
-//             . PHP_EOL;
+	elseif ($pid)
+	{
+		// parent
+		
+	}
+	else
+	{
+		// child
+		getPriceFromStaticice($products[$i], $i);
+		exit($i);
+	}
+
+}
+
+while (pcntl_waitpid(0, $status) != -1)
+{
+	$status = pcntl_wexitstatus($status);
+	echo "Child $status completed\n";
 }
 
 echo "End at MELB TIME: " . UDate::now(UDate::TIME_ZONE_MELB) . "\n";
 
+function getPriceFromStaticice($products, $childNo)
+{
+	$count = 0;
+	foreach ($products as $product)
+	{
+		$count++;
+		$productId = $product["id"];
+		$sku = $product["sku"];
+		echo "+++ Child:[$childNo] No." . $count . " ProudctId [ " . $productId ." ], Sku [ " . $sku . " ] " . "\n";
+		if(($productId = intval($productId)) !== 0)
+		{
+			$output = array();
+			$cmd = 'php ' . dirname(__FILE__). '/crawler.php ' . $productId;
+			exec($cmd, $output);
+			foreach ($output as $line)
+				echo "\t" . $line . PHP_EOL;
+		}
+	}
+}
 
 function get_date_diff( $time1, $time2, $precision = 2 ) {
     // If not numeric then convert timestamps
