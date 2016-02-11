@@ -15,7 +15,7 @@ echo -n "crawlerRunner is Already Running....... :: "
 date
 echo -n " "
 else
-/usr/bin/php /var/www/price-match-crawler/web/cronjobs/pricematch/crawlerRunner.php >> /tmp/log/crawler_`date +"%d_%b_%y"`.log
+/usr/bin/php /var/www/price-match-crawler/web/cronjobs/pricematch/crawlerRunner.php >> /tmp/log/crawler_`date +"%Y_%m_%d_%H_%M_%S"`.log
 fi
 
 
