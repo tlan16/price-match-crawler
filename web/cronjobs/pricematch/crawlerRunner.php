@@ -1,9 +1,10 @@
 <?php
 ini_set('memory_limit','1024M');
 require_once dirname(__FILE__) . '/../../bootstrap.php';
+require dirname(__FILE__) . '/MultiProcess.php';
 
-if (! function_exists('pcntl_fork')) die('PCNTL functions not available on this PHP installation');
-$i = 0;
+//if (! function_exists('pcntl_fork')) die('PCNTL functions not available on this PHP installation');
+//$i = 0;
 $maxChild = 100;
 
 Core::setUser(UserAccount::get(UserAccount::ID_SYSTEM_ACCOUNT));
@@ -16,7 +17,7 @@ $totalCount=count($products);
 $size = ceil($totalCount / $maxChild);
 echo "Got [ " . $totalCount . " ] products, size of array [ $size ] . " . "\n";
 
-$products = array_chunk($products, $size);
+//$products = array_chunk($products, $size);
 
 //$productIds = array_map(create_function('$a', 'return intval($a["id"]);'), $productIds);
 
@@ -27,37 +28,52 @@ echo "    Finished archiving old data : " . UDate::now(UDate::TIME_ZONE_MELB) . 
 //$started['time'] = UDate::now();
 //$started['count'] = Record::countByCriteria('active = 1');
 
+$job = new Multiprocess($products, 'getPriceFromStaticice', $maxChild);
+$job->run();
 
 
-for ($i=1; $i<=$maxChild; $i++)
-{
+// for ($i=0; $i<$maxChild; $i++)
+// {
 
-	$pid = pcntl_fork();
-	if ($pid == -1)
-	{
-		// Fork failed
-		echo ' Fork failed !!!';
-		exit(1);
-	}
-	elseif ($pid)
-	{
-		// parent
+// 	$pid = pcntl_fork();
+// 	if ($pid == -1)
+// 	{
+// 		// Fork failed
+// 		echo ' Fork failed !!!';
+// 		exit(1);
+// 	}
+// 	elseif ($pid)
+// 	{
+// 		// parent
 		
-	}
-	else
-	{
-		// child
-		getPriceFromStaticice($products[$i], $i);
-		exit($i);
-	}
+// 	}
+// 	else
+// 	{
+// 		// child
+// 		$childPid = getmypid();
+// 		getPriceFromStaticice($products[$i], $childPid);
+// 		exit($childPid);
+// 	}
 
-}
+// }
 
-while (pcntl_waitpid(0, $status) != -1)
-{
-	$status = pcntl_wexitstatus($status);
-	echo "Child $status completed\n";
-}
+// while (pcntl_waitpid(0, $status) != -1)
+// {
+// // 	if (pcntl_wifexited($status)) 
+// // 	{
+// // 		echo "Child exited normally";
+// // 	} 
+// // 	else if (pcntl_wifstopped($status)) 
+// // 	{
+// // 		echo "Signal: ", pcntl_wstopsig($status), " caused this child to stop.";
+// // 	} 
+// // 	else if (pcntl_wifsignaled($status)) 
+// // 	{
+// // 		echo "Signal: ",pcntl_wtermsig($status)," caused this child to exit with return code: ", pcntl_wexitstatus($status);
+// // 	}
+// 	$status = pcntl_wexitstatus($status);
+// 	echo "Child $status completed\n";
+// }
 
 echo "End at MELB TIME: " . UDate::now(UDate::TIME_ZONE_MELB) . "\n";
 
