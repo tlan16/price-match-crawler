@@ -1,1 +1,1 @@
-30 * * * * /bin/sh /var/www/price-match-crawler/web/cronjobs/cronRunner.sh >> /tmp/cronRunner.log
+* */3 * * * /bin/sh /var/www/price-match-crawler/web/cronjobs/cronRunner.sh >> /tmp/cronRunner.log
